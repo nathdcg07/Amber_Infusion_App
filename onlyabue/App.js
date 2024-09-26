@@ -1,12 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { RegistroUsuario} from './components/registroUsuario';
+import { NativeBaseProvider } from 'native-base';
+import Constants from "expo-constants";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <NativeBaseProvider>
+    <View flex={1} style={{paddingTop: Constants.statusBarHeight,}}>
       <StatusBar style="auto" />
+      <RegistroUsuario/>
     </View>
+    </NativeBaseProvider>
   );
 }
 
