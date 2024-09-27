@@ -1,6 +1,7 @@
 import React from "react";
-import {Alert, Button,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity } from 'react-native';
+import {Alert, Button,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
 import {useState} from 'react';
+import { Input, VStack, Select,   } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -15,14 +16,29 @@ const { width, height } = Dimensions.get('window');
   const [SelectedImagen,setSelectedImagen]=useState(null);
   const handleSubmit = () => {
     // Aquí puedes manejar la lógica del registro
-    console.log({
-     NombreComercial,
-     NombreGenerico,
-     Dosis,
-     Intervalo,
-     Laboratorio,
-     SelectedImagen
-    });
+    if (
+      !errorNombreComercial &&
+      !errorNombreGenerico &&
+      !errorDosis &&
+      !errorIntervalo &&
+      !errorLaboratorio &&
+      NombreComercial &&
+      NombreGenerico &&
+      Dosis &&
+      Intervalo &&
+      Laboratorio
+    ) {
+      console.log({
+        NombreComercial,
+        NombreGenerico,
+        Dosis,
+        Intervalo,
+        Laboratorio,
+        SelectedImagen
+      });
+    } else {
+      Alert.alert('Error', 'Por favor llene correctamente el formulario');
+    }
   };
   let openImagePickerAsync = async()=>{
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -45,81 +61,155 @@ const { width, height } = Dimensions.get('window');
      setSelectedImagen(uri);
     
   }
+// Estados de errores
+  const [errorNombreComercial, setErrorNombreComercial] = useState('');
+  const [errorNombreGenerico, setErrorNombreGenerico] = useState('');
+  const [errorDosis, setErrorDosis] = useState('');
+  const [errorIntervalo, setErrorIntervalo] = useState('');
+  const [errorLaboratorio, setErrorLaboratorio] = useState('');
+  
+  //validaciones
+  const validateNombreComercial = (text) => {
+    const regex =  /^[a-zA-Z]{2,}$/; // Solo letras y espacios
+    if (!regex.test(text)) {
+      setErrorNombreComercial('El nombre comercial debe contener solo letras');
+    } else {
+      setErrorNombreComercial('');
+    }
+    setNombreComercial(text);
+  };
+  const validateNombreGenerico = (text) => {
+    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
+    if (!regex.test(text)) {
+      setErrorNombreGenerico('El nombre comercial debe contener solo letras y un minimo de 2 caracteres');
+    } else {
+      setErrorNombreGenerico('');
+    }
+    setNombreGenerico(text);
+  };
+  const validateIntervalo = (text) => {
+    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
+    if (!regex.test(text)) {
+      setErrorIntervalo('El intervalo debe contener solo letras y un minimo de 3 caracteres');
+    } else {
+      setErrorIntervalo('');
+    }
+    setIntervalo(text);
+  };
+  const validateLaboratorio=(text)=> {
+    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
+    if (!regex.test(text)) {
+      setErrorLaboratorio('El nombre de laboratorio debe contener letras o numeros y un minimo de 3 caracteres');
+    } else {
+      setErrorLaboratorio('');
+    }
+    setLaboratorio(text);
+  };
+  
+
+  
     return (
 
-    <View style={styles.container}>
-      <View StyleSheet={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>←</Text>
-      </TouchableOpacity>
-      </View>
-      <TouchableOpacity onPress={openImagePickerAsync}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
-        <Image    
-        source={{
-          uri : SelectedImagen !== null
-      ?  SelectedImagen  // URI dinámica
-      : 'https://via.placeholder.com/100'// Placeholder local
-      }}style={styles.icon} />
-      </TouchableOpacity>
-      <StatusBar style='default'></StatusBar>
+        <View StyleSheet={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.backButton}>←</Text>
+        </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={openImagePickerAsync}>
+          
+          <Image    
+          source={{
+            uri : SelectedImagen !== null
+        ?  SelectedImagen  // URI dinámica
+        : 'https://via.placeholder.com/100'// Placeholder local
+        }}style={styles.icon} />
+        </TouchableOpacity>
+        <StatusBar style='default'></StatusBar>
+        <VStack space={4}>
+
+        <View style={styles.form}>
+          
+          <Text style={styles.title}>Registro de Medicamento</Text>
+          <Text style={styles.textForm}>Nombre Medicamento:</Text>
+          
+          
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={NombreComercial}
+                onChangeText={validateNombreComercial}
+                ></Input>
+          {errorNombreComercial ? <Text style={styles.error}>{errorNombreComercial}</Text> : null}
+
+
+          <Text style={styles.textForm}>Nombre Generico:</Text>
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={NombreGenerico}
+                onChangeText={validateNombreGenerico}
+          ></Input>
+           {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
+
+          <Text style={styles.textForm}>Dosis:</Text>
+          <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+            onValueChange={(itemValue) => setDosis(itemValue)}>
+            <Select.Item label='1/4' value="1/4" />
+            <Select.Item label='1/2' value="1/2"/>
+            <Select.Item label='3/4' value="3/4"/>
+            <Select.Item label='1' value="1"/>
+            <Select.Item label='2' value="2"/>
+            <Select.Item label='3' value="3"/>
+            <Select.Item label='4' value="4"/>
+          </Select>
+          {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
+
+
+          <Text style={styles.textForm}>Intervalo:</Text>
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={Intervalo}
+                onChangeText={validateIntervalo}
+          ></Input>
+          {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text> : null}
+
+
+          <Text style={styles.textForm}>Laboratorio:</Text>
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={Laboratorio}
+                onChangeText={validateLaboratorio}
+          ></Input>
+          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null} 
+          <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+            <Text style={styles.buttonText}> Agregar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button_Secundary}>
+            <Text style={styles.buttonText}>Atras</Text>
+          </TouchableOpacity>
+        
+        </View>
+      </VStack>
       
-      <View style={styles.form}>
-        
-        <Text style={styles.title}>Registro de Medicamento</Text>
-        <Text>Nombre Medicamento:</Text>
-        <TextInput 
-          style={styles.input}
-          value={NombreComercial}
-          onChangeText={setNombreComercial}
-          
-        ></TextInput>
-        <Text>Nombre Generico:</Text>
-        <TextInput 
-          style={styles.input}
-          value={NombreGenerico}  
-          onChangeText={setNombreGenerico}
-          
-          ></TextInput>
-        <Text>Dosis:</Text>
-        <TextInput 
-          style={styles.input}
-          value={Dosis}  
-          onChangeText={setDosis}
-          keyboardType="numeric"
-        ></TextInput>
-        <Text>Intervalo:</Text>
-        <TextInput 
-          style={styles.input}
-          value={Intervalo}
-          onChange={setIntervalo}
-          
-        ></TextInput>
-        <Text>Laboratorio:</Text>
-        <TextInput 
-          style={styles.input}
-          value={Laboratorio}
-          onChange={setLaboratorio}
-          
-        ></TextInput>
-        <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-          <Text style={styles.buttonText}> Agregar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button_Secundary}>
-          <Text style={styles.buttonText}>Atras</Text>
-        </TouchableOpacity>
-      </View>
+    </ScrollView>
+
     
-    </View>
     );
  }
  const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#90CAF9',
-      alignItems: 'center',
-      justifyContent: 'center',
+      backgroundColor: '#90CAF9',      
       
+    },
+    page:{
+      flex:1,
     },
     title: {
       fontSize: 24,
@@ -132,7 +222,7 @@ const { width, height } = Dimensions.get('window');
       padding: 20,
       borderRadius: 20,
       width: width * 0.8,
-      height:height * 0.8,
+      
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -187,6 +277,20 @@ const { width, height } = Dimensions.get('window');
       fontSize: 16,
       fontWeight: 'bold',
       
+    },
+    textForm: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      paddingBottom: 5,
+    },
+    scrollContainer: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    error: {
+      color: 'red',
+      marginBottom: 10,
     },
   
   });
