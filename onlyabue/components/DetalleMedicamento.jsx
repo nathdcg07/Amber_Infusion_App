@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
-import { View, Text, Image, StyleSheet,StatusBar, TouchableOpacity, ScrollView } from 'react-native';
+import { Text } from 'native-base';
+import { View,  Image, StyleSheet,StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import RecomendacionMedicamiento from './RecomendacionMedicamentos';
 const ProductScreen = ({ navigation }) => {
   const [Titulo,setTitulo]=useState('Medicamentos');
@@ -26,32 +26,33 @@ const ProductScreen = ({ navigation }) => {
           <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.productImage} />
         </View>
         <View style={styles.productDetails}>
-          <Text style={styles.productName}>{NombreCom}</Text>
-          <Text style={styles.productIngredient}>{NombreGen}</Text>
+          <Text  fontSize='3xl' >{NombreCom}</Text>
+          <Text fontSize='2xs' style={styles.productIngredient}>{NombreGen}</Text>
           <Text style={styles.productQuantity}>Cantidad: {Cantidad}</Text>
         </View>
       </View>
 
       {/* Description */}
       <View style={styles.description}>
-        <Text style={styles.sectionTitle}>Descripción</Text>
-        <Text style={styles.paragraph}>
+        <Text fontSize='2xl' style={styles.sectionTitle}>Descripción</Text>
+        <Text fontSize='2xl' style={styles.paragraph}>
           {Descipcion}
         </Text>
         
       </View>
+      <ScrollView>
+        <Text style={styles.titleSimilares}>Medicamentos Similares:</Text>
+        <RecomendacionMedicamiento/>
+        <RecomendacionMedicamiento/>
+        <RecomendacionMedicamiento/>
+        <TouchableOpacity style={styles.VerMas}>
+          <Text fontSize='lg' fontWeight='bold'>Ver Mas ---&gt; </Text>
+        </TouchableOpacity>
+      </ScrollView>
       
-        <RecomendacionMedicamiento/>
-        <RecomendacionMedicamiento/>
-        <RecomendacionMedicamiento/>
+        
     
-      {/* Similar Medications */}
-      <View style={styles.similarProducts}>
-        <Text style={styles.sectionTitle}>Medicamentos similares</Text>
-        <View style={styles.similarItem}>
-          <Text style={styles.similarProductName}>Aspirinetas 500mg</Text>
-        </View>
-      </View>
+      
     </ScrollView>
   );
 };
@@ -71,9 +72,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginRight: 16,
   },
-  title: {
+  title:{
+ marginTop:5,
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  titleSimilares: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop:5,
+    marginBottom:5,
   },
   productCard: {
     flexDirection: 'row',
@@ -101,17 +109,16 @@ const styles = StyleSheet.create({
   productDetails: {
     flex: 1,
   },
-  productName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  
   productIngredient: {
+    margin:5,
     fontSize: 16,
     color: '#666',
   },
   productQuantity: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#666',
+    fontWeight:'bold',
   },
   description: {
     paddingVertical: 20,
@@ -121,16 +128,18 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderBlockColor:'#000000',
     padding:10,
+    paddingLeft:15,
+    paddingRight:15,
     marginTop:15,
 
   },
   sectionTitle: {
-    fontSize: 18,
+    
     fontWeight: 'bold',
     marginBottom: 10,
   },
   paragraph: {
-    fontSize: 14,
+    
     marginBottom: 8,
   },
   boldText: {
@@ -146,6 +155,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
+  VerMas:{
+    flex:3,    
+    fontWeight:'bold',
+    alignItems:'flex-end',
+    margin:8,
+    marginBottom:10,
+
+  }
 });
 
 export default ProductScreen;

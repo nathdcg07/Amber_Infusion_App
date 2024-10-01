@@ -11,7 +11,8 @@ export default function App() {
       <View flex={1} style={{paddingTop: Constants.statusBarHeight,}}>
       <StatusBar style='default' />
      {/* <RegistroUsuario/> */}
-      <RegistroMedicamento/>
+      {/* <RegistroMedicamento/> */}
+      <ProductScreen/>
     </View>
     </NativeBaseProvider>
     
