@@ -6,12 +6,10 @@ import Constants from "expo-constants";
 
 export default function App() {
   return (
-    <NativeBaseProvider>
-    <View flex={1} style={{paddingTop: Constants.statusBarHeight,}}>
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
-      <RegistroUsuario/>
     </View>
-    </NativeBaseProvider>
   );
 }
 

@@ -2,7 +2,6 @@ import { StatusBar, View, Fab, Center } from "native-base";
 import { ScrollView, StyleSheet } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
-import { Footbar } from "./navBar";
 import { NextAlarm } from "./nextAlarm";
 
 export function AlarmHome() {

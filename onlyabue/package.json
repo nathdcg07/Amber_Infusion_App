@@ -1,19 +1,12 @@
 {
   "name": "onlyabue",
   "version": "1.0.0",
-  "main": "expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
-  },
-  "dependencies": {
-    "expo": "~51.0.28",
-    "expo-status-bar": "~1.12.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-native": "0.74.5"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
