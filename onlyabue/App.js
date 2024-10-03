@@ -1,10 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import ProductScreen from './components/DetalleMedicamento';
-import Constants from "expo-constants";
+import { RegistroUsuario} from './components/registroUsuario';
 import { NativeBaseProvider } from 'native-base';
-import { RegistroMedicamento } from './components/RegistroMedicamento';
-import {RegistroUsuario} from './components/registroUsuario';
+import Constants from "expo-constants";
+
 export default function App() {
   return (
     <NativeBaseProvider>
