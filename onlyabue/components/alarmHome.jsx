@@ -3,6 +3,8 @@ import { ScrollView, StyleSheet } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import React from "react";
 import { NextAlarm } from "./nextAlarm";
+import { Link } from "expo-router";
+import MedCard from './medicamentoCard';
 
 export function AlarmHome() {
   return (
@@ -11,18 +13,31 @@ export function AlarmHome() {
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
           <NextAlarm />
+      </View>
+        
+        <View>
+          <MedCard/>
+          <MedCard/>
+          <MedCard/>
+          <MedCard/>
+          <MedCard/>
+          <MedCard/>
         </View>
-        <Fab
-          renderInPortal={false}
-          shadow={2}
-          size="sm"
-          icon={<AntDesign name="plus" size={25} color="white" />}
-          backgroundColor="#29B6F6"
-          position="absolute"
-          bottom={10}
-          right={30}
-        />
+       
       </ScrollView>
+      <Link asChild href='./RegistroMed'>
+            <Fab
+              renderInPortal={false}
+              shadow={2}
+              size="sm"
+              icon={<AntDesign name="plus" size={25} color="white" />}
+              backgroundColor="#29B6F6"
+              position="absolute"
+              bottom={10}
+              right={30}
+              
+            />
+        </Link>
       <View style={styles.footbarContainer}>
         
       </View>

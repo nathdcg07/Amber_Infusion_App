@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text } from 'native-base';
 import { View,  Image, StyleSheet,StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import RecomendacionMedicamiento from './RecomendacionMedicamentos';
-const ProductScreen = ({ navigation }) => {
+const ProductScreen = () => {
   const [Titulo,setTitulo]=useState('Medicamentos');
   const [NombreCom,setNombreCom]=useState('Aspirina');
   const [NombreGen,setNombGen]=useState('Acido acetilsalicico');

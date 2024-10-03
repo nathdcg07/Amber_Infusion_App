@@ -1,9 +1,10 @@
 import React from "react";
-import {Alert, Button,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
-import {useState} from 'react';
-import { Input, VStack, Select,   } from "native-base";
+import {Alert,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
+import {useState,useCallback} from 'react';
+import { Input, VStack, Select, Pressable,   } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
-
+import { useFocusEffect } from '@react-navigation/native';
+import { Link } from "expo-router";
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
@@ -14,6 +15,24 @@ const { width, height } = Dimensions.get('window');
   const [Intervalo,setIntervalo] = useState('');
   const [Laboratorio,setLaboratorio] = useState('');
   const [SelectedImagen,setSelectedImagen]=useState(null);
+  useFocusEffect(
+    useCallback(() => {
+      // Reiniciar todos los campos del formulario
+      setNombreComercial('');
+      setNombreGenerico('');
+      setDosis('');
+      setIntervalo('');
+      setLaboratorio('');
+      setSelectedImagen(null);
+      setErrorNombreComercial('');
+      setErrorNombreGenerico('');
+      setErrorDosis('');
+      setErrorIntervalo('');
+      setErrorLaboratorio('');
+      setErrorImage('');
+    }, [])
+  );
+
   const handleSubmit = () => {
     // Aquí puedes manejar la lógica del registro
     if (
@@ -22,6 +41,8 @@ const { width, height } = Dimensions.get('window');
       !errorDosis &&
       !errorIntervalo &&
       !errorLaboratorio &&
+      !errorImage &&
+      SelectedImagen &&
       NombreComercial &&
       NombreGenerico &&
       Dosis &&
@@ -37,7 +58,7 @@ const { width, height } = Dimensions.get('window');
         SelectedImagen
       });
     } else {
-      Alert.alert('Error', 'Por favor llene correctamente el formulario');
+      Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
   };
   let openImagePickerAsync = async()=>{
@@ -55,11 +76,12 @@ const { width, height } = Dimensions.get('window');
       
       
   if(PickResult.canceled===true){
+    setErrorImage('Seleccione una imagen')
     return;
   }
   const uri = PickResult.assets?.[0]?.uri;
      setSelectedImagen(uri);
-    
+     setErrorImagen('');
   }
 // Estados de errores
   const [errorNombreComercial, setErrorNombreComercial] = useState('');
@@ -67,6 +89,7 @@ const { width, height } = Dimensions.get('window');
   const [errorDosis, setErrorDosis] = useState('');
   const [errorIntervalo, setErrorIntervalo] = useState('');
   const [errorLaboratorio, setErrorLaboratorio] = useState('');
+  const [errorImage, setErrorImage]=useState('');
   
   //validaciones
   const validateNombreComercial = (text) => {
@@ -106,6 +129,7 @@ const { width, height } = Dimensions.get('window');
     setLaboratorio(text);
   };
   
+  
 
   
     return (
@@ -113,19 +137,20 @@ const { width, height } = Dimensions.get('window');
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         <View StyleSheet={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>←</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={styles.backButton}>←</Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={openImagePickerAsync}>
           
           <Image    
-          source={{
-            uri : SelectedImagen !== null
-        ?  SelectedImagen  // URI dinámica
-        : 'https://via.placeholder.com/100'// Placeholder local
-        }}style={styles.icon} />
+            source={{
+              uri : SelectedImagen !== null
+          ?  SelectedImagen  // URI dinámica
+          : 'https://via.placeholder.com/100'// Placeholder local
+          }}style={styles.icon} />
         </TouchableOpacity>
+        {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
         <StatusBar style='default'></StatusBar>
         <VStack space={4}>
 
@@ -190,9 +215,12 @@ const { width, height } = Dimensions.get('window');
           <TouchableOpacity onPress={handleSubmit} style={styles.button}>
             <Text style={styles.buttonText}> Agregar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button_Secundary}>
-            <Text style={styles.buttonText}>Atras</Text>
-          </TouchableOpacity>
+          <Link asChild href='/'>
+            <Pressable style={styles.button_Secundary}>
+              <Text style={styles.buttonText}>Atras</Text>
+            </Pressable>
+          </Link>
+          
         
         </View>
       </VStack>
@@ -222,7 +250,7 @@ const { width, height } = Dimensions.get('window');
       padding: 20,
       borderRadius: 20,
       width: width * 0.8,
-      
+      marginBottom:20,
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
