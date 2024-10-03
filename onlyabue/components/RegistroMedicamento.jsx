@@ -1,8 +1,10 @@
 import React from "react";
-import {Alert, Button,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
+import {Alert,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
 import {useState} from 'react';
 import { Input, VStack, Select,   } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
+import { Link } from "expo-router";
+import { Button } from "native-base";
 
 
 const { width, height } = Dimensions.get('window');
@@ -113,9 +115,7 @@ const { width, height } = Dimensions.get('window');
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         <View StyleSheet={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backButton}>←</Text>
-        </TouchableOpacity>
+        
         </View>
         <TouchableOpacity onPress={openImagePickerAsync}>
           
@@ -123,7 +123,7 @@ const { width, height } = Dimensions.get('window');
           source={{
             uri : SelectedImagen !== null
         ?  SelectedImagen  // URI dinámica
-        : 'https://via.placeholder.com/100'// Placeholder local
+        : 'https://via.placeholder.com/150'// Placeholder local
         }}style={styles.icon} />
         </TouchableOpacity>
         <StatusBar style='default'></StatusBar>
@@ -190,10 +190,11 @@ const { width, height } = Dimensions.get('window');
           <TouchableOpacity onPress={handleSubmit} style={styles.button}>
             <Text style={styles.buttonText}> Agregar</Text>
           </TouchableOpacity>
+          <Link asChild href='/'>
           <TouchableOpacity style={styles.button_Secundary}>
             <Text style={styles.buttonText}>Atras</Text>
           </TouchableOpacity>
-        
+          </Link>
         </View>
       </VStack>
       
@@ -222,7 +223,7 @@ const { width, height } = Dimensions.get('window');
       padding: 20,
       borderRadius: 20,
       width: width * 0.8,
-      
+      marginBottom: 50,
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -241,15 +242,16 @@ const { width, height } = Dimensions.get('window');
       backgroundColor:'#fff',
     },
     icon: {
-      width: 100,
-      height: 100,
+      width: 150,
+      height: 150,
       marginBottom: 15,
-      borderRadius: 100,
-      resizeMode:'cover'
+      borderRadius: 15,
+      resizeMode:'cover',
+      marginTop:20,
     
     },
     button: {
-      backgroundColor: '#0288d1',
+      backgroundColor: '#64B5F6',
       paddingVertical: 10,
       paddingHorizontal: 30,
       borderRadius: 10,
