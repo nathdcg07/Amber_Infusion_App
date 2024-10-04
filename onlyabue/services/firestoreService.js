@@ -95,3 +95,33 @@ export const obtenerHistorialMedicamentosPorUsuario = async (usuarioId) => {
     console.error('Error al obtener el historial de medicamentos:', error);
   }
 };
+
+//Recomendaciones
+export const agregarRecomendacion = async (recomendacionData) => {
+    try {
+      const docRef = await addDoc(collection(firestore, 'recomendaciones'), recomendacionData);
+      console.log('Recomendación agregada con ID:', docRef.id);
+    } catch (error) {
+      console.error('Error al agregar recomendación:', error);
+    }
+};
+  
+//Recordatorios
+export const agregarRecordatorio = async (recordatorioData) => {
+    try {
+      const docRef = await addDoc(collection(firestore, 'recordatorios'), recordatorioData);
+      console.log('Recordatorio agregado con ID:', docRef.id);
+    } catch (error) {
+      console.error('Error al agregar recordatorio:', error);
+    }
+};
+  
+export const eliminarRecordatorio = async (recordatorioId) => {
+    try {
+      await deleteDoc(doc(firestore, 'recordatorios', recordatorioId));
+      console.log('Recordatorio eliminado con éxito');
+    } catch (error) {
+      console.error('Error al eliminar recordatorio:', error);
+    }
+};
+  
