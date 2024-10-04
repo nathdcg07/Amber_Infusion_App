@@ -269,15 +269,16 @@ const { width, height } = Dimensions.get('window');
       backgroundColor:'#fff',
     },
     icon: {
-      width: 100,
-      height: 100,
+      width: 150,
+      height: 150,
       marginBottom: 15,
-      borderRadius: 100,
-      resizeMode:'cover'
+      borderRadius: 15,
+      resizeMode:'cover',
+      marginTop:20,
     
     },
     button: {
-      backgroundColor: '#0288d1',
+      backgroundColor: '#64B5F6',
       paddingVertical: 10,
       paddingHorizontal: 30,
       borderRadius: 10,
