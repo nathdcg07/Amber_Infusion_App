@@ -14,7 +14,11 @@ export function AlarmHome() {
       <View style={styles.nextAlarmContainer}>
           <NextAlarm />
         </View>
-        <Fab
+        <View>
+          
+        </View>
+      </ScrollView>
+      <Fab
           renderInPortal={false}
           shadow={2}
           size="sm"
@@ -24,10 +28,6 @@ export function AlarmHome() {
           bottom={10}
           right={30}
         />
-      </ScrollView>
-      <View style={styles.footbarContainer}>
-        
-      </View>
     </View>
   );
 }
