@@ -51,12 +51,36 @@ export const eliminarMedicamento = async (medicamentoId) => {
 };
 
 // Para historial_medicamento
-export const agregarMedicamentoHistorial = async () => {
-  try {
-    
-  } catch (error) {
-  }
-};
+export const agregarHistorialMedicamento = async (userId, medicamentoId, fecha, hora, cantidad) => {
+    const historialRef = doc(collection(firestore, 'historial_medicamentos'), userId);
+  
+    try {
+      const historialSnapshot = await historialRef.get();
+  
+      if (historialSnapshot.exists()) {
+        await updateDoc(historialRef, {
+          medicamentos: arrayUnion({
+            medicamentoId,
+            fecha,
+            hora,
+            cantidad
+          })
+        });
+      } else {
+        await setDoc(historialRef, {
+          medicamentos: [{
+            medicamentoId,
+            fecha,
+            hora,
+            cantidad
+          }]
+        });
+      }
+      console.log("Historial de medicamentos actualizado correctamente");
+    } catch (error) {
+      console.error("Error al agregar el medicamento al historial: ", error);
+    }
+  };
 
 export const obtenerHistorialMedicamentosPorUsuario = async (usuarioId) => {
   try {
@@ -71,5 +95,3 @@ export const obtenerHistorialMedicamentosPorUsuario = async (usuarioId) => {
     console.error('Error al obtener el historial de medicamentos:', error);
   }
 };
-
-
