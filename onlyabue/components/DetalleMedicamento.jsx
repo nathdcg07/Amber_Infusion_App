@@ -2,20 +2,24 @@ import React, { useState } from 'react';
 import { Text } from 'native-base';
 import { View,  Image, StyleSheet,StatusBar, TouchableOpacity, ScrollView } from 'react-native';
 import RecomendacionMedicamiento from './RecomendacionMedicamentos';
-const ProductScreen = () => {
+import { Navigator,useRouter } from 'expo-router';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
+export const ProductScreen = ({idMed}) => {
   const [Titulo,setTitulo]=useState('Medicamentos');
   const [NombreCom,setNombreCom]=useState('Aspirina');
   const [NombreGen,setNombGen]=useState('Acido acetilsalicico');
   const[Cantidad,setCantidad]=useState('12')
   const [Descipcion,setDescripcion]=useState('Analgésico: Bloquea la formación del impulso del dolor a través de una acción central, posiblemente localizada en el hipotálamo. Ayuda a reducir o aliviar el dolor en general, se puede utilizar para dolores de cabeza, musculares, artríticos, entre muchos otros más');
   const[Gramaje,setGramaje]=useState('500 mg')
+  const router = useRouter();
   return (
 
     <ScrollView style={styles.container}>
       <StatusBar style='default'></StatusBar>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>←</Text>
+        <TouchableOpacity onPress={() => router.back()} style={styles.buttonBack}>
+          <Ionicons name="arrow-back-circle" size={50} color="white" />
         </TouchableOpacity>
         <Text style={styles.title} >{Titulo}</Text>
       </View>
@@ -72,9 +76,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginRight: 16,
   },
+  buttonBack:{
+    paddingRight:5,
+  },
   title:{
- marginTop:5,
-    fontSize: 20,
+    paddingTop:5,
+    marginTop:5,
+    fontSize: 25,
     fontWeight: 'bold',
   },
   titleSimilares: {
@@ -165,4 +173,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ProductScreen;
+

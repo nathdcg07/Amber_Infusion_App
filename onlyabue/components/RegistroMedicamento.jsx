@@ -17,7 +17,6 @@ const { width, height } = Dimensions.get('window');
   const [SelectedImagen,setSelectedImagen]=useState(null);
   useFocusEffect(
     useCallback(() => {
-      // Reiniciar todos los campos del formulario
       setNombreComercial('');
       setNombreGenerico('');
       setDosis('');
@@ -34,7 +33,7 @@ const { width, height } = Dimensions.get('window');
   );
 
   const handleSubmit = () => {
-    // Aquí puedes manejar la lógica del registro
+
     if (
       !errorNombreComercial &&
       !errorNombreGenerico &&
@@ -136,11 +135,7 @@ const { width, height } = Dimensions.get('window');
 
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
-        <View StyleSheet={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.backButton}>←</Text>
-          </TouchableOpacity>
-        </View>
+        
         <TouchableOpacity onPress={openImagePickerAsync}>
           
           <Image    

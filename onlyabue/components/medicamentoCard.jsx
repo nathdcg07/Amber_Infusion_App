@@ -1,4 +1,3 @@
-
 import {  HStack, Box,Text, Pressable,  } from "native-base";
 import { Link } from "expo-router";
 import React from "react";
@@ -8,7 +7,7 @@ import {View, StyleSheet, Touchable} from 'react-native'
 export default function MedCard(){
     return(
         <View style={styles.container}>
-                <Link asChild href='./MedicamentosRegistrados'>
+                <Link asChild href='./MedDetails'>
                     <Pressable>                        
                         <HStack space={3} alignItems="center" padding="4">
                             <Box flex={1}>
@@ -38,6 +37,7 @@ export default function MedCard(){
             backgroundColor:'white',
             borderRadius:15,
             borderWidth:1,
+            borderColor:'#4FC3F7',
             
         },
         Detalles:{
