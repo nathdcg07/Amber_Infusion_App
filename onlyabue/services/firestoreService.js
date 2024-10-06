@@ -124,4 +124,3 @@ export const eliminarRecordatorio = async (recordatorioId) => {
       console.error('Error al eliminar recordatorio:', error);
     }
 };
-  
