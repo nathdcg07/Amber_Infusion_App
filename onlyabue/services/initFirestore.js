@@ -1,7 +1,8 @@
-import { firestore } from '@/firebaseConfig';
+import { firestore } from './firebaseConfig';
 import { collection, doc, setDoc } from 'firebase/firestore';
 
 const initializeCollections = async () => {
+    console.log('Initializing collections...');
   try {
     await setDoc(doc(collection(firestore, 'usuarios'), 'placeholder'), {
       nombre: "",
