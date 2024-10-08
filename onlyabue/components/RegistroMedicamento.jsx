@@ -6,15 +6,19 @@ import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
 
+import { firestore } from '../services/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
-  const [NombreComercial,setNombreComercial] = useState('');
-  const [NombreGenerico,setNombreGenerico] = useState('');
-  const [Dosis,setDosis] = useState('');
-  const [Intervalo,setIntervalo] = useState('');
-  const [Laboratorio,setLaboratorio] = useState('');
-  const [SelectedImagen,setSelectedImagen]=useState(null);
+  const [NombreComercial, setNombreComercial] = useState('');
+  const [NombreGenerico, setNombreGenerico] = useState('');
+  const [Dosis, setDosis] = useState('');
+  const [Intervalo, setIntervalo] = useState('');
+  const [Laboratorio, setLaboratorio] = useState('');
+  const [SelectedImagen, setSelectedImagen]=useState(null);
+
   useFocusEffect(
     useCallback(() => {
       setNombreComercial('');
@@ -32,8 +36,7 @@ const { width, height } = Dimensions.get('window');
     }, [])
   );
 
-  const handleSubmit = () => {
-
+  const handleSubmit = async () => {
     if (
       !errorNombreComercial &&
       !errorNombreGenerico &&
@@ -41,7 +44,7 @@ const { width, height } = Dimensions.get('window');
       !errorIntervalo &&
       !errorLaboratorio &&
       !errorImage &&
-      SelectedImagen &&
+      // SelectedImagen &&
       NombreComercial &&
       NombreGenerico &&
       Dosis &&
@@ -58,8 +61,27 @@ const { width, height } = Dimensions.get('window');
       });
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
+      return;
+    }
+    try {
+      const docRef = await addDoc(collection(firestore, 'medicamentos'), {
+        nombreComercial: NombreComercial,
+        nombreGenerico: NombreGenerico,
+        dosis: Dosis,
+        intervalo: Intervalo,
+        laboratorio: Laboratorio,
+        creadoEn: new Date(),
+      });
+  
+      alert('Medicamento registrado correctamente');
+      console.log("Medicamento agregado con ID: ", docRef.id);
+
+    } catch (error) {
+      console.error("Error agregando el medicamento: ", error);
+      alert('Error al registrar el medicamento');
     }
   };
+
   let openImagePickerAsync = async()=>{
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if(permissionResult.granted===false){
@@ -82,7 +104,7 @@ const { width, height } = Dimensions.get('window');
      setSelectedImagen(uri);
      setErrorImagen('');
   }
-// Estados de errores
+  // Estados de errores
   const [errorNombreComercial, setErrorNombreComercial] = useState('');
   const [errorNombreGenerico, setErrorNombreGenerico] = useState('');
   const [errorDosis, setErrorDosis] = useState('');
@@ -128,26 +150,19 @@ const { width, height } = Dimensions.get('window');
     setLaboratorio(text);
   };
   
-  
-
-  
     return (
-
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        
-        
-        <TouchableOpacity onPress={openImagePickerAsync}>
-          
-          <Image    
+      <TouchableOpacity onPress={openImagePickerAsync}>
+        <Image    
             source={{
               uri : SelectedImagen !== null
           ?  SelectedImagen  // URI dinámica
           : 'https://via.placeholder.com/100'// Placeholder local
           }}style={styles.icon} />
-        </TouchableOpacity>
-        {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
-        <StatusBar style='default'></StatusBar>
-        <VStack space={4}>
+      </TouchableOpacity>
+      {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
+      <StatusBar style='default'></StatusBar>
+      <VStack space={4}>
 
         <View style={styles.form}>
           
@@ -171,7 +186,7 @@ const { width, height } = Dimensions.get('window');
                 value={NombreGenerico}
                 onChangeText={validateNombreGenerico}
           ></Input>
-           {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
+          {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
 
           <Text style={styles.textForm}>Dosis:</Text>
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
@@ -188,7 +203,6 @@ const { width, height } = Dimensions.get('window');
           </Select>
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
 
-
           <Text style={styles.textForm}>Intervalo:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
@@ -197,7 +211,6 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateIntervalo}
           ></Input>
           {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text> : null}
-
 
           <Text style={styles.textForm}>Laboratorio:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
@@ -215,11 +228,8 @@ const { width, height } = Dimensions.get('window');
               <Text style={styles.buttonText}>Atras</Text>
             </Pressable>
           </Link>
-          
-        
         </View>
-      </VStack>
-      
+      </VStack>     
     </ScrollView>
 
     
