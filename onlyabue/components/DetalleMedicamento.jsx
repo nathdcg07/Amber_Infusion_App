@@ -5,7 +5,7 @@ import RecomendacionMedicamiento from './RecomendacionMedicamentos';
 import { Navigator,useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-export const ProductScreen = ({idMed}) => {
+export const ProductScreen = ({Med}) => {
   const [Titulo,setTitulo]=useState('Medicamentos');
   const [NombreCom,setNombreCom]=useState('Aspirina');
   const [NombreGen,setNombGen]=useState('Acido acetilsalicico');
@@ -64,7 +64,7 @@ export const ProductScreen = ({idMed}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#64B5f6',
+    backgroundColor: '#81d4f4',
     paddingHorizontal: 16,
   },
   header: {
@@ -86,7 +86,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   titleSimilares: {
-    fontSize: 20,
+    paddingTop:8,
+    paddingBottom:2,
+    fontSize: 22,
     fontWeight: 'bold',
     marginTop:5,
     marginBottom:5,
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#bbdefb',
+    backgroundColor:'#e1f5fe',
     padding:10,
     borderRadius:15
   },
@@ -132,7 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#bbdefb',
+    backgroundColor:'#e1f5fe',
     borderRadius: 15,
     borderBlockColor:'#000000',
     padding:10,

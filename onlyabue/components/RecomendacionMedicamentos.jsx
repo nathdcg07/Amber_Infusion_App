@@ -46,7 +46,7 @@ container: {
     padding: 10,  // Espaciado interno para estética
     marginTop:4,
     marginBottom:4,
-    backgroundColor:'white',
+    backgroundColor:'#e1f5fe',
     borderRadius:15,
 
 },

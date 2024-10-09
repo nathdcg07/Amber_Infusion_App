@@ -4,7 +4,7 @@ import React from "react";
 import {View, StyleSheet, Touchable} from 'react-native'
 
 
-export default function MedCard(){
+export default function MedCard({medicamento}){
     return(
         <View style={styles.container}>
                 <Link asChild href='./MedDetails'>
