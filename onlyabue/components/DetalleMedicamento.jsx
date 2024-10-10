@@ -64,7 +64,7 @@ export const ProductScreen = ({Med}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#81d4f4',
+    backgroundColor: '#90CAF9',
     paddingHorizontal: 16,
   },
   header: {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#e1f5fe',
+    backgroundColor:'#BBDEFB',
     padding:10,
     borderRadius:15
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#e1f5fe',
+    backgroundColor:'#BBDEFB',
     borderRadius: 15,
     borderBlockColor:'#000000',
     padding:10,

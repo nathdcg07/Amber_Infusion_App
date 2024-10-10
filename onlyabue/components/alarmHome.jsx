@@ -6,10 +6,30 @@ import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import { Dimensions } from "react-native";
+import { useEffect,useState } from "react";
+import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 
 const { width } = Dimensions.get('window');
 
 export function AlarmHome() {
+  const [Medicamentos, setMedicamentos] = useState([]);
+
+  useEffect(() => {
+      //fetchMeds('usuario1234');
+  }, []);
+
+
+  async function fetchMeds(user) {
+      try {
+
+          const data = await obtenerMedicamentosPorUsuario(user);
+          console.log(data,"dataHome"); 
+          setMedicamentos(data);
+      } catch (error) {
+          console.error("Error fetching meds:", error);
+      }
+  }
+
   return (
     <View flex={1}>
       <StatusBar/>
@@ -20,12 +40,14 @@ export function AlarmHome() {
         
         <View alignItems='center'>
        <Box bg={'#E3F2FD'} rounded="xl" width={(width*0.9)} borderColor={'#4FC3F7'} borderWidth={1}>
-       <Text color='black' fontSize={23} marginLeft={3} marginY={2} fontWeight='bold'>
+       <Text color='black' fontSize={23} marginLeft={5} marginY={2} fontWeight='bold'>
             TUS RECORDATORIOS
           </Text>
-        <MedCard/>
-        <MedCard/>
-        <MedCard/>
+          <View paddingX={3}>
+          {Medicamentos.map((med) => (
+            <MedCard medicamento={med}/>
+          ))}
+          </View>
        </Box>
        </View>
       </ScrollView>
