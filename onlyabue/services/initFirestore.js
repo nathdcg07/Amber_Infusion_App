@@ -54,11 +54,7 @@ const initializeCollections = async () => {
       usuarioId: "",
     });
 
-    console.log('Colecciones inicializadas exitosamente');
-  } catch (error) {
-    console.error('Error al inicializar las colecciones: ', error);
-  }
-
+    
   await setDoc(doc(collection(firestore, 'reco_medicamentos'), 'placeholder'), {
     nombre: "Ibuprofeno",
     descripcion: "Antiinflamatorio y analgésico",
@@ -69,6 +65,11 @@ const initializeCollections = async () => {
     etiquetas: [], // Este array se llenará con IDs de etiquetas
     creadoEn: new Date(),
   });
+  
+    console.log('Colecciones inicializadas exitosamente');
+  } catch (error) {
+    console.error('Error al inicializar las colecciones: ', error);
+  }
 
 };
   
