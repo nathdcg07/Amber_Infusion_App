@@ -6,18 +6,21 @@ import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
 
-import { firestore } from '../services/firebaseConfig';
+import { firestore, storage } from '../services/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { width, height } = Dimensions.get('window');
- export function RegistroMedicamento(){
+
+export function RegistroMedicamento(){
   
   const [NombreComercial, setNombreComercial] = useState('');
   const [NombreGenerico, setNombreGenerico] = useState('');
   const [Dosis, setDosis] = useState('');
   const [Intervalo, setIntervalo] = useState('');
   const [Laboratorio, setLaboratorio] = useState('');
-  const [SelectedImagen, setSelectedImagen]=useState(null);
+  const [selectedImage, setSelectedImage]= useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -26,7 +29,7 @@ const { width, height } = Dimensions.get('window');
       setDosis('');
       setIntervalo('');
       setLaboratorio('');
-      setSelectedImagen(null);
+      setSelectedImage(null);
       setErrorNombreComercial('');
       setErrorNombreGenerico('');
       setErrorDosis('');
@@ -44,7 +47,7 @@ const { width, height } = Dimensions.get('window');
       !errorIntervalo &&
       !errorLaboratorio &&
       !errorImage &&
-      // SelectedImagen &&
+      selectedImage &&
       NombreComercial &&
       NombreGenerico &&
       Dosis &&
@@ -57,14 +60,20 @@ const { width, height } = Dimensions.get('window');
         Dosis,
         Intervalo,
         Laboratorio,
-        SelectedImagen
+        imageUrl
       });
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
       return;
     }
     try {
+      if (!selectedImage) {
+        alert('Debe seleccionar una imagen');
+        return;
+      }
+      const imageUrl = await uploadImage(selectedImage);
       const docRef = await addDoc(collection(firestore, 'medicamentos'), {
+        imagenUrl: imageUrl,
         nombreComercial: NombreComercial,
         nombreGenerico: NombreGenerico,
         dosis: Dosis,
@@ -81,29 +90,66 @@ const { width, height } = Dimensions.get('window');
       alert('Error al registrar el medicamento');
     }
   };
+  async function uploadImage(uri) {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+  
+      const storageRef = ref(storage, "Imagenes/" + new Date().getTime());
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+  
+      return new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Progreso: " + progress + "% terminado.");
+          },
+          (error) => {
+            console.error("Error durante la subida: ", error);
+            reject(error);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("Archivo disponible en: ", downloadURL);
+            resolve(downloadURL);
+          }
+        );
+      });
+    } catch (error) {
+      console.error("Error general en uploadImage: ", error);
+      throw error;
+    }
+  }
 
   let openImagePickerAsync = async()=>{
-    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if(permissionResult.granted===false){
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false){
       alert('Los permisos a galeria de imagenes son requeridos para continuar');
       return;
+    }
+
+    const pickResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });     
+         
+    if (!pickResult.canceled) {
+      if (pickResult.assets && pickResult.assets.length > 0) {
+        const uri = pickResult.assets[0].uri;
+        setSelectedImage(uri);
+        // await uploadImage(uri, "image");
       }
-      const PickResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:ImagePicker.MediaTypeOptions.Images,
-        allowsEditing:true,
-        aspect:[4,3],
-        quality:1,
-      });     
       
-      
-  if(PickResult.canceled===true){
-    setErrorImage('Seleccione una imagen')
-    return;
+    } else {
+      setErrorImage('Seleccione una imagen')
+      return;
+    }
+    setErrorImage('');
   }
-  const uri = PickResult.assets?.[0]?.uri;
-     setSelectedImagen(uri);
-     setErrorImagen('');
-  }
+
   // Estados de errores
   const [errorNombreComercial, setErrorNombreComercial] = useState('');
   const [errorNombreGenerico, setErrorNombreGenerico] = useState('');
@@ -155,8 +201,8 @@ const { width, height } = Dimensions.get('window');
       <TouchableOpacity onPress={openImagePickerAsync}>
         <Image    
             source={{
-              uri : SelectedImagen !== null
-          ?  SelectedImagen  // URI dinámica
+              uri : selectedImage !== null
+          ?  selectedImage
           : 'https://via.placeholder.com/100'// Placeholder local
           }}style={styles.icon} />
       </TouchableOpacity>
@@ -238,8 +284,7 @@ const { width, height } = Dimensions.get('window');
  const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#90CAF9',      
-      
+      backgroundColor: '#90CAF9',     
     },
     page:{
       flex:1,
