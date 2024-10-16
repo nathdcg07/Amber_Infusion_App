@@ -52,6 +52,14 @@ const initializeCollections = async () => {
     await setDoc(doc(collection(firestore, 'recomendaciones'), 'placeholder'), {
       medicamentoId: "",
       usuarioId: "",
+      nombre: "",
+      descripcion: "",
+      dosis: "",
+      forma: "",
+      cantidadTabletas: '',
+      tipoVenta: "",
+      etiquetas: [], // Este array se llenará con IDs de etiquetas
+      creadoEn: new Date(),
     });
 
     console.log('Colecciones inicializadas exitosamente');
