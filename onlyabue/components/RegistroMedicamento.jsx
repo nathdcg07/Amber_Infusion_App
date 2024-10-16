@@ -1,10 +1,11 @@
 import React from "react";
-import {Alert,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
+import {Alert,Dimensions, StyleSheet, Text, View, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
 import {useState,useCallback} from 'react';
-import { Input, VStack, Select, Pressable,   } from "native-base";
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl  } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
@@ -59,7 +60,7 @@ const { width, height } = Dimensions.get('window');
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
-  };
+  };  
   let openImagePickerAsync = async()=>{
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if(permissionResult.granted===false){
@@ -90,6 +91,12 @@ const { width, height } = Dimensions.get('window');
   const [errorLaboratorio, setErrorLaboratorio] = useState('');
   const [errorImage, setErrorImage]=useState('');
   
+  const [ModalConfig, setModalConfig] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [formData, setFormData] = useState({
+    time: new Date(),  // Aquí almacenamos la hora seleccionada
+  });
   //validaciones
   const validateNombreComercial = (text) => {
     const regex =  /^[a-zA-Z]{2,}$/; // Solo letras y espacios
@@ -109,14 +116,12 @@ const { width, height } = Dimensions.get('window');
     }
     setNombreGenerico(text);
   };
-  const validateIntervalo = (text) => {
-    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
-    if (!regex.test(text)) {
-      setErrorIntervalo('El intervalo debe contener solo letras y un minimo de 3 caracteres');
-    } else {
-      setErrorIntervalo('');
+
+  const handleTimeChange = (event, time) => {
+    if (time) {
+      setSelectedTime(time); // Guardar la hora seleccionada
     }
-    setIntervalo(text);
+    setShowTimePicker(false); // Cerrar el selector después de elegir la hora
   };
   const validateLaboratorio=(text)=> {
     const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
@@ -189,16 +194,44 @@ const { width, height } = Dimensions.get('window');
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
 
 
-          <Text style={styles.textForm}>Intervalo:</Text>
-          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
-                borderRadius={7}
-                marginTop={1}
-                value={Intervalo}
-                onChangeText={validateIntervalo}
-          ></Input>
-          {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text> : null}
-
-
+          <Button onPress={()=>setModalConfig(true)}>Configurar Alarma</Button>
+          <Modal isOpen={ModalConfig} onClose={()=>setModalConfig(false)}>
+              <Modal.Content maxWidth="400px">
+              <Modal.CloseButton />
+              <Modal.Header>Formulario</Modal.Header>
+              <Modal.Body>
+                <VStack space={3}>
+                  <FormControl>
+                    <FormControl.Label>Hora Seleccionada:</FormControl.Label>
+                    <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
+                  </FormControl>
+                  <FormControl>
+                    <Button onPress={()=>setShowTimePicker(true)}>Ajustar Hora</Button>
+                    <Modal isOpen={showTimePicker} onClose={()=>setShowTimePicker(false)}>
+                      <DateTimePicker
+                        value={selectedTime || new Date()}
+                        mode="time"
+                        display="default"
+                        onChange={handleTimeChange}
+                        is24Hour={true} // Opcional, para formato de 24 horas
+                      />
+                    </Modal>
+                  
+                  </FormControl>
+                </VStack>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button.Group space={2}>
+                  <Button variant="ghost" onPress={() => setModalConfig(false)}>
+                    Cancelar
+                  </Button>
+                  <Button onPress={()=>console.log(selectedTime.toLocaleTimeString())}>
+                    Enviar
+                  </Button>
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
           <Text style={styles.textForm}>Laboratorio:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
