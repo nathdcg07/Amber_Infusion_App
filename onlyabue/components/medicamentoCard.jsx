@@ -1,21 +1,24 @@
 import {  HStack, Box,Text, Pressable,  } from "native-base";
 import { Link } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {View, StyleSheet, Touchable} from 'react-native'
 
 
-export default function MedCard(){
+
+export default function MedCard({medicamento}){
     return(
         <View style={styles.container}>
+            
                 <Link asChild href='./MedDetails'>
                     <Pressable>                        
-                        <HStack space={3} alignItems="center" padding="4">
+                        <HStack space={3} alignItems="center" padding="1">
                             <Box flex={1}>
                                 <Text fontSize="2xl" fontWeight="bold">
-                                Aspirinetas 500mg
+                                {medicamento.nombreComercial} {medicamento.gramaje} {"\n"}{medicamento.dosis} tableta
                                 </Text>
                                 <Text fontSize="md" color="gray.500">
-                                Description duis aute irure dolor in reprehenderit in voluptate velit.
+                                cada {medicamento.intervalo || "Sin descripción disponible"} horas{"\n"} 
+                                {medicamento.dias+"" || "Sin descripción disponible"}
                                 </Text>
                                 <Box style={styles.Detalles}>
                                     <Text>

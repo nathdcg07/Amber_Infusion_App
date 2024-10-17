@@ -239,20 +239,22 @@ const { width, height } = Dimensions.get('window');
       fontWeight: 'bold',
       color: '#000000',
       marginBottom: 20,
+      textAlign: 'center',
     },
     form:{
       backgroundColor: '#BBDEFB',
       padding: 20,
       borderRadius: 20,
-      width: width * 0.8,
+      width: width * 0.9,
       marginBottom:20,
-      alignItems: 'center',
+      
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
+      shadowOpacity: 0.15,
       shadowRadius: 10,
       elevation: 8,
-      paddingVertical: 20,     
+      paddingVertical: 20,
+      textAlign:'left',
       
     },
     input: {

@@ -1,31 +1,59 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text } from "native-base";
-import { ScrollView, StyleSheet } from "react-native";
+import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner } from "native-base";
+import { ScrollView, StyleSheet,Dimensions } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import React from "react";
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
-import { Dimensions } from "react-native";
+import React,{ useEffect,useState } from "react";
+import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 
 const { width } = Dimensions.get('window');
 
 export function AlarmHome() {
+  const [Medicamentos, setMedicamentos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+
+  useEffect(() => {
+    setIsLoading(true);
+      fetchMeds('usuario1234');
+      
+ }, []);
+ async function fetchMeds(user) {
+  try {
+
+      const data = await obtenerMedicamentosPorUsuario(user);
+      console.log(data,"dataHome"); 
+      setMedicamentos(data);
+      setIsLoading(false);
+  } catch (error) {
+      console.error("Error fetching meds:", error);
+  }
+}
+
+  
+
   return (
     <View flex={1}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
-          <NextAlarm />          
+          <NextAlarm ListaMed={Medicamentos} />          
         </View>
         
         <View alignItems='center'>
        <Box bg={'#E3F2FD'} rounded="xl" width={(width*0.9)} borderColor={'#4FC3F7'} borderWidth={1}>
-       <Text color='black' fontSize={23} marginLeft={3} marginY={2} fontWeight='bold'>
+       <Text color='black' fontSize={23} marginLeft={5} marginY={2} fontWeight='bold'>
             TUS RECORDATORIOS
           </Text>
-        <MedCard/>
-        <MedCard/>
-        <MedCard/>
+          <View paddingX={3}>
+          {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
+            Medicamentos.map((med) => (
+              <MedCard key={med.id} medicamento={med}/>
+            ))
+          )}
+          
+          </View>
        </Box>
        </View>
       </ScrollView>
