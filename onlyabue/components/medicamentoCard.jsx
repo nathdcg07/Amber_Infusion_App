@@ -11,13 +11,14 @@ export default function MedCard({medicamento}){
             
                 <Link asChild href='./MedDetails'>
                     <Pressable>                        
-                        <HStack space={3} alignItems="center" padding="4">
+                        <HStack space={3} alignItems="center" padding="1">
                             <Box flex={1}>
                                 <Text fontSize="2xl" fontWeight="bold">
-                                {medicamento.nombreComercial} {medicamento.dosis}
+                                {medicamento.nombreComercial} {medicamento.gramaje} {"\n"}{medicamento.dosis} tableta
                                 </Text>
                                 <Text fontSize="md" color="gray.500">
-                                {medicamento.descripcion || "Sin descripción disponible"}
+                                cada {medicamento.intervalo || "Sin descripción disponible"} horas{"\n"} 
+                                {medicamento.dias+"" || "Sin descripción disponible"}
                                 </Text>
                                 <Box style={styles.Detalles}>
                                     <Text>

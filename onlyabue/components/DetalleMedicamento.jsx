@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#BBDEFB',
+    backgroundColor:'#FFF',
     padding:10,
     borderRadius:15
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor:'#BBDEFB',
+    backgroundColor:'#FFF',
     borderRadius: 15,
     borderBlockColor:'#000000',
     padding:10,

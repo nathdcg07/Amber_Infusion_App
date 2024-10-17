@@ -1,41 +1,44 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text } from "native-base";
-import { ScrollView, StyleSheet } from "react-native";
+import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner } from "native-base";
+import { ScrollView, StyleSheet,Dimensions } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import React from "react";
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
-import { Dimensions } from "react-native";
-import { useEffect,useState } from "react";
+import React,{ useEffect,useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 
 const { width } = Dimensions.get('window');
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
 
   useEffect(() => {
-      //fetchMeds('usuario1234');
-  }, []);
+    setIsLoading(true);
+      fetchMeds('usuario1234');
+      
+ }, []);
+ async function fetchMeds(user) {
+  try {
 
-
-  async function fetchMeds(user) {
-      try {
-
-          const data = await obtenerMedicamentosPorUsuario(user);
-          console.log(data,"dataHome"); 
-          setMedicamentos(data);
-      } catch (error) {
-          console.error("Error fetching meds:", error);
-      }
+      const data = await obtenerMedicamentosPorUsuario(user);
+      console.log(data,"dataHome"); 
+      setMedicamentos(data);
+      setIsLoading(false);
+  } catch (error) {
+      console.error("Error fetching meds:", error);
   }
+}
+
+  
 
   return (
     <View flex={1}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
-          <NextAlarm />          
+          <NextAlarm ListaMed={Medicamentos} />          
         </View>
         
         <View alignItems='center'>
@@ -44,9 +47,12 @@ export function AlarmHome() {
             TUS RECORDATORIOS
           </Text>
           <View paddingX={3}>
-          {Medicamentos.map((med) => (
-            <MedCard medicamento={med}/>
-          ))}
+          {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
+            Medicamentos.map((med) => (
+              <MedCard key={med.id} medicamento={med}/>
+            ))
+          )}
+          
           </View>
        </Box>
        </View>
