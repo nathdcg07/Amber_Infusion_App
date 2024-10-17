@@ -7,6 +7,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+
+
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
@@ -203,7 +205,9 @@ const { width, height } = Dimensions.get('window');
                 <VStack space={3}>
                   <FormControl>
                     <FormControl.Label>Hora Seleccionada:</FormControl.Label>
-                    <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
+                    <Pressable>
+                     <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
+                    </Pressable>
                   </FormControl>
                   <FormControl>
                     <Button onPress={()=>setShowTimePicker(true)}>Ajustar Hora</Button>
@@ -272,20 +276,22 @@ const { width, height } = Dimensions.get('window');
       fontWeight: 'bold',
       color: '#000000',
       marginBottom: 20,
+      textAlign: 'center',
     },
     form:{
       backgroundColor: '#BBDEFB',
       padding: 20,
       borderRadius: 20,
-      width: width * 0.8,
+      width: width * 0.9,
       marginBottom:20,
-      alignItems: 'center',
+      
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
+      shadowOpacity: 0.15,
       shadowRadius: 10,
       elevation: 8,
-      paddingVertical: 20,     
+      paddingVertical: 20,
+      textAlign:'left',
       
     },
     input: {
