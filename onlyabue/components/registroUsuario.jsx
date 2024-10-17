@@ -221,10 +221,11 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     backgroundColor: '#BBDEFB',
-    width: width * 0.8,
+    width: width * 0.9,
     alignItems: 'center',
     paddingVertical: 20,
     borderRadius: 20,
+    shadowOpacity: 0.15,
   },
   logoRegister: {
     resizeMode: 'contain',
@@ -238,7 +239,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   formContainer: {
-    width: '80%',
+    width: '90%',
+
   },
   textForm: {
     fontSize: 18,
