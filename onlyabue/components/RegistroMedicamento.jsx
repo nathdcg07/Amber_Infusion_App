@@ -1,7 +1,7 @@
 import React from "react";
-import {Alert,Dimensions, StyleSheet, Text, View, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
+import {Alert,Dimensions, StyleSheet, Text,  Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
 import {useState,useCallback} from 'react';
-import { Input, VStack, Select, Pressable, Modal, Button, FormControl  } from "native-base";
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl,View, Center  } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
@@ -17,7 +17,9 @@ const { width, height } = Dimensions.get('window');
   const [Dosis,setDosis] = useState('');
   const [Intervalo,setIntervalo] = useState('');
   const [Laboratorio,setLaboratorio] = useState('');
-  const [SelectedImagen,setSelectedImagen]=useState(null);
+  const [SelectedImagen1,setSelectedImagen1]=useState(null);
+  const [SelectedImagen2,setSelectedImagen2]=useState(null);
+  const [Cantidad,setCantidad]=useState('');
   useFocusEffect(
     useCallback(() => {
       setNombreComercial('');
@@ -25,13 +27,14 @@ const { width, height } = Dimensions.get('window');
       setDosis('');
       setIntervalo('');
       setLaboratorio('');
-      setSelectedImagen(null);
+      setSelectedImagen1(null);
+      setSelectedImagen2(null);
       setErrorNombreComercial('');
       setErrorNombreGenerico('');
       setErrorDosis('');
       setErrorIntervalo('');
       setErrorLaboratorio('');
-      setErrorImage('');
+      setErrorImagen1('');
     }, [])
   );
 
@@ -78,20 +81,45 @@ const { width, height } = Dimensions.get('window');
       
       
   if(PickResult.canceled===true){
-    setErrorImage('Seleccione una imagen')
+    setErrorImagen1('Seleccione una imagen')
     return;
   }
   const uri = PickResult.assets?.[0]?.uri;
-     setSelectedImagen(uri);
-     setErrorImagen('');
+     setSelectedImagen1(uri);
+     setErrorImagen1('');
   }
+  let openImagePickerAsync2 = async()=>{
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if(permissionResult.granted===false){
+      alert('Los permisos a galeria de imagenes son requeridos para continuar');
+      return;
+      }
+      const PickResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:ImagePicker.MediaTypeOptions.Images,
+        allowsEditing:true,
+        aspect:[4,3],
+        quality:1,
+      });     
+      
+      
+  if(PickResult.canceled===true){
+    setErrorImagen2('Seleccione una imagen')
+    return;
+  }
+  const uri = PickResult.assets?.[0]?.uri;
+     setSelectedImagen2(uri);
+     setErrorImagen2('');
+  }
+ 
 // Estados de errores
   const [errorNombreComercial, setErrorNombreComercial] = useState('');
   const [errorNombreGenerico, setErrorNombreGenerico] = useState('');
   const [errorDosis, setErrorDosis] = useState('');
   const [errorIntervalo, setErrorIntervalo] = useState('');
   const [errorLaboratorio, setErrorLaboratorio] = useState('');
-  const [errorImage, setErrorImage]=useState('');
+  const [errorImagen1, setErrorImagen1]=useState('');
+  const [errorImagen2, setErrorImagen2]=useState('');
+  const [errorCantidad,setErrorCantidad]=useState('')
   
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -101,7 +129,7 @@ const { width, height } = Dimensions.get('window');
   });
   //validaciones
   const validateNombreComercial = (text) => {
-    const regex =  /^[a-zA-Z]{2,}$/; // Solo letras y espacios
+    const regex =  /^[a-zA-Z\s]{2,}$/; // Solo letras y espacios
     if (!regex.test(text)) {
       setErrorNombreComercial('El nombre comercial debe contener solo letras');
     } else {
@@ -118,6 +146,15 @@ const { width, height } = Dimensions.get('window');
     }
     setNombreGenerico(text);
   };
+  const validateCantidad = (text)=>{
+    const regex = /^[1-9]{1,3}$/;
+    if(!regex.test(text)){
+      setErrorCantidad('Ingrese un valor numerico valido');
+    }else{
+      setErrorCantidad('');
+    }
+    setCantidad(text);
+  }
 
   const handleTimeChange = (event, time) => {
     if (time) {
@@ -142,26 +179,39 @@ const { width, height } = Dimensions.get('window');
 
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
-        
-        <TouchableOpacity onPress={openImagePickerAsync}>
-          
-          <Image    
-            source={{
-              uri : SelectedImagen !== null
-          ?  SelectedImagen  // URI dinámica
-          : 'https://via.placeholder.com/100'// Placeholder local
-          }}style={styles.icon} />
-        </TouchableOpacity>
-        {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
         <StatusBar style='default'></StatusBar>
         <VStack space={4}>
-
+        
         <View style={styles.form}>
-          
-          <Text style={styles.title}>Registro de Medicamento</Text>
+        <Text style={styles.title}>Registro de Medicamento</Text>
+          <View alignItems={"center"}>
+            <Text style={styles.textForm}>Imagen del Medicamento:</Text>
+            <TouchableOpacity onPress={openImagePickerAsync}>
+{/* imagen medicamento */}
+              <Image    
+                source={{
+                  uri : SelectedImagen1 !== null
+              ?  SelectedImagen1  // URI dinámica
+              : 'https://via.placeholder.com/100'// Placeholder local
+              }}style={styles.icon} />
+            </TouchableOpacity>
+            {errorImagen1 ? <Text style={styles.error}>{errorImagen1}</Text> : null}
+          </View>
+          <View alignItems={"center"}>
+            <Text style={styles.textForm}>Imagen Caja Medicamento:</Text>
+            <TouchableOpacity onPress={openImagePickerAsync2}>
+{/* imagen caja medicamento */}
+              <Image    
+                source={{
+                  uri : SelectedImagen2 !== null
+              ?  SelectedImagen2  // URI dinámica
+              : 'https://via.placeholder.com/100'// Placeholder local
+              }}style={styles.icon} />
+            </TouchableOpacity>
+            {errorImagen2 ? <Text style={styles.error}>{errorImagen2}</Text> : null} 
+          </View>
+
           <Text style={styles.textForm}>Nombre Medicamento:</Text>
-          
-          
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
                 marginTop={1}
@@ -169,7 +219,6 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateNombreComercial}
                 ></Input>
           {errorNombreComercial ? <Text style={styles.error}>{errorNombreComercial}</Text> : null}
-
 
           <Text style={styles.textForm}>Nombre Generico:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
@@ -179,7 +228,13 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateNombreGenerico}
           ></Input>
            {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
-
+          <Text style={styles.textForm}>Cantidad:</Text>
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={Cantidad}
+                onChangeText={validateCantidad}></Input>
+          {errorCantidad? <Text  style={styles.error}>{errorCantidad}</Text>:null}
           <Text style={styles.textForm}>Dosis:</Text>
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
@@ -194,9 +249,17 @@ const { width, height } = Dimensions.get('window');
             <Select.Item label='4' value="4"/>
           </Select>
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
+          <Text style={styles.textForm}>Laboratorio:</Text>
+          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1}
+                value={Laboratorio}
+                onChangeText={validateLaboratorio}
+          ></Input>
+          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null} 
+{/* Modal Configuracion Alarma */}
 
-
-          <Button onPress={()=>setModalConfig(true)}>Configurar Alarma</Button>
+          <Button onPress={()=>setModalConfig(true)} margin={"3"} style={styles.buttonText}>Configurar Alarma</Button>
           <Modal isOpen={ModalConfig} onClose={()=>setModalConfig(false)}>
               <Modal.Content maxWidth="400px">
               <Modal.CloseButton />
@@ -204,22 +267,34 @@ const { width, height } = Dimensions.get('window');
               <Modal.Body>
                 <VStack space={3}>
                   <FormControl>
-                    <FormControl.Label>Hora Seleccionada:</FormControl.Label>
-                    <Pressable>
-                     <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
+                    <Pressable onPress={()=>setShowTimePicker(true)}>
+                      <FormControl.Label>Hora Seleccionada:</FormControl.Label>
+                      <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
                     </Pressable>
-                  </FormControl>
-                  <FormControl>
-                    <Button onPress={()=>setShowTimePicker(true)}>Ajustar Hora</Button>
                     <Modal isOpen={showTimePicker} onClose={()=>setShowTimePicker(false)}>
                       <DateTimePicker
                         value={selectedTime || new Date()}
                         mode="time"
                         display="default"
                         onChange={handleTimeChange}
-                        is24Hour={true} // Opcional, para formato de 24 horas
+                        is24Hour={true} 
                       />
                     </Modal>
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Intervalo:</FormControl.Label>
+                    <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                          borderRadius={7} 
+                          marginTop={1} selectedValue={Intervalo} minWidth="200"  placeholder="Seleccione Intervalo"
+                          onValueChange={(itemValue) => setIntervalo(itemValue)}>
+                      
+                      <Select.Item label='6 Horas' value="6" />
+                      <Select.Item label='8 Horas' value="8"/>
+                      <Select.Item label='12 Horas' value="12"/>
+                      <Select.Item label='24 Horas' value="24"/>
+                      
+                    </Select>
+                   
                   
                   </FormControl>
                 </VStack>
@@ -236,22 +311,18 @@ const { width, height } = Dimensions.get('window');
               </Modal.Footer>
             </Modal.Content>
           </Modal>
-          <Text style={styles.textForm}>Laboratorio:</Text>
-          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
-                borderRadius={7}
-                marginTop={1}
-                value={Laboratorio}
-                onChangeText={validateLaboratorio}
-          ></Input>
-          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null} 
-          <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-            <Text style={styles.buttonText}> Agregar</Text>
-          </TouchableOpacity>
-          <Link asChild href='/'>
-            <Pressable style={styles.button_Secundary}>
-              <Text style={styles.buttonText}>Atras</Text>
-            </Pressable>
-          </Link>
+         
+          <View alignItems={"center"}>
+            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+              <Text style={styles.buttonText}> Agregar</Text>
+            </TouchableOpacity>
+            <Link asChild href='/'>
+              <Pressable style={styles.button_Secundary}>
+                <Text style={styles.buttonText}>Atras</Text>
+              </Pressable>
+            </Link>
+          </View>
+          
           
         
         </View>
@@ -284,6 +355,7 @@ const { width, height } = Dimensions.get('window');
       borderRadius: 20,
       width: width * 0.9,
       marginBottom:20,
+      marginTop:20,
       
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
@@ -303,8 +375,8 @@ const { width, height } = Dimensions.get('window');
       backgroundColor:'#fff',
     },
     icon: {
-      width: 150,
-      height: 150,
+      width: 100,
+      height: 100,
       marginBottom: 15,
       borderRadius: 15,
       resizeMode:'cover',

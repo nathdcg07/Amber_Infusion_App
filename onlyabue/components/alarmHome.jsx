@@ -23,7 +23,7 @@ export function AlarmHome() {
   try {
 
       const data = await obtenerMedicamentosPorUsuario(user);
-      console.log(data,"dataHome"); 
+     
       setMedicamentos(data);
       setIsLoading(false);
   } catch (error) {

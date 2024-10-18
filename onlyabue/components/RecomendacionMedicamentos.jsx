@@ -17,6 +17,7 @@ return(
                         size="80px"
                         borderRadius="md"
                         shadow={3}
+                        marginLeft="0.5"
                     />
                     <Box flex={1}>
                         <Text fontSize="2xl" fontWeight="bold">
