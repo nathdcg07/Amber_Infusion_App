@@ -62,7 +62,7 @@ const initializeCollections = async () => {
       creadoEn: new Date(),
     });
 
-    await setDoc(doc(collection(firestore, 'recomendaciones'), 'placeholder'), {
+    await setDoc(doc(collection(firestore, 'etiquetas'), 'placeholder'), {
       nombre: "analgésico",
       descripcion: "Medicamento para aliviar el dolor",
       creadoEn: new Date(),
