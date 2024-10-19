@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Image, Dimensions, StyleSheet,  TextInput, ScrollView } from 'react-native';
-import { StatusBar, Button, Input, Icon, FormControl,Text} from 'native-base';
+import { StatusBar, Button, Input, Icon, FormControl,Text,VStack,Stack} from 'native-base';
 import logo from '../assets/icons/logoPill.png';
 import { Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -13,33 +13,32 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 const { width, height } = Dimensions.get('window');
 
 export function RegistroUsuario() {
-  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
-  const [isNameValid, setisNameValid] = useState(false);
+  const [isNameValid, setIsNameValid] = useState(false);
+  const [surNamePat, setsurNamePat] = useState("");
+  const [isSurNameValidPat, setIsSurNamePatValid] = useState(false);
+  const [surNameMat, setsurNameMat] = useState("");
+  const [isSurNameValidMat, setIsSurNameMatValid] = useState(false);
   const [age, setAge] = useState();
-  const [isAgeValid, setisAgeValid] = useState(false);
+  const [isAgeValid, setIsAgeValid] = useState(false);
   const [email, setEmail] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
-  const [password, setPassword] = useState("");
-  const [isPasswordValid, setisPasswordValid] = useState(false);
-  const [confirmPassword, setconfirmPassword] = useState("");
-  const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   
   const [touched, setTouched] = useState({
     name: false,
+    surNamePat: false,
+    surNameMat: false,
     age: false,
     email: false,
-    password: false,
-    confirmPassword: false,
   });
   useEffect(() => {
     const validateForm = () => {
-      setIsFormValid(isNameValid && isAgeValid && isEmailValid && isPasswordValid && isPasswordMatch);
+      setIsFormValid(isNameValid && isSurNameValidPat && isSurNameValidMat && isAgeValid && isEmailValid);
     };
 
     validateForm();
-  }, [isNameValid, isAgeValid, isEmailValid, isPasswordValid, isPasswordMatch]);
+  }, [isNameValid,isSurNameValidPat,isSurNameValidMat, isAgeValid, isEmailValid]);
 
   const validateAge = (age) => {
     return age >= 18;
@@ -49,20 +48,20 @@ export function RegistroUsuario() {
     const nameRegex = /^[a-zA-Z]{2,}$/;
     return nameRegex.test(name);
   };
+  const validateSurNamePat = (surNamePat) => {
+    const SurnameRegex = /^[a-zA-Z]{2,}$/;
+    return SurnameRegex.test(surNamePat);
+  };
+  const validateSurNameMat = (surNameMat) => {
+    const SurnameRegex = /^[a-zA-Z]{2,}$/;
+    return SurnameRegex.test(surNameMat);
+  };
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password) => {
-    const passwordRegex = /^.{7,}$/;
-    return passwordRegex.test(password);
-  };
-
-  const validatePasswordMatch = (password, confirmPassword) => {
-    return password === confirmPassword;
-  };
 
   const handleBlurMail = () => {
     setIsEmailValid(validateEmail(email));
@@ -74,20 +73,21 @@ export function RegistroUsuario() {
     setTouched({ ...touched, name: true });
   };
 
+  const handleBlurSurNamePat = () => {
+    setIsSurNamePatValid(validateSurNamePat(surNamePat));
+    setTouched({ ...touched, surNamePat: true });
+  };
+
+  const handleBlurSurNameMat = () => {
+    setIsSurNameMatValid(validateSurNameMat(surNameMat));
+    setTouched({ ...touched, surNameMat: true });
+  };
+
   const handleBlurAge = () => {
     setIsAgeValid(validateAge(Number(age)));
     setTouched({ ...touched, age: true });
   };
 
-  const handleBlurPassword = () => {
-    setIsPasswordValid(validatePassword(password));
-    setTouched({ ...touched, password: true });
-  };
-
-  const handleBlurConfirmPassword = () => {
-    setIsPasswordMatch(validatePasswordMatch(password, confirmPassword));
-    setTouched({ ...touched, confirmPassword: true });
-  };
   
 
   return (
@@ -98,6 +98,7 @@ export function RegistroUsuario() {
           <Image source={logo} style={styles.logoRegister} />
           <Text style={styles.Titulo}>REGISTRO</Text>
           <View style={styles.formContainer}>
+            <VStack>
             <Text style={styles.textForm}>Nombre:</Text>
             <FormControl isInvalid={touched.name && !isNameValid}>
             <Input
@@ -119,6 +120,49 @@ export function RegistroUsuario() {
                 </FormControl.ErrorMessage>
               )}
           </FormControl>
+          <Stack flexDirection="row" display="flex" justifyContent="space-between">
+            <VStack w="48%"> 
+              <Text style={styles.textForm}>Apellido Paterno</Text>
+              <FormControl isInvalid={touched.surNamePat && !isSurNameValidPat}>
+                <Input
+                  backgroundColor={'white'}
+                  fontSize={14}
+                  borderRadius={7}
+                  marginTop={1}
+                  marginBottom={1}
+                  value={surNamePat}
+                  onChangeText={(text) => {
+                    setsurNamePat(text);
+                  }}
+                  onBlur={handleBlurSurNamePat}
+                />
+                 {touched.surNamePat && !isSurNameValidPat && (
+                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
+                  El Apellido Parterno debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
+                </FormControl.ErrorMessage>
+              )}
+              </FormControl>
+            </VStack>
+            <VStack w="48%"> 
+            <Text style={styles.textForm}>Apellido Materno</Text>
+              <FormControl>
+                <Input
+                  backgroundColor={'white'}
+                  fontSize={14}
+                  borderRadius={7}
+                  marginTop={1}
+                  marginBottom={1}
+                  value={surNameMat}
+                  onChangeText={(text) => {
+                    setsurNameMat(text);
+                  }}
+                  onBlur={handleBlurSurNameMat}
+                />
+              </FormControl>
+            </VStack>
+          </Stack>
+
+          
             <Text style={styles.textForm} >Edad:</Text>
             <FormControl isInvalid={touched.age && !isAgeValid}>
             <Input
@@ -162,44 +206,7 @@ export function RegistroUsuario() {
                 </FormControl.ErrorMessage>
               )}
           </FormControl>
-           <Text style={styles.textForm}>Contraseña:</Text>
-           <FormControl isInvalid={touched.password && !isPasswordValid}>
-           <Input bg="white" borderWidth="0" onChangeText={(text) => {
-                setPassword(text);
-              }}
-              onBlur={handleBlurPassword} w={{
-              base: "100%",
-              md: "100%"
-            }} _focus={{
-              bg: "white"  
-            }} fontSize={14} borderRadius={7} marginY={1} type={showPassword ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShowPassword(!showPassword)}>
-                    <Icon as={<MaterialIcons name={showPassword ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
-                  </Pressable>}/>
-                  {touched.password && !isPasswordValid && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  La contraseña debe tener mínimo 7 caracteres.
-                </FormControl.ErrorMessage>
-              )}
-            </FormControl>
-            <Text style={styles.textForm}>Confirmar Contraseña:</Text>
-            <FormControl isInvalid={touched.confirmPassword && !isPasswordMatch}>
-           <Input bg="white" borderWidth="0" onChangeText={(text) => {
-                setconfirmPassword(text);
-              }}
-              onBlur={handleBlurConfirmPassword} w={{
-              base: "100%",
-              md: "100%"
-            }} _focus={{
-              bg: "white"  
-            }} fontSize={14} borderRadius={7} marginY={1} type={showPassword ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShowPassword(!showPassword)}>
-                    <Icon as={<MaterialIcons name={showPassword ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
-                  </Pressable>}/>
-                  {touched.confirmPassword && !isPasswordMatch && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  La contraseña debe ser la misma.
-                </FormControl.ErrorMessage>
-              )}
-            </FormControl>
+          </VStack>
           </View>
           <Button bg="#64B5F6" width="50%" borderRadius="md" m="3"  isDisabled={!isFormValid} >Registrate</Button>
         </View>
@@ -226,6 +233,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 20,
     shadowOpacity: 0.15,
+    display: "flex",
   },
   logoRegister: {
     resizeMode: 'contain',

@@ -8,7 +8,6 @@ const { width } = Dimensions.get('window');
 export const NextAlarm = ( {ListaMed} ) => {
   const [medicamentoProximo, setMedicamentoProximo] = useState(null);
   for(const{ horaInicio: horas, intervalo: inter, nombreComercial: nombre,} of ListaMed)
-  console.log(nombre,horas,inter,);
 
   return (
     <Box backgroundColor="#4FC3F7" borderRadius="15" width={width * 0.9} height={215}>

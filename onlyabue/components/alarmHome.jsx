@@ -5,6 +5,7 @@ import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import React,{ useEffect,useState } from "react";
+import {RegisterUser} from "../app/(screens)/RegisterUser";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 
 const { width } = Dimensions.get('window');
@@ -23,7 +24,6 @@ export function AlarmHome() {
   try {
 
       const data = await obtenerMedicamentosPorUsuario(user);
-      console.log(data,"dataHome"); 
       setMedicamentos(data);
       setIsLoading(false);
   } catch (error) {
@@ -57,7 +57,7 @@ export function AlarmHome() {
        </Box>
        </View>
       </ScrollView>
-      <Link asChild href="/RegisterMed">
+      <Link asChild href="/RegisterUser">
             <Fab
                 renderInPortal={false}
                 shadow={2}
