@@ -1,13 +1,15 @@
 import React from "react";
 import {Alert,Dimensions, StyleSheet, Text,  Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
 import {useState,useCallback} from 'react';
-import { Input, VStack, Select, Pressable, Modal, Button, FormControl,View, Center  } from "native-base";
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl,View, Center, Box  } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-
+import ColorPicker from 'react-native-wheel-color-picker';
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
@@ -17,9 +19,14 @@ const { width, height } = Dimensions.get('window');
   const [Dosis,setDosis] = useState('');
   const [Intervalo,setIntervalo] = useState('');
   const [Laboratorio,setLaboratorio] = useState('');
+  const [Tamanio, setTamanio]=useState('');
+  const [Unidad, setUnidad]=useState('');
+  const [Presentacion, setPresentacion]=useState('');
   const [SelectedImagen1,setSelectedImagen1]=useState(null);
   const [SelectedImagen2,setSelectedImagen2]=useState(null);
   const [Cantidad,setCantidad]=useState('');
+  const [selectedColor, setSelectedColor] = useState('#ffffff'); // Estado para el color seleccionado
+  const [showColorPicker, setShowColorPicker] = useState(false);
   useFocusEffect(
     useCallback(() => {
       setNombreComercial('');
@@ -110,6 +117,10 @@ const { width, height } = Dimensions.get('window');
      setSelectedImagen2(uri);
      setErrorImagen2('');
   }
+  const handleColorChange = (color) => {
+    setSelectedColor(color); 
+    
+  };
  
 // Estados de errores
   const [errorNombreComercial, setErrorNombreComercial] = useState('');
@@ -119,7 +130,9 @@ const { width, height } = Dimensions.get('window');
   const [errorLaboratorio, setErrorLaboratorio] = useState('');
   const [errorImagen1, setErrorImagen1]=useState('');
   const [errorImagen2, setErrorImagen2]=useState('');
-  const [errorCantidad,setErrorCantidad]=useState('')
+  const [errorCantidad,setErrorCantidad]=useState('');
+  const [errorTamanio,setErrorTamanio]=useState('');
+
   
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -155,6 +168,15 @@ const { width, height } = Dimensions.get('window');
     }
     setCantidad(text);
   }
+  const validateTamanio = (text)=>{
+    const regex = /^ [1-9]$/;
+    if(!regex.test(text)){
+      setErrorTamanio('Ingrese un numero valido');
+    }else{
+      setErrorTamanio('');
+    }
+    setTamanio(text);
+  }
 
   const handleTimeChange = (event, time) => {
     if (time) {
@@ -171,6 +193,15 @@ const { width, height } = Dimensions.get('window');
     }
     setLaboratorio(text);
   };
+  function FlechaColor(color){
+      let flecha='#878787';
+      if(color=='#000000'){
+        flecha='#ffffff'
+      }else if(color=='#ffffff'){
+        flecha='#000000'
+      }
+      return(flecha);
+  }
   
   
 
@@ -228,6 +259,20 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateNombreGenerico}
           ></Input>
            {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
+          <Text style={styles.textForm}>Seleccione la Presentacion del medicamento:</Text>
+          <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1} selectedValue={Presentacion} minWidth="200"  placeholder="presentacion del Medicamento"
+            onValueChange={(itemValue) => setPresentacion(itemValue)}>
+              <Select.Item label="Comprimido" value="Comprimido"/>
+              <Select.Item label="Capsula Blanda" value="Capsula Blanda"/>
+              <Select.Item label="Inyectable" value="Inyectable"/>
+              <Select.Item label="Loción Tópica" value="Locion Topica"/>
+              <Select.Item label="Polvo" value="Polvo"/>
+              <Select.Item label="Jarabe" value="Jarabe"/>
+              <Select.Item label="Solucion Liquida" value="Solucion Liquida"/>
+
+          </Select>
           <Text style={styles.textForm}>Cantidad:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
@@ -249,28 +294,49 @@ const { width, height } = Dimensions.get('window');
             <Select.Item label='4' value="4"/>
           </Select>
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
-          <Text style={styles.textForm}>Laboratorio:</Text>
-          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+          <Text style={styles.textForm}>Tamaño y unidad:</Text>
+          <View style={{
+            flexDirection:"row",
+            justifyContent: "space-between"
+
+          }}
+          >
+           <Input size={"xs"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+            borderRadius={7}
+            marginTop={1}
+            value={Tamanio}
+            minWidth="100"
+            onChange={validateTamanio}
+           ></Input> 
+           <Select size={"sm"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
-                marginTop={1}
-                value={Laboratorio}
-                onChangeText={validateLaboratorio}
-          ></Input>
-          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null} 
+                marginTop={1} selectedValue={Unidad} minWidth="200"  placeholder="Selecciones Unidad"
+                onValueChange={(itemValue) => setUnidad(itemValue)}>
+            <Select.Item label="mg" value="mg"/>
+            <Select.Item label="ml" value="ml"/>
+            <Select.Item label="Unidades" value="unidades"/>
+            <Select.Item label="g" value="g"/>
+            <Select.Item label="UI/ml" value="UI/ml"/>
+           </Select>
+          </View>
+          {errorTamanio? <Text style={styles.error}>{errorTamanio}</Text>:null}
+         
 {/* Modal Configuracion Alarma */}
 
           <Button onPress={()=>setModalConfig(true)} margin={"3"} style={styles.buttonText}>Configurar Alarma</Button>
           <Modal isOpen={ModalConfig} onClose={()=>setModalConfig(false)}>
               <Modal.Content maxWidth="400px">
               <Modal.CloseButton />
-              <Modal.Header>Formulario</Modal.Header>
+              <Modal.Header >Configuracion Alarma</Modal.Header>
               <Modal.Body>
                 <VStack space={3}>
                   <FormControl>
-                    <Pressable onPress={()=>setShowTimePicker(true)}>
-                      <FormControl.Label>Hora Seleccionada:</FormControl.Label>
+                  <FormControl.Label>Hora Seleccionada:</FormControl.Label>
+                    <Button  variant="outline" backgroundColor="white" endIcon={<MaterialIcons name="arrow-forward-ios" size={18} color="#878787" />}
+                     onPress={()=>setShowTimePicker(true)}>
                       <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
-                    </Pressable>
+                      
+                    </Button>
                     <Modal isOpen={showTimePicker} onClose={()=>setShowTimePicker(false)}>
                       <DateTimePicker
                         value={selectedTime || new Date()}
@@ -297,6 +363,65 @@ const { width, height } = Dimensions.get('window');
                    
                   
                   </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Seleccione un Color:</FormControl.Label>
+                    <Pressable onPress={() => setShowColorPicker(true)}>
+                    <View style={{ 
+                        flexDirection: "row",  // Alinear contenido horizontalmente
+                        alignItems: "center",  // Alinear verticalmente el contenido en el centro
+                        width: width * 0.60, 
+                        height: 35, 
+                        backgroundColor: selectedColor,  // Color seleccionado
+                        borderRadius: 10, 
+                        margin: 10, 
+                        borderWidth: 1, 
+                        borderColor: '#878787', 
+                        paddingHorizontal: 10,  // Añadimos padding para los elementos dentro
+                        justifyContent: "space-between" // Espacio entre el color y la flecha
+                      }}>
+                        {/* Cuadro de color */}
+                        <View style={{ 
+                          width: 20, 
+                          height: 20, 
+                          borderRadius: 5, 
+                          backgroundColor: selectedColor  // Color seleccionado
+                        }} />
+                          <MaterialIcons name="arrow-forward-ios" size={18} color={FlechaColor(selectedColor)} />
+                      </View>
+                        
+                          
+                          
+                          
+                    </Pressable>
+                    <Modal isOpen={showColorPicker} onClose={() => setShowColorPicker(false)}>
+                      <Modal.Content Width={width*0.8} > {/* Ajustamos el tamaño */}
+                        <Modal.Header fontSize="3xl">Seleccione un Color</Modal.Header>
+                        <Modal.Body>
+                          <ScrollView>
+                              {/* Color Picker Wheel */}
+                              <ColorPicker
+                                color={selectedColor}
+                                onColorChange={handleColorChange}
+                                thumbSize={20}
+                                sliderSize={30}
+                                noSnap={true}
+                                row={false}
+                                swatches={true} // Mostrar colores base
+                                swatchesOnly={false} // Mostrar solo los colores base
+                                swatchesLast={false} // Posicionar la rueda debajo de los colores base
+                                discrete={true}
+                                style={{ width: '100%', height: '100%' }} // Tamaño reducido
+                               
+                              />
+                          </ScrollView>
+                          
+                        </Modal.Body>
+                        <Modal.Footer> 
+                          <Button  onPress={()=>setShowColorPicker(false)}>Confirmar</Button>                         
+                        </Modal.Footer>
+                      </Modal.Content>
+                    </Modal>
+                  </FormControl>
                 </VStack>
               </Modal.Body>
               <Modal.Footer>
@@ -304,7 +429,10 @@ const { width, height } = Dimensions.get('window');
                   <Button variant="ghost" onPress={() => setModalConfig(false)}>
                     Cancelar
                   </Button>
-                  <Button onPress={()=>console.log(selectedTime.toLocaleTimeString())}>
+                  <Button onPress={()=>{console.log(selectedTime.toLocaleTimeString());
+                      console.log(Intervalo);
+                      console.log(selectedColor);
+                  }}>
                     Enviar
                   </Button>
                 </Button.Group>
