@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "619524224303",
+    "firebase_url": "https://abueapp-d3758-default-rtdb.firebaseio.com",
+    "project_id": "abueapp-d3758",
+    "storage_bucket": "abueapp-d3758.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619524224303:android:0234e8346796f6588c5dda",
+        "android_client_info": {
+          "package_name": "com.movil.abueapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqQpGbU41i9gUHL3urz-yBeLLIm1b7FIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

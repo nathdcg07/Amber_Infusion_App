@@ -18,7 +18,6 @@ const { width, height } = Dimensions.get('window');
   const [NombreGenerico,setNombreGenerico] = useState('');
   const [Dosis,setDosis] = useState('');
   const [Intervalo,setIntervalo] = useState('');
-  const [Laboratorio,setLaboratorio] = useState('');
   const [Tamanio, setTamanio]=useState('');
   const [Unidad, setUnidad]=useState('');
   const [Presentacion, setPresentacion]=useState('');
@@ -32,16 +31,22 @@ const { width, height } = Dimensions.get('window');
       setNombreComercial('');
       setNombreGenerico('');
       setDosis('');
-      setIntervalo('');
-      setLaboratorio('');
+      setIntervalo('');      
+      setTamanio('');
+      setUnidad('');
+      setPresentacion('');
       setSelectedImagen1(null);
       setSelectedImagen2(null);
+      setCantidad('');
+      setSelectedColor('');
+// Setear errores            
       setErrorNombreComercial('');
       setErrorNombreGenerico('');
       setErrorDosis('');
-      setErrorIntervalo('');
-      setErrorLaboratorio('');
+      setErrorIntervalo('');      
       setErrorImagen1('');
+      setErrorImagen2('');
+
     }, [])
   );
 
@@ -52,21 +57,19 @@ const { width, height } = Dimensions.get('window');
       !errorNombreGenerico &&
       !errorDosis &&
       !errorIntervalo &&
-      !errorLaboratorio &&
       !errorImage &&
       SelectedImagen &&
       NombreComercial &&
       NombreGenerico &&
       Dosis &&
-      Intervalo &&
-      Laboratorio
+      Intervalo 
+      
     ) {
       console.log({
         NombreComercial,
         NombreGenerico,
         Dosis,
-        Intervalo,
-        Laboratorio,
+        Intervalo,        
         SelectedImagen
       });
     } else {
@@ -127,19 +130,19 @@ const { width, height } = Dimensions.get('window');
   const [errorNombreGenerico, setErrorNombreGenerico] = useState('');
   const [errorDosis, setErrorDosis] = useState('');
   const [errorIntervalo, setErrorIntervalo] = useState('');
-  const [errorLaboratorio, setErrorLaboratorio] = useState('');
+  const [errorTamanio,setErrorTamanio]=useState('');
+  const [errorUnidad,setErrorUnidad]=useState('');
+  const[errorPresentacion,setErrorPresentacion]=useState('');
   const [errorImagen1, setErrorImagen1]=useState('');
   const [errorImagen2, setErrorImagen2]=useState('');
   const [errorCantidad,setErrorCantidad]=useState('');
-  const [errorTamanio,setErrorTamanio]=useState('');
+  const [errorSelectedColor,setErrorSelectedColor]=useState('');
 
   
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [formData, setFormData] = useState({
-    time: new Date(),  // Aquí almacenamos la hora seleccionada
-  });
+  
   //validaciones
   const validateNombreComercial = (text) => {
     const regex =  /^[a-zA-Z\s]{2,}$/; // Solo letras y espacios
@@ -159,6 +162,9 @@ const { width, height } = Dimensions.get('window');
     }
     setNombreGenerico(text);
   };
+  const validate= (text)=>{
+    if
+  }
   const validateCantidad = (text)=>{
     const regex = /^[1-9]{1,3}$/;
     if(!regex.test(text)){
@@ -184,15 +190,7 @@ const { width, height } = Dimensions.get('window');
     }
     setShowTimePicker(false); // Cerrar el selector después de elegir la hora
   };
-  const validateLaboratorio=(text)=> {
-    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
-    if (!regex.test(text)) {
-      setErrorLaboratorio('El nombre de laboratorio debe contener letras o numeros y un minimo de 3 caracteres');
-    } else {
-      setErrorLaboratorio('');
-    }
-    setLaboratorio(text);
-  };
+  
   function FlechaColor(color){
       let flecha='#878787';
       if(color=='#000000'){
@@ -259,7 +257,7 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateNombreGenerico}
           ></Input>
            {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
-          <Text style={styles.textForm}>Seleccione la Presentacion del medicamento:</Text>
+          <Text style={styles.textForm}>Presentacion del medicamento:</Text>
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
                 marginTop={1} selectedValue={Presentacion} minWidth="200"  placeholder="presentacion del Medicamento"
@@ -347,22 +345,27 @@ const { width, height } = Dimensions.get('window');
                       />
                     </Modal>
                   </FormControl>
-                  <FormControl>
-                    <FormControl.Label>Intervalo:</FormControl.Label>
-                    <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
-                          borderRadius={7} 
-                          marginTop={1} selectedValue={Intervalo} minWidth="200"  placeholder="Seleccione Intervalo"
-                          onValueChange={(itemValue) => setIntervalo(itemValue)}>
-                      
+                  <View>
+                    <Text>Intervalo:</Text>
+                    <Select size={"lg"} 
+                        variant={"outline"}
+                         backgroundColor={'white'} 
+                         fontSize={14}
+                         borderRadius={7} 
+                         marginTop={1} 
+                         selectedValue={Intervalo}
+                         minWidth="200"  
+                         placeholder="Seleccione Intervalo"
+                         onValueChange={(itemValue) => setIntervalo(itemValue)}>
+                      <Select.Item label='1 Hora' value="1" />
+                      <Select.Item label='2 Horas' value="2" />
+                      <Select.Item label='4 Horas' value="4" />
                       <Select.Item label='6 Horas' value="6" />
                       <Select.Item label='8 Horas' value="8"/>
                       <Select.Item label='12 Horas' value="12"/>
                       <Select.Item label='24 Horas' value="24"/>
-                      
                     </Select>
-                   
-                  
-                  </FormControl>
+                  </View>
                   <FormControl>
                     <FormControl.Label>Seleccione un Color:</FormControl.Label>
                     <Pressable onPress={() => setShowColorPicker(true)}>
