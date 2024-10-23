@@ -196,3 +196,63 @@ crearUsuario('email@ejemplo.com', '1990-01-01', 'masculino', 'Miguel Robledo');
 obtenerUsuario('idDelUsuario');
 actualizarUsuario('idDelUsuario', { nombre: 'Nuevo Nombre', genero: 'femenino' });
 
+
+//recomendaciones medicamento
+export const crearMedicamento = async (medicamento) => {
+  await setDoc(doc(collection(db, 'reco_medicamentos')), {
+    medicamentoId: medicamento.medicamentoId,
+    usuarioId: medicamento.usuarioId,
+    nombre: medicamento.nombre,
+    descripcion: medicamento.descripcion,
+    dosis: medicamento.dosis,
+    forma: medicamento.forma,
+    cantidadTabletas: medicamento.cantidadTabletas,
+    tipoVenta: medicamento.tipoVenta,
+    etiquetas: medicamento.etiquetas,  // Array de IDs de etiquetas
+    creadoEn: new Date(),
+  });
+};
+
+//leer la reco 
+export const leerMedicamento = async (id) => {
+  const docRef = doc(db, "reco_medicamentos", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No existe ese medicamento.");
+  }
+};
+
+//crear etiquetas
+export const crearEtiqueta = async (etiqueta) => {
+  await setDoc(doc(collection(db, 'etiquetas')), {
+    nombre: etiqueta.nombre,
+    descripcion: etiqueta.descripcion,
+    creadoEn: new Date(),
+  });
+};
+
+//leer etiquetas
+export const leerEtiqueta = async (id) => {
+  const docRef = doc(db, "etiquetas", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No existe esa etiqueta.");
+  }
+};
+
+//actualizar etiqueta
+export const actualizarEtiqueta = async (id, data) => {
+  const docRef = doc(db, "etiquetas", id);
+  await updateDoc(docRef, data);
+};
+
+//eliminar etiqueta
+export const eliminarEtiqueta = async (id) => {
+  await deleteDoc(doc(db, "etiquetas", id));
+};

@@ -49,7 +49,7 @@ const initializeCollections = async () => {
       creadoEn: new Date(),
     });
 
-    await setDoc(doc(collection(firestore, 'recomendaciones'), 'placeholder'), {
+    await setDoc(doc(collection(firestore, 'reco_medicamentos'), 'placeholder'), {
       medicamentoId: "",
       usuarioId: "",
       nombre: "",
