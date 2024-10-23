@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
-import {useState,useCallback} from 'react';
+import { Alert,Dimensions, StyleSheet, Text, View, TextInput, Image, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useState, useCallback } from 'react';
 import { Input, VStack, Select, Pressable,   } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,6 +21,7 @@ export function RegistroMedicamento(){
   const [Laboratorio, setLaboratorio] = useState('');
   const [selectedImage, setSelectedImage]= useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -71,6 +72,7 @@ export function RegistroMedicamento(){
         alert('Debe seleccionar una imagen');
         return;
       }
+      setLoading(true);
       const imageUrl = await uploadImage(selectedImage);
       const docRef = await addDoc(collection(firestore, 'medicamentos'), {
         imagenUrl: imageUrl,
@@ -88,6 +90,8 @@ export function RegistroMedicamento(){
     } catch (error) {
       console.error("Error agregando el medicamento: ", error);
       alert('Error al registrar el medicamento');
+    } finally {
+      setLoading(false);
     }
   };
   async function uploadImage(uri) {
@@ -160,36 +164,36 @@ export function RegistroMedicamento(){
   
   //validaciones
   const validateNombreComercial = (text) => {
-    const regex =  /^[a-zA-Z]{2,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/;
     if (!regex.test(text)) {
-      setErrorNombreComercial('El nombre comercial debe contener solo letras');
+      setErrorNombreComercial('El nombre comercial debe contener solo letras, números o espacios, y un mínimo de 2 caracteres');
     } else {
       setErrorNombreComercial('');
     }
     setNombreComercial(text);
   };
   const validateNombreGenerico = (text) => {
-    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/;
     if (!regex.test(text)) {
-      setErrorNombreGenerico('El nombre comercial debe contener solo letras y un minimo de 2 caracteres');
+      setErrorNombreGenerico('El nombre comercial debe contener solo letras, números o espacios, y un mínimo de 2 caracteres');
     } else {
       setErrorNombreGenerico('');
     }
     setNombreGenerico(text);
   };
   const validateIntervalo = (text) => {
-    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[0-9]*\.?[0-9]+$/;
     if (!regex.test(text)) {
-      setErrorIntervalo('El intervalo debe contener solo letras y un minimo de 3 caracteres');
+      setErrorIntervalo('El intervalo debe contener solo números.');
     } else {
       setErrorIntervalo('');
     }
     setIntervalo(text);
   };
   const validateLaboratorio=(text)=> {
-    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/;
     if (!regex.test(text)) {
-      setErrorLaboratorio('El nombre de laboratorio debe contener letras o numeros y un minimo de 3 caracteres');
+      setErrorLaboratorio('El nombre de laboratorio debe contener solo letras, números o espacios, y un mínimo de 2 caracteres');
     } else {
       setErrorLaboratorio('');
     }
@@ -249,13 +253,14 @@ export function RegistroMedicamento(){
           </Select>
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
 
-          <Text style={styles.textForm}>Intervalo:</Text>
-          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+          <Text style={styles.textForm}>Intervalo: Cada </Text>
+          <Input size={"xs"} variant={"outline"} backgroundColor={'white'} fontSize={14} style={[{ width: '20%', alignSelf: 'flex-start' }]}
                 borderRadius={7}
                 marginTop={1}
                 value={Intervalo}
                 onChangeText={validateIntervalo}
           ></Input>
+          <Text style={styles.textForm}>horas.</Text>
           {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text> : null}
 
           <Text style={styles.textForm}>Laboratorio:</Text>
@@ -265,10 +270,19 @@ export function RegistroMedicamento(){
                 value={Laboratorio}
                 onChangeText={validateLaboratorio}
           ></Input>
-          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null} 
-          <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-            <Text style={styles.buttonText}> Agregar</Text>
-          </TouchableOpacity>
+          {errorLaboratorio ? <Text style={styles.error}>{errorLaboratorio}</Text> : null}
+          <View style={styles.loading}>
+            {loading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text>Subiendo datos...</Text>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={handleSubmit} style={styles.button} disabled={loading}>
+                <Text style={styles.buttonText}>Registrar</Text>
+              </TouchableOpacity>
+            )}
+          </View>
           <Link asChild href='/'>
             <Pressable style={styles.button_Secundary}>
               <Text style={styles.buttonText}>Atras</Text>
@@ -277,8 +291,6 @@ export function RegistroMedicamento(){
         </View>
       </VStack>     
     </ScrollView>
-
-    
     );
  }
  const styles = StyleSheet.create({
@@ -308,7 +320,6 @@ export function RegistroMedicamento(){
       shadowRadius: 10,
       elevation: 8,
       paddingVertical: 20,     
-      
     },
     input: {
       width: '100%',
@@ -355,7 +366,6 @@ export function RegistroMedicamento(){
       color: '#fff',
       fontSize: 16,
       fontWeight: 'bold',
-      
     },
     textForm: {
       fontSize: 18,
@@ -370,6 +380,15 @@ export function RegistroMedicamento(){
     error: {
       color: 'red',
       marginBottom: 10,
+    },
+    loading: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   
   });
