@@ -1,5 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { NativeBaseProvider } from "native-base";
 import { View } from 'native-base';
 import { AlarmHome } from '../../components/alarmHome';
 
@@ -11,8 +9,6 @@ import { agregarMedicamento,
   obtenerMedicamentosPorUsuario, 
   actualizarMedicamento, 
   eliminarMedicamento } from '../../services/firestoreService';
-
-
 
 export default function Index() {
 
@@ -26,6 +22,7 @@ export default function Index() {
 
         init();
     }, []);
+    
     return (
         <View flex={1}>
           <AlarmHome/>
