@@ -39,13 +39,17 @@ const { width, height } = Dimensions.get('window');
       setSelectedImagen2(null);
       setCantidad('');
       setSelectedColor('');
+      setSelectedTime('');
 // Setear errores            
       setErrorNombreComercial('');
       setErrorNombreGenerico('');
       setErrorDosis('');
-      setErrorIntervalo('');      
+      setErrorIntervalo('');    
+      setTamanio('');
       setErrorImagen1('');
       setErrorImagen2('');
+      setCantidad('');
+      
 
     }, [])
   );
@@ -56,21 +60,35 @@ const { width, height } = Dimensions.get('window');
       !errorNombreComercial &&
       !errorNombreGenerico &&
       !errorDosis &&
-      !errorIntervalo &&
-      !errorImage &&
-      SelectedImagen &&
+      !errorIntervalo && 
+      !errorImagen1 &&     
+      !errorImagen2 &&
+      SelectedImagen1 &&
+      SelectedImagen2 &&
       NombreComercial &&
       NombreGenerico &&
-      Dosis &&
-      Intervalo 
+      Intervalo &&
+      Unidad &&
+      Tamanio &&
+      Presentacion &&
+      Cantidad &&
+      selectedColor
+
       
     ) {
       console.log({
         NombreComercial,
-        NombreGenerico,
-        Dosis,
-        Intervalo,        
-        SelectedImagen
+      NombreGenerico,
+      Dosis,
+      Intervalo,
+      Tamanio,
+      Unidad,
+      Presentacion,
+      SelectedImagen1,
+      SelectedImagen2,
+      Cantidad,
+      selectedColor,
+      selectedTime,
       });
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
@@ -131,14 +149,9 @@ const { width, height } = Dimensions.get('window');
   const [errorDosis, setErrorDosis] = useState('');
   const [errorIntervalo, setErrorIntervalo] = useState('');
   const [errorTamanio,setErrorTamanio]=useState('');
-  const [errorUnidad,setErrorUnidad]=useState('');
-  const[errorPresentacion,setErrorPresentacion]=useState('');
   const [errorImagen1, setErrorImagen1]=useState('');
   const [errorImagen2, setErrorImagen2]=useState('');
   const [errorCantidad,setErrorCantidad]=useState('');
-  const [errorSelectedColor,setErrorSelectedColor]=useState('');
-
-  
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -162,9 +175,16 @@ const { width, height } = Dimensions.get('window');
     }
     setNombreGenerico(text);
   };
-  const validate= (text)=>{
-    if
+  
+  const validateIntervalo = ()=>{
+    if(Intervalo == null){
+      setErrorIntervalo('seleccione un intervalo');
+    }else{
+      setErrorIntervalo('');
+    }    
+    
   }
+  
   const validateCantidad = (text)=>{
     const regex = /^[1-9]{1,3}$/;
     if(!regex.test(text)){
@@ -175,7 +195,7 @@ const { width, height } = Dimensions.get('window');
     setCantidad(text);
   }
   const validateTamanio = (text)=>{
-    const regex = /^ [1-9]$/;
+    const regex = /^[1-9]{1,}$/;
     if(!regex.test(text)){
       setErrorTamanio('Ingrese un numero valido');
     }else{
@@ -199,6 +219,88 @@ const { width, height } = Dimensions.get('window');
         flecha='#000000'
       }
       return(flecha);
+  }
+  const ComponentesSegunPresentacion = ()=>{
+    switch(Presentacion){
+      case 'Inyectable':
+        return('');
+      case 'Locion Topica':
+        return('');
+      case 'Polvo':
+        return('');
+      case 'Jarabe':
+        return(
+        <View>
+          <Text style={styles.textForm}>Dosis:</Text> 
+          <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+              borderRadius={7}
+              marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+            onValueChange={(itemValue) => setDosis(itemValue)}>
+            <Select.Item label='1.25 ml' value="1.25" />
+            <Select.Item label='2.5 ml' value="2.5"/>
+            <Select.Item label='5 ml' value="5"/>
+            <Select.Item label='7 ml' value="7"/>
+            <Select.Item label='10ml' value="10"/>
+          </Select>
+        </View>
+        );
+        case 'Solucion Liquida':
+          return(
+            <View>
+            <Text style={styles.textForm}>Dosis:</Text> 
+            <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                borderRadius={7}
+                marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+              onValueChange={(itemValue) => setDosis(itemValue)}>
+              <Select.Item label='5 gotas' value="5" />
+              <Select.Item label='10 gotas' value="10"/>
+              <Select.Item label='15 gotas' value="15"/>
+              <Select.Item label='20 gotas' value="20"/>
+              <Select.Item label='25 gotas' value="25"/>
+              <Select.Item label='30 gotas' value="30"/>
+              <Select.Item label='35 gotas' value="35"/>
+              <Select.Item label='40 gotas' value="40"/>
+              <Select.Item label='45 gotas' value="45"/>
+            </Select>
+          </View>
+          );
+          case 'Capsula Blanda':
+            return(
+            <View>
+              <Text style={styles.textForm}>Dosis:</Text> 
+              <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                  borderRadius={7}
+                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+                onValueChange={(itemValue) => setDosis(itemValue)}>
+                 
+                <Select.Item label='1' value="1"/>
+                <Select.Item label='2' value="2"/>
+                <Select.Item label='3' value="3"/>
+                <Select.Item label='4' value="4"/>
+              </Select>
+          </View>
+            );
+           
+      default:
+        return(
+          <View>
+              <Text style={styles.textForm}>Dosis:</Text> 
+              <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                  borderRadius={7}
+                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+                onValueChange={(itemValue) => setDosis(itemValue)}>
+                <Select.Item label='1/4' value="1/4" />
+                <Select.Item label='1/2' value="1/2"/>
+                <Select.Item label='3/4' value="3/4"/>
+                <Select.Item label='1' value="1"/>
+                <Select.Item label='2' value="2"/>
+                <Select.Item label='3' value="3"/>
+                <Select.Item label='4' value="4"/>
+              </Select>
+          </View>
+        
+    );
+    }
   }
   
   
@@ -261,7 +363,8 @@ const { width, height } = Dimensions.get('window');
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
                 marginTop={1} selectedValue={Presentacion} minWidth="200"  placeholder="presentacion del Medicamento"
-            onValueChange={(itemValue) => setPresentacion(itemValue)}>
+            onValueChange={(itemValue) => {setPresentacion(itemValue); 
+                                          setDosis('');}}>
               <Select.Item label="Comprimido" value="Comprimido"/>
               <Select.Item label="Capsula Blanda" value="Capsula Blanda"/>
               <Select.Item label="Inyectable" value="Inyectable"/>
@@ -278,19 +381,9 @@ const { width, height } = Dimensions.get('window');
                 value={Cantidad}
                 onChangeText={validateCantidad}></Input>
           {errorCantidad? <Text  style={styles.error}>{errorCantidad}</Text>:null}
-          <Text style={styles.textForm}>Dosis:</Text>
-          <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
-                borderRadius={7}
-                marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
-            onValueChange={(itemValue) => setDosis(itemValue)}>
-            <Select.Item label='1/4' value="1/4" />
-            <Select.Item label='1/2' value="1/2"/>
-            <Select.Item label='3/4' value="3/4"/>
-            <Select.Item label='1' value="1"/>
-            <Select.Item label='2' value="2"/>
-            <Select.Item label='3' value="3"/>
-            <Select.Item label='4' value="4"/>
-          </Select>
+          
+          {ComponentesSegunPresentacion()}
+          
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
           <Text style={styles.textForm}>Tamaño y unidad:</Text>
           <View style={{
@@ -304,7 +397,7 @@ const { width, height } = Dimensions.get('window');
             marginTop={1}
             value={Tamanio}
             minWidth="100"
-            onChange={validateTamanio}
+            onChangeText={validateTamanio}
            ></Input> 
            <Select size={"sm"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
@@ -317,7 +410,7 @@ const { width, height } = Dimensions.get('window');
             <Select.Item label="UI/ml" value="UI/ml"/>
            </Select>
           </View>
-          {errorTamanio? <Text style={styles.error}>{errorTamanio}</Text>:null}
+          {errorTamanio? <Text style={styles.error}>{errorTamanio}</Text> : null}
          
 {/* Modal Configuracion Alarma */}
 
@@ -345,6 +438,7 @@ const { width, height } = Dimensions.get('window');
                       />
                     </Modal>
                   </FormControl>
+                 
                   <View>
                     <Text>Intervalo:</Text>
                     <Select size={"lg"} 
@@ -356,7 +450,9 @@ const { width, height } = Dimensions.get('window');
                          selectedValue={Intervalo}
                          minWidth="200"  
                          placeholder="Seleccione Intervalo"
-                         onValueChange={(itemValue) => setIntervalo(itemValue)}>
+                         onValueChange={(itemValue) => {setIntervalo(itemValue);
+                            validateIntervalo();
+                         }}>
                       <Select.Item label='1 Hora' value="1" />
                       <Select.Item label='2 Horas' value="2" />
                       <Select.Item label='4 Horas' value="4" />
@@ -365,6 +461,7 @@ const { width, height } = Dimensions.get('window');
                       <Select.Item label='12 Horas' value="12"/>
                       <Select.Item label='24 Horas' value="24"/>
                     </Select>
+                    {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text>: null}
                   </View>
                   <FormControl>
                     <FormControl.Label>Seleccione un Color:</FormControl.Label>
@@ -391,13 +488,10 @@ const { width, height } = Dimensions.get('window');
                         }} />
                           <MaterialIcons name="arrow-forward-ios" size={18} color={FlechaColor(selectedColor)} />
                       </View>
-                        
-                          
-                          
-                          
                     </Pressable>
                     <Modal isOpen={showColorPicker} onClose={() => setShowColorPicker(false)}>
                       <Modal.Content Width={width*0.8} > {/* Ajustamos el tamaño */}
+                      <Modal.CloseButton/>
                         <Modal.Header fontSize="3xl">Seleccione un Color</Modal.Header>
                         <Modal.Body>
                           <ScrollView>
@@ -432,9 +526,7 @@ const { width, height } = Dimensions.get('window');
                   <Button variant="ghost" onPress={() => setModalConfig(false)}>
                     Cancelar
                   </Button>
-                  <Button onPress={()=>{console.log(selectedTime.toLocaleTimeString());
-                      console.log(Intervalo);
-                      console.log(selectedColor);
+                  <Button onPress={()=>{setModalConfig(false)
                   }}>
                     Enviar
                   </Button>
