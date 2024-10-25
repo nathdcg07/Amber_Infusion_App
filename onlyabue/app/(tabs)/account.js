@@ -4,7 +4,7 @@ export default function Account(){
     return(
         <View>
             <Text>
-                Hola Cuenta?
+               
             </Text>
         </View>
     )
