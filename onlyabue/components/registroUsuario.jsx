@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Image, Dimensions, StyleSheet,  TextInput, ScrollView } from 'react-native';
-import { StatusBar, Button, Input, Icon, FormControl,Text,VStack,Stack} from 'native-base';
+import { View, Image, Dimensions, StyleSheet,  TextInput, ScrollView,TouchableOpacity } from 'react-native';
+import { StatusBar, Button, Input, Icon, FormControl,Text,VStack,Stack,Select} from 'native-base';
 import logo from '../assets/icons/logoPill.png';
 import { Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 
 
@@ -21,24 +23,26 @@ export function RegistroUsuario() {
   const [isSurNameValidMat, setIsSurNameMatValid] = useState(false);
   const [age, setAge] = useState();
   const [isAgeValid, setIsAgeValid] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [Sex, setSex] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
+  const [errorImage, setErrorImagen]=useState('');
+  const [SelectedImagen,setSelectedImagen]=useState(null);
+  const router = useRouter();  // Inicializa el router
   
   const [touched, setTouched] = useState({
     name: false,
     surNamePat: false,
     surNameMat: false,
     age: false,
-    email: false,
+    Sex: false,
   });
   useEffect(() => {
     const validateForm = () => {
-      setIsFormValid(isNameValid && isSurNameValidPat && isSurNameValidMat && isAgeValid && isEmailValid);
+      setIsFormValid(isNameValid && isSurNameValidPat && isSurNameValidMat && isAgeValid && Sex && SelectedImagen);
     };
 
     validateForm();
-  }, [isNameValid,isSurNameValidPat,isSurNameValidMat, isAgeValid, isEmailValid]);
+  }, [isNameValid,isSurNameValidPat,isSurNameValidMat, isAgeValid,Sex,SelectedImagen]);
 
   const validateAge = (age) => {
     return age >= 18;
@@ -57,15 +61,9 @@ export function RegistroUsuario() {
     return SurnameRegex.test(surNameMat);
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
-
-  const handleBlurMail = () => {
-    setIsEmailValid(validateEmail(email));
-    setTouched({ ...touched, email: true });
+  const handleBlurSex = () => {
+    setTouched({ ...touched, Sex: true });
   };
 
   const handleBlurName = () => {
@@ -88,6 +86,44 @@ export function RegistroUsuario() {
     setTouched({ ...touched, age: true });
   };
 
+  const handleButtonNext = () => {
+    const user = {
+      name,
+      surNamePat,
+      surNameMat,
+      age,
+      Sex,
+      SelectedImagen
+    };
+    router.push({
+      
+      pathname: '/RegisterUserExtra',  // Asegúrate de que la ruta exista
+      params: { user: JSON.stringify(user) }  // Envía los datos como string JSON
+    });
+  };
+  
+  let openImagePickerAsync = async()=>{
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if(permissionResult.granted===false){
+      alert('Los permisos a galeria de imagenes son requeridos para continuar');
+      return;
+      }
+      const PickResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:ImagePicker.MediaTypeOptions.Images,
+        allowsEditing:true,
+        aspect:[4,3],
+        quality:1,
+      });     
+      
+  if(PickResult.canceled===true){
+    setErrorImage('Seleccione una imagen')
+    return;
+  }
+  const uri = PickResult.assets?.[0]?.uri;
+     setSelectedImagen(uri);
+     setErrorImagen('');
+  }
+
   
 
   return (
@@ -95,8 +131,17 @@ export function RegistroUsuario() {
       <StatusBar />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.registerContainer}>
-          <Image source={logo} style={styles.logoRegister} />
-          <Text style={styles.Titulo}>REGISTRO</Text>
+          <Text style={styles.Titulo}>Elija una foto suya</Text>
+        <TouchableOpacity onPress={openImagePickerAsync}>
+          <Image    
+            source={{
+              uri : SelectedImagen !== null
+          ?  SelectedImagen  // URI dinámica
+          : 'https://via.placeholder.com/100'// Placeholder local
+          }}style={styles.icon} />
+        </TouchableOpacity>
+        {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
+          <Text style={styles.Titulo}>Ingrese sus datos basicos</Text>
           <View style={styles.formContainer}>
             <VStack>
             <Text style={styles.textForm}>Nombre:</Text>
@@ -119,9 +164,7 @@ export function RegistroUsuario() {
                   El Nombre debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
                 </FormControl.ErrorMessage>
               )}
-          </FormControl>
-          <Stack flexDirection="row" display="flex" justifyContent="space-between">
-            <VStack w="48%"> 
+          </FormControl> 
               <Text style={styles.textForm}>Apellido Paterno</Text>
               <FormControl isInvalid={touched.surNamePat && !isSurNameValidPat}>
                 <Input
@@ -142,8 +185,7 @@ export function RegistroUsuario() {
                 </FormControl.ErrorMessage>
               )}
               </FormControl>
-            </VStack>
-            <VStack w="48%"> 
+            
             <Text style={styles.textForm}>Apellido Materno</Text>
               <FormControl>
                 <Input
@@ -159,10 +201,10 @@ export function RegistroUsuario() {
                   onBlur={handleBlurSurNameMat}
                 />
               </FormControl>
-            </VStack>
-          </Stack>
+            
 
-          
+            <Stack flexDirection="row" display="flex" justifyContent="space-between">
+            <VStack w="30%" pb={8}>
             <Text style={styles.textForm} >Edad:</Text>
             <FormControl isInvalid={touched.age && !isAgeValid}>
             <Input
@@ -185,30 +227,31 @@ export function RegistroUsuario() {
                 </FormControl.ErrorMessage>
               )}
           </FormControl>
-            <Text style={styles.textForm}>Correo Electrónico:</Text>
-            <FormControl isInvalid={touched.email && !isEmailValid}>
-            <Input
-              w="100%"
-              backgroundColor={'white'}
-              fontSize={14}
-              borderRadius={7}
-              marginTop={1}
-              keyboardType="email-address"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-              }}
-              onBlur={handleBlurMail}
-            />
-            {touched.email && !isEmailValid && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  El correo electrónico no es válido.
-                </FormControl.ErrorMessage>
-              )}
-          </FormControl>
+          </VStack>
+          <VStack w="60%">
+            <Text style={styles.textForm}>Sexo:</Text>
+            <Select backgroundColor={'white'}
+                   fontSize={14}
+                   borderRadius={7}
+                   marginBottom={1}
+                   selectedValue={Sex}
+                   minWidth="100"
+                   accessibilityLabel="Elije tu Sexo"
+                   placeholder="Elije tu Sexo" 
+                   _selectedItem={{bg: "white",}}
+                   mt={1} 
+                   onValueChange={itemValue => setSex(itemValue)}
+                   onBlur={handleBlurSex}
+                   >
+                  
+          <Select.Item label="Masculino" value="Masculino" />
+          <Select.Item label="Femenino" value="Femenino" />
+        </Select>
+          </VStack>
+          </Stack>
           </VStack>
           </View>
-          <Button bg="#64B5F6" width="50%" borderRadius="md" m="3"  isDisabled={!isFormValid} >Registrate</Button>
+          <Button bg="#64B5F6" width="50%" borderRadius="md" m="3"  isDisabled={!isFormValid} onPress={handleButtonNext} >Continuar</Button>
         </View>
       </ScrollView>
     </View>
@@ -254,5 +297,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     paddingBottom: 5,
+  },
+  icon: {
+    width: 150,
+    height: 150,
+    marginBottom: 15,
+    borderRadius: 80,
+    resizeMode:'cover',
+
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
