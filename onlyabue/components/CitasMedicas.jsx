@@ -28,7 +28,7 @@ export const CitasMedicas = () => {
                 </Box>
                 </View>
             </ScrollView>
-            <Link asChild href="">{/*en el href="" pones el nombre del archivo JS a llamar en (Screens) */}
+            <Link asChild href="/RegistroCitaMed">
             <Fab
                 renderInPortal={false}
                 shadow={2}
