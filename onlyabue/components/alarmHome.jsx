@@ -57,7 +57,7 @@ export function AlarmHome() {
        </Box>
        </View>
       </ScrollView>
-      <Link asChild href="/RegisterMed">
+      <Link asChild href="/RegisterUser">
             <Fab
                 renderInPortal={false}
                 shadow={2}

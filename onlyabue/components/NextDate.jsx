@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from "react";
-import { Box, View, Text, HStack, Icon } from "native-base";
+import { Box, View, Text, HStack, Icon,VStack, } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
 
@@ -26,14 +26,14 @@ export const NextDate = ( {ListaMed} ) => {
             </View>
           </>
         ) : (
-            <>
+            <VStack flex={1}>
             <View justifyContent="center" alignItems="center">
-              <Text fontSize={60} color="white">15:00</Text>
+              <Text fontSize={55} color="white">15:00</Text>
             </View>
             <View position="absolute" bottom={5} left={5}>
-              <Text fontSize={30} color="white">Dr. Jose Armando rocios</Text>
+              <Text fontSize={25} color="white">Dr. Jose Armando rocios palacios</Text>
             </View>
-          </>
+          </VStack>
           
 
         )}
