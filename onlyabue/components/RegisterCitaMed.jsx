@@ -5,6 +5,7 @@ import { Link,useRouter } from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import styles from "../Styles/GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 const router = useRouter();
@@ -14,6 +15,7 @@ export function RegistroCitaMedica(){
   const [NombreMedico,setNombreMedico] = useState('');
   const [ApellidoMedico, setApellidoMedico] = useState('')
   const [DescipcionCita, setDescripcionCita]= useState('')
+  const [Detalle, setDetalle] = useState('')
   const [Lugar, setLugar] = useState('')
   const [Recordatorio,setRecordatorio] = useState('')
   const [selectedTime, setSelectedTime] = useState(null);
@@ -49,7 +51,8 @@ export function RegistroCitaMedica(){
           setErrorFecha('Seleccione una Fecha')
         if(!Recordatorio)
           setErrorRecordatorio('Seleccione Recordatorio')
-
+        if(!Detalle)
+          setErrorDetalle('Ingrese detalles de la Cita Medica')
 
         Alert.alert('Error', 'Por favor llene los campos con * del formulario');
       }
@@ -76,6 +79,7 @@ const [errorRecordatorio,setErrorRecordatorio] = useState('')
 const [errorLugar,setErrorLugar] = useState('')
 const [errorHora,setErrorHora] = useState('')
 const [errorFecha, setErrorFecha]=useState('')
+const [errorDetalle, setErrorDetalle]=useState('')
 
   const ValidateNombreMed = (text)=>{
     const regix= /^[a-zA-Z]{3,}$/;
@@ -119,9 +123,9 @@ const [errorFecha, setErrorFecha]=useState('')
     return(
       <Box bg="#28B6F6" flex={1} p={4} position="relative" >
         <View style={styles.topSemiCircle} />
-        <View style={styles.middleSemiCircle}/>
+        <View style={styles.middleLeftSemiCircle}/>
         <View style={styles.bottomSemiCircle} />
-        <View style={styles.header}>
+        <View>
           <TouchableOpacity onPress={() => router.back()} style={styles.buttonBack}>
             <Ionicons name="arrow-back-circle" size={50} color="black" />
           </TouchableOpacity>
@@ -130,7 +134,7 @@ const [errorFecha, setErrorFecha]=useState('')
         <ScrollView   contentContainerStyle={styles.scrollContainer}>
             <VStack space={3}>
                 <View style={styles.form}>
-                    <Text style={styles.title}>Registro Cita Medica</Text>
+                    <Text style={styles.Titulo}>Registro Cita Medica</Text>
                     <View>
                         <Text style={styles.textForm}>Ingrese Nombre del Medico: *</Text>
                         <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
@@ -151,6 +155,18 @@ const [errorFecha, setErrorFecha]=useState('')
                         ></Input>
                         {errorApellidoMed? htmlError(errorApellidoMed) : null}
 
+                        <Text style={styles.textForm}>Detalle:*</Text>
+                         <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
+                            borderRadius={7}
+                            marginTop={1}
+                            value={Detalle}
+                            onChangeText={(text)=>{setDetalle(text);
+                              if(Detalle!=''){
+                                setErrorDetalle('')
+                              }
+                            }}
+                         ></Input>
+                          {errorDetalle? htmlError(errorDetalle) : null}
                          <Text style={styles.textForm}>Descripcion:</Text>
                          <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                             borderRadius={7}
@@ -243,15 +259,11 @@ const [errorFecha, setErrorFecha]=useState('')
                        
                         
                     </View >
-                        <View flexDirection='row' alignItems={"center"}>
+                        <View  alignItems={"center"}>
                             <Pressable onPress={handleSubmit} style={styles.button}>
                                 <Text style={styles.buttonText}> Agregar</Text>
                             </Pressable>
-                            <Link asChild href='/medicDates'>
-                                <Pressable style={styles.button_Secundary}>
-                                    <Text style={styles.buttonText}>Atras</Text>
-                                </Pressable>
-                            </Link>
+                            
                         </View>
                 </View>
                 
@@ -262,123 +274,3 @@ const [errorFecha, setErrorFecha]=useState('')
         
     );
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#90CAF9',      
-        
-      },
-      scrollContainer: {
-        flexGrow: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      page:{
-        flex:1,
-      },
-      title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#000000',
-        marginBottom: 20,
-        textAlign: 'center',
-      },
-      form:{
-        // backgroundColor: '#BBDEFB',
-        padding: 20,
-        borderRadius: 20,
-        width: width * 0.9,
-        marginBottom:20,
-        marginTop:20,
-        
-        // shadowColor: '#000',
-        // shadowOffset: { width: 0, height: 4 },
-        // shadowOpacity: 0.15,
-        // shadowRadius: 10,
-        // elevation: 8,
-        paddingVertical: 20,
-        textAlign:'left',
-        
-      },
-      input: {
-        width: '100%',
-        padding: 10,
-        borderRadius: 10,                  
-        marginBottom: 10,
-        fontSize: 16,
-        backgroundColor:'#fff',
-      },
-      icon: {
-        width: 100,
-        height: 100,
-        marginBottom: 15,
-        borderRadius: 15,
-        resizeMode:'cover',
-        marginTop:20,
-      
-      },
-      button: {
-        backgroundColor: '#64B5F6',
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginTop: 15,
-      },
-      backButton: {
-        fontSize: 24,
-        marginRight: 16,
-        flexDirection:'row',
-      },
-      buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-        
-      },
-      button_Secundary: {
-        backgroundColor: '#617371',
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginTop: 15,
-      },
-      textForm: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        paddingBottom: 5,
-        color:'white'
-      },
-      error: {
-        color: 'red',
-        marginBottom: 10,
-        fontWeight:'bold',
-      },
-      topSemiCircle: {
-        position: 'absolute',
-        width: 300,
-        height: 300,
-        borderRadius: 10000,
-        backgroundColor: 'white',  // Color del semicírculo superior
-        top: -250,  // Posición ajustada hacia arriba
-        left: -100,  // Ajuste para la posición izquierda
-       
-      },
-      middleSemiCircle:{
-        position:'absolute',
-        backgroundColor:'white',
-        width: 400,
-        height: 400,
-        borderRadius:10000,
-        left:-380,
-        top:200,
-      },
-      bottomSemiCircle: {
-        position: 'absolute',
-        width: 300,
-        height: 300,
-        borderRadius: 150,
-        backgroundColor: 'white',  // Color del semicírculo inferior
-        bottom: -200,  // Posición ajustada hacia abajo
-        right: -75,  // Ajuste para la posición derecha
-      },
-})

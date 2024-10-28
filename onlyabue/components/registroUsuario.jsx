@@ -1,18 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Image, Dimensions, StyleSheet,  TextInput, ScrollView,TouchableOpacity } from 'react-native';
-import { StatusBar, Button, Input, Icon, FormControl,Text,VStack,Stack,Select} from 'native-base';
+import { StatusBar, Button, Input, Icon, FormControl,Text,VStack,Stack,Select,Box} from 'native-base';
 import logo from '../assets/icons/logoPill.png';
 import { Pressable } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import styles from '../Styles/GlobalStyles'
 
 
 
-
-const { width, height } = Dimensions.get('window');
 
 export function RegistroUsuario() {
   const [name, setName] = useState("");
@@ -127,187 +126,142 @@ export function RegistroUsuario() {
   
 
   return (
-    <View style={styles.container}>
-      <StatusBar />
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={styles.registerContainer}>
-          <Text style={styles.Titulo}>Elija una foto suya</Text>
-        <TouchableOpacity onPress={openImagePickerAsync}>
-          <Image    
-            source={{
-              uri : SelectedImagen !== null
-          ?  SelectedImagen  // URI dinámica
-          : 'https://via.placeholder.com/100'// Placeholder local
-          }}style={styles.icon} />
-        </TouchableOpacity>
-        {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
-          <Text style={styles.Titulo}>Ingrese sus datos basicos</Text>
-          <View style={styles.formContainer}>
-            <VStack>
-            <Text style={styles.textForm}>Nombre:</Text>
-            <FormControl isInvalid={touched.name && !isNameValid}>
-            <Input
-              w="100%"
-              backgroundColor={'white'}
-              fontSize={14}
-              borderRadius={7}
-              marginTop={1}
-              marginBottom={1}
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-              }}
-              onBlur={handleBlurName}
-            />
-            {touched.name && !isNameValid && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  El Nombre debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
-                </FormControl.ErrorMessage>
-              )}
-          </FormControl> 
-              <Text style={styles.textForm}>Apellido Paterno</Text>
-              <FormControl isInvalid={touched.surNamePat && !isSurNameValidPat}>
-                <Input
-                  backgroundColor={'white'}
-                  fontSize={14}
-                  borderRadius={7}
-                  marginTop={1}
-                  marginBottom={1}
-                  value={surNamePat}
-                  onChangeText={(text) => {
-                    setsurNamePat(text);
-                  }}
-                  onBlur={handleBlurSurNamePat}
-                />
-                 {touched.surNamePat && !isSurNameValidPat && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  El Apellido Parterno debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
-                </FormControl.ErrorMessage>
-              )}
-              </FormControl>
-            
-            <Text style={styles.textForm}>Apellido Materno</Text>
-              <FormControl>
-                <Input
-                  backgroundColor={'white'}
-                  fontSize={14}
-                  borderRadius={7}
-                  marginTop={1}
-                  marginBottom={1}
-                  value={surNameMat}
-                  onChangeText={(text) => {
-                    setsurNameMat(text);
-                  }}
-                  onBlur={handleBlurSurNameMat}
-                />
-              </FormControl>
-            
+    <Box bg="#28B6F6" flex={1} p={4} position="relative">
+        <View style={styles.topSemiCircle} />
+        <View style={styles.middleRigthSemiCircle}/>
+        <View style={styles.bottomSemiCircle}/>
+        <View >
+              <StatusBar />
+              <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+                <View style={styles.registerContainer}>
+                  <Text style={styles.Titulo}>Elija una foto suya</Text>
+                <TouchableOpacity onPress={openImagePickerAsync}>
+                  <Image    
+                    source={{
+                      uri : SelectedImagen !== null
+                  ?  SelectedImagen  // URI dinámica
+                  : 'https://via.placeholder.com/100'// Placeholder local
+                  }}style={styles.iconRegistroUsuario} />
+                </TouchableOpacity>
+                {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
+                  <Text style={styles.Titulo}>Ingrese sus datos basicos</Text>
+                  <View style={styles.formContainer}>
+                    <VStack>
+                    <Text style={styles.textForm}>Nombre:</Text>
+                    <FormControl isInvalid={touched.name && !isNameValid}>
+                    <Input
+                      w="100%"
+                      backgroundColor={'white'}
+                      fontSize={14}
+                      borderRadius={7}
+                      marginTop={1}
+                      marginBottom={1}
+                      value={name}
+                      onChangeText={(text) => {
+                        setName(text);
+                      }}
+                      onBlur={handleBlurName}
+                    />
+                    {touched.name && !isNameValid && (
+                        <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
+                          El Nombre debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
+                        </FormControl.ErrorMessage>
+                      )}
+                  </FormControl> 
+                      <Text style={styles.textForm}>Apellido Paterno</Text>
+                      <FormControl isInvalid={touched.surNamePat && !isSurNameValidPat}>
+                        <Input
+                          backgroundColor={'white'}
+                          fontSize={14}
+                          borderRadius={7}
+                          marginTop={1}
+                          marginBottom={1}
+                          value={surNamePat}
+                          onChangeText={(text) => {
+                            setsurNamePat(text);
+                          }}
+                          onBlur={handleBlurSurNamePat}
+                        />
+                        {touched.surNamePat && !isSurNameValidPat && (
+                        <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
+                          El Apellido Parterno debe contener mínimo 2 caracteres y/o no tener caracteres especiales.
+                        </FormControl.ErrorMessage>
+                      )}
+                      </FormControl>
+                    
+                    <Text style={styles.textForm}>Apellido Materno</Text>
+                      <FormControl>
+                        <Input
+                          backgroundColor={'white'}
+                          fontSize={14}
+                          borderRadius={7}
+                          marginTop={1}
+                          marginBottom={1}
+                          value={surNameMat}
+                          onChangeText={(text) => {
+                            setsurNameMat(text);
+                          }}
+                          onBlur={handleBlurSurNameMat}
+                        />
+                      </FormControl>
+                    
 
-            <Stack flexDirection="row" display="flex" justifyContent="space-between">
-            <VStack w="30%" pb={8}>
-            <Text style={styles.textForm} >Edad:</Text>
-            <FormControl isInvalid={touched.age && !isAgeValid}>
-            <Input
-              w="100%"
-              backgroundColor={'white'}
-              fontSize={14}
-              borderRadius={7}
-              marginTop={1}
-              marginBottom={1}
-              keyboardType="numeric"
-              value={age}
-              onChangeText={(text) => {
-                setAge(text);
-              }}
-              onBlur={handleBlurAge}
-            />
-            {touched.age && !isAgeValid && (
-                <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
-                  La edad mínima es 18 años
-                </FormControl.ErrorMessage>
-              )}
-          </FormControl>
-          </VStack>
-          <VStack w="60%">
-            <Text style={styles.textForm}>Sexo:</Text>
-            <Select backgroundColor={'white'}
-                   fontSize={14}
-                   borderRadius={7}
-                   marginBottom={1}
-                   selectedValue={Sex}
-                   minWidth="100"
-                   accessibilityLabel="Elije tu Sexo"
-                   placeholder="Elije tu Sexo" 
-                   _selectedItem={{bg: "white",}}
-                   mt={1} 
-                   onValueChange={itemValue => setSex(itemValue)}
-                   onBlur={handleBlurSex}
-                   >
-                  
-          <Select.Item label="Masculino" value="Masculino" />
-          <Select.Item label="Femenino" value="Femenino" />
-        </Select>
-          </VStack>
-          </Stack>
-          </VStack>
-          </View>
-          <Button bg="#64B5F6" width="50%" borderRadius="md" m="3"  isDisabled={!isFormValid} onPress={handleButtonNext} >Continuar</Button>
-        </View>
-      </ScrollView>
-    </View>
+                    <Stack flexDirection="row" display="flex" justifyContent="space-between">
+                    <VStack w="30%" pb={8}>
+                    <Text style={styles.textForm} >Edad:</Text>
+                    <FormControl isInvalid={touched.age && !isAgeValid}>
+                    <Input
+                      w="100%"
+                      backgroundColor={'white'}
+                      fontSize={14}
+                      borderRadius={7}
+                      marginTop={1}
+                      marginBottom={1}
+                      keyboardType="numeric"
+                      value={age}
+                      onChangeText={(text) => {
+                        setAge(text);
+                      }}
+                      onBlur={handleBlurAge}
+                    />
+                    {touched.age && !isAgeValid && (
+                        <FormControl.ErrorMessage leftIcon={<AntDesign name="exclamationcircle" size={15} color="red" />}>
+                          La edad mínima es 18 años
+                        </FormControl.ErrorMessage>
+                      )}
+                  </FormControl>
+                  </VStack>
+                  <VStack w="60%">
+                    <Text style={styles.textForm}>Sexo:</Text>
+                    <Select backgroundColor={'white'}
+                          fontSize={14}
+                          borderRadius={7}
+                          marginBottom={1}
+                          selectedValue={Sex}
+                          minWidth="100"
+                          accessibilityLabel="Elije tu Sexo"
+                          placeholder="Elije tu Sexo" 
+                          _selectedItem={{bg: "white",}}
+                          mt={1} 
+                          onValueChange={itemValue => setSex(itemValue)}
+                          onBlur={handleBlurSex}
+                          >
+                          
+                  <Select.Item label="Masculino" value="Masculino" />
+                  <Select.Item label="Femenino" value="Femenino" />
+                </Select>
+                  </VStack>
+                  </Stack>
+                  </VStack>
+                  </View>
+                  <Button bg="#81D5FA" width="50%" borderRadius="md" m="3"  isDisabled={!isFormValid} onPress={handleButtonNext} >Continuar</Button>
+                </View>
+              </ScrollView>
+            </View>
+    </Box>
+    
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#90CAF9',
-    alignItems: 'center',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  registerContainer: {
-    backgroundColor: '#BBDEFB',
-    width: width * 0.9,
-    alignItems: 'center',
-    paddingVertical: 20,
-    borderRadius: 20,
-    shadowOpacity: 0.15,
-    display: "flex",
-  },
-  logoRegister: {
-    resizeMode: 'contain',
-    height: 150,
-    marginTop: 20,
-  },
-  Titulo: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  formContainer: {
-    width: '90%',
 
-  },
-  textForm: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    paddingBottom: 5,
-  },
-  icon: {
-    width: 150,
-    height: 150,
-    marginBottom: 15,
-    borderRadius: 80,
-    resizeMode:'cover',
 
-  },
-  error: {
-    color: 'red',
-    marginBottom: 10,
-  },
-});

@@ -1,4 +1,4 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner } from "native-base";
+import { StatusBar, View, Fab,  Box, Text, Spinner } from "native-base";
 import { ScrollView, StyleSheet,Dimensions } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
@@ -57,7 +57,7 @@ export function AlarmHome() {
        </Box>
        </View>
       </ScrollView>
-      <Link asChild href="/RegisterUser">
+      <Link asChild href="/RegisterMed">
             <Fab
                 renderInPortal={false}
                 shadow={2}
