@@ -1,13 +1,13 @@
-import {  Input, ScrollView, VStack, Modal, Pressable, View, Button, Select, } from "native-base";
+import {  Input, ScrollView, VStack, Modal, Pressable, View, Button, Select,Box } from "native-base";
 import React, { useState } from "react";
-import { Dimensions,StyleSheet, Text, Alert} from "react-native";
-import { Link } from "expo-router";
+import { Dimensions,StyleSheet, Text, Alert, TouchableOpacity} from "react-native";
+import { Link,useRouter } from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
-
+const router = useRouter();
 export function RegistroCitaMedica(){
 
   
@@ -117,7 +117,17 @@ const [errorFecha, setErrorFecha]=useState('')
 
 
     return(
-        <ScrollView style={styles.container}  contentContainerStyle={styles.scrollContainer}>
+      <Box bg="#28B6F6" flex={1} p={4} position="relative" >
+        <View style={styles.topSemiCircle} />
+        <View style={styles.middleSemiCircle}/>
+        <View style={styles.bottomSemiCircle} />
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.buttonBack}>
+            <Ionicons name="arrow-back-circle" size={50} color="black" />
+          </TouchableOpacity>
+        
+      </View>
+        <ScrollView   contentContainerStyle={styles.scrollContainer}>
             <VStack space={3}>
                 <View style={styles.form}>
                     <Text style={styles.title}>Registro Cita Medica</Text>
@@ -232,8 +242,8 @@ const [errorFecha, setErrorFecha]=useState('')
                         {errorFecha? htmlError(errorFecha):null}
                        
                         
-                    </View>
-                        <View alignItems={"center"}>
+                    </View >
+                        <View flexDirection='row' alignItems={"center"}>
                             <Pressable onPress={handleSubmit} style={styles.button}>
                                 <Text style={styles.buttonText}> Agregar</Text>
                             </Pressable>
@@ -248,6 +258,8 @@ const [errorFecha, setErrorFecha]=useState('')
             </VStack>
             
         </ScrollView>
+      </Box>
+        
     );
 }
 const styles = StyleSheet.create({
@@ -272,18 +284,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
       },
       form:{
-        backgroundColor: '#BBDEFB',
+        // backgroundColor: '#BBDEFB',
         padding: 20,
         borderRadius: 20,
         width: width * 0.9,
         marginBottom:20,
         marginTop:20,
         
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 8,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 4 },
+        // shadowOpacity: 0.15,
+        // shadowRadius: 10,
+        // elevation: 8,
         paddingVertical: 20,
         textAlign:'left',
         
@@ -334,10 +346,39 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         paddingBottom: 5,
+        color:'white'
       },
       error: {
         color: 'red',
         marginBottom: 10,
         fontWeight:'bold',
+      },
+      topSemiCircle: {
+        position: 'absolute',
+        width: 300,
+        height: 300,
+        borderRadius: 10000,
+        backgroundColor: 'white',  // Color del semicírculo superior
+        top: -250,  // Posición ajustada hacia arriba
+        left: -100,  // Ajuste para la posición izquierda
+       
+      },
+      middleSemiCircle:{
+        position:'absolute',
+        backgroundColor:'white',
+        width: 400,
+        height: 400,
+        borderRadius:10000,
+        left:-380,
+        top:200,
+      },
+      bottomSemiCircle: {
+        position: 'absolute',
+        width: 300,
+        height: 300,
+        borderRadius: 150,
+        backgroundColor: 'white',  // Color del semicírculo inferior
+        bottom: -200,  // Posición ajustada hacia abajo
+        right: -75,  // Ajuste para la posición derecha
       },
 })
