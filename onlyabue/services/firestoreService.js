@@ -124,3 +124,135 @@ export const eliminarRecordatorio = async (recordatorioId) => {
       console.error('Error al eliminar recordatorio:', error);
     }
 };
+
+
+//Recomendaciones de la tabla rec_medicamentos
+export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
+  try {
+    const docRef = await addDoc(collection(firestore, 'reco_medicamentos'), recomendacionesData);
+    console.log('Recomendación agregada con ID:', docRef.id);
+  } catch (error) {
+    console.error('Error al agregar recomendación:', error);
+  }
+};
+
+//usuarios
+async function crearUsuario(email, fechaNacimiento, genero, nombre) {
+  try {
+    const nuevoUsuario = {
+      email,
+      fechaNacimiento,
+      genero,
+      nombre,
+    };
+
+    await setDoc(doc(collection(firestore, 'usuarios')), nuevoUsuario);
+    console.log('Usuario creado con éxito');
+  } catch (error) {
+    console.error('Error creando el usuario: ', error);
+  }
+}
+
+async function obtenerUsuario(id) {
+  try {
+    const docRef = doc(firestore, 'usuarios', id);
+    const usuario = await getDoc(docRef);
+
+    if (usuario.exists()) {
+      console.log('Datos del usuario:', usuario.data());
+    } else {
+      console.log('No se encontró el usuario');
+    }
+  } catch (error) {
+    console.error('Error obteniendo el usuario: ', error);
+  }
+}
+
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestore } from './firebase';
+
+async function actualizarUsuario(id, nuevosDatos) {
+  try {
+    const docRef = doc(firestore, 'usuarios', id);
+
+    await updateDoc(docRef, nuevosDatos);
+    console.log('Usuario actualizado con éxito');
+  } catch (error) {
+    console.error('Error actualizando el usuario: ', error);
+  }
+}
+
+async function eliminarUsuario(id) {
+  try {
+    const docRef = doc(firestore, 'usuarios', id);
+    await deleteDoc(docRef);
+    console.log('Usuario eliminado con éxito');
+  } catch (error) {
+    console.error('Error eliminando el usuario: ', error);
+  }
+}
+
+crearUsuario('email@ejemplo.com', '1990-01-01', 'masculino', 'Miguel Robledo');
+obtenerUsuario('idDelUsuario');
+actualizarUsuario('idDelUsuario', { nombre: 'Nuevo Nombre', genero: 'femenino' });
+
+
+//recomendaciones medicamento
+export const crearMedicamento = async (medicamento) => {
+  await setDoc(doc(collection(db, 'reco_medicamentos')), {
+    medicamentoId: medicamento.medicamentoId,
+    usuarioId: medicamento.usuarioId,
+    nombre: medicamento.nombre,
+    descripcion: medicamento.descripcion,
+    dosis: medicamento.dosis,
+    forma: medicamento.forma,
+    cantidadTabletas: medicamento.cantidadTabletas,
+    tipoVenta: medicamento.tipoVenta,
+    etiquetas: medicamento.etiquetas,  // Array de IDs de etiquetas
+    creadoEn: new Date(),
+  });
+};
+
+//leer la reco 
+export const leerMedicamento = async (id) => {
+  const docRef = doc(db, "reco_medicamentos", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No existe ese medicamento.");
+  }
+};
+
+//crear etiquetas
+export const crearEtiqueta = async (etiqueta) => {
+  await setDoc(doc(collection(db, 'etiquetas')), {
+    nombre: etiqueta.nombre,
+    descripcion: etiqueta.descripcion,
+    creadoEn: new Date(),
+  });
+};
+
+//leer etiquetas
+export const leerEtiqueta = async (id) => {
+  const docRef = doc(db, "etiquetas", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No existe esa etiqueta.");
+  }
+};
+
+//actualizar etiqueta
+export const actualizarEtiqueta = async (id, data) => {
+  const docRef = doc(db, "etiquetas", id);
+  await updateDoc(docRef, data);
+};
+
+//eliminar etiqueta
+export const eliminarEtiqueta = async (id) => {
+  await deleteDoc(doc(db, "etiquetas", id));
+};
