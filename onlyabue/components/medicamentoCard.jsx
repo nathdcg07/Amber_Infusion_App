@@ -2,12 +2,12 @@ import {  HStack, Box,Text, Pressable,  } from "native-base";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {View, StyleSheet, Touchable} from 'react-native'
-
+import styles from "../Styles/GlobalStyles";
 
 
 export default function MedCard({medicamento}){
     return(
-        <View style={styles.container}>
+        <View style={styles.CardsContainer}>
             
                 <Link asChild href='./MedDetails'>
                     <Pressable>                        
@@ -20,7 +20,7 @@ export default function MedCard({medicamento}){
                                 cada {medicamento.intervalo || "Sin descripción disponible"} horas{"\n"} 
                                 {medicamento.dias+"" || "Sin descripción disponible"}
                                 </Text>
-                                <Box style={styles.Detalles}>
+                                <Box style={styles.DetallesCard}>
                                     <Text>
                                         Detalles ---&gt;
                                     </Text>
@@ -33,22 +33,4 @@ export default function MedCard({medicamento}){
         </View>
 )};
 
-    const styles= StyleSheet.create({
-        container: {
-            padding: 10,  // Espaciado interno para estética
-            margin:8,
-            backgroundColor:'white',
-            borderRadius:15,
-            borderWidth:1,
-            borderColor:'#4FC3F7',
-            
-        },
-        Detalles:{
-            flex:3,
-            fontSize:20,
-            fontWeight:'bold',
-            alignItems:'flex-end',
-            margin:8,
-        }
-
-    });
+    

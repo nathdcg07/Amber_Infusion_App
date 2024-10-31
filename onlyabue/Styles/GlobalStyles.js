@@ -2,14 +2,17 @@ import { StyleSheet,Dimensions } from "react-native";
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+// ====================== Contenedores =================
     container: {
       flex: 1,      
       alignItems: 'center',
     },
     scrollContainer: {
-      flexGrow: 1,
+      flexGrow: 1, 
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'center',      
+      paddingVertical: 20,
+      paddingTop:10,
     },
     registerContainer: {
       // backgroundColor: '#BBDEFB',
@@ -20,25 +23,69 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.15,
       display: "flex",
     },
+    formContainer: {
+      paddingVertical: 20,
+      textAlign:'left',
+       padding: 20,
+       borderRadius: 20,
+       width: width * 0.9,
+       marginBottom:20,
+       marginTop:20,
+     },
     logoRegister: {
       resizeMode: 'contain',
       height: 150,
       marginTop: 20,
     },
+    CardsContainer:{
+      backgroundColor:'white',
+      marginTop:10,
+      marginBottom:10,
+      marginLeft:5,
+      marginrigth:5,
+      padding: 10,
+      margin:8,
+      backgroundColor:'white',
+      borderRadius:15,
+      borderWidth:1,
+      borderColor:'#4FC3F7',
+    },
+    
+    
+    footbarContainer: {
+      position: 'absolute',
+      bottom: 0,
+      width: '100%',
+    },
+    nextAlarmContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 20,
+    },
+    footbar: {
+      position: 'absolute',
+      bottom: 0,
+      width: '100%',
+    },
+
+    ColorPickerBase:{
+      flexDirection: 'row',  // Alinear contenido horizontalmente
+      alignItems: 'center',  // Alinear verticalmente el contenido en el centro
+      width: width * 0.60, 
+      height: 35, 
+      borderRadius: 10, 
+      margin: 10, 
+      borderWidth: 1, 
+      borderColor: '#878787', 
+      paddingHorizontal: 10,  // Añadimos padding para los elementos dentro
+      justifyContent: 'space-between'
+    },
+//==========================   Textos  =========================
     Titulo: {
       color: 'black',
       fontWeight: 'bold',
       fontSize: 24,
       marginBottom: 20,
-    },
-    formContainer: {
-     paddingVertical: 20,
-     textAlign:'left',
-      padding: 20,
-      borderRadius: 20,
-      width: width * 0.9,
-      marginBottom:20,
-      marginTop:20,
     },
     textForm: {
       fontSize: 18,
@@ -46,13 +93,46 @@ const styles = StyleSheet.create({
       paddingBottom: 5,
       color:'white'
     },
+    buttonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    error: {
+      color: 'red',
+      marginBottom: 10,
+      fontWeight:'bold',
+    },
+    DetallesCard:{
+      flex:3,
+      fontSize:20,
+      fontWeight:'bold',
+      alignItems:'flex-end',
+      margin:8,
+  },
+    CitaText:{
+      fontSize:24,
+      fontWeight:'bold',
+      margin:3,
+      padding:5,
+    },
+    CitaDetalleText:{
+      fontSize:18,
+      
+    },
+//======================== Botones ===============================
+    BackIconButton:{
+      width: 50, 
+      height: 50,
+      alignItems: 'center', 
+      justifyContent: 'center',
+      },
     iconRegistroUsuario: {
       width: 150,
       height: 150,
       marginBottom: 15,
       borderRadius: 80,
       resizeMode:'cover',
-  
     },
     iconRegistroMedicamento:{
         width: 100,
@@ -69,25 +149,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 15,
       },
-      buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-        
-      },
-      button_Secundary: {
-        backgroundColor: '#617371',
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 10,
-        marginTop: 15,
-      },
-    error: {
-      color: 'red',
-      marginBottom: 10,
-      fontWeight:'bold',
+      
+    button_Secundary: {
+      backgroundColor: '#617371',
+      paddingVertical: 10,
+      paddingHorizontal: 30,
+      borderRadius: 10,
+      marginTop: 15,
     },
     
+//======================= Circulos de los fondos ==================
     topSemiCircle: {
       position: 'absolute',
       width: 300,
@@ -125,5 +196,7 @@ const styles = StyleSheet.create({
       bottom: -250,  // Posición ajustada hacia abajo
       right: 0,  // Ajuste para la posición derecha
     },
+    
+
 });
 export default styles;

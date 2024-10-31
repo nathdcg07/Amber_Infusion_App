@@ -4,13 +4,14 @@ import {useState,useCallback} from 'react';
 import { Input, VStack, Select, Pressable, Modal, Button, FormControl,View, Center, Box  } from "native-base";
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import styles from "../Styles/GlobalStyles";
 
 import ColorPicker from 'react-native-wheel-color-picker';
-
+const router = useRouter();
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
@@ -307,14 +308,22 @@ const { width, height } = Dimensions.get('window');
 
   
     return (
-
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+<Box bg="#28B6F6" flex={1} p={4} position="relative">
+  <View style={styles.topSemiCirclep}></View>
+  <View style={styles.middleRigthSemiCircle}></View>
+  <View style={styles.middleLeftSemiCircle}></View>
+  <View>
+    <TouchableOpacity onPress={() => router.back()} style={styles.BackIconButton}>
+      <Ionicons name="arrow-back-circle" size={50} color="black" />
+    </TouchableOpacity>
+  </View>
+  <ScrollView  contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         <StatusBar style='default'></StatusBar>
         <VStack space={4}>
         
         <View style={styles.form}>
-        <Text style={styles.title}>Registro de Medicamento</Text>
+        <Text style={styles.Titulo}>Registro de Medicamento</Text>
           <View alignItems={"center"}>
             <Text style={styles.textForm}>Imagen del Medicamento:</Text>
             <TouchableOpacity onPress={openImagePickerAsync}>
@@ -324,7 +333,7 @@ const { width, height } = Dimensions.get('window');
                   uri : SelectedImagen1 !== null
               ?  SelectedImagen1  // URI dinámica
               : 'https://via.placeholder.com/100'// Placeholder local
-              }}style={styles.icon} />
+              }}style={styles.iconRegistroMedicamento} />
             </TouchableOpacity>
             {errorImagen1 ? <Text style={styles.error}>{errorImagen1}</Text> : null}
           </View>
@@ -337,7 +346,7 @@ const { width, height } = Dimensions.get('window');
                   uri : SelectedImagen2 !== null
               ?  SelectedImagen2  // URI dinámica
               : 'https://via.placeholder.com/100'// Placeholder local
-              }}style={styles.icon} />
+              }}style={styles.iconRegistroMedicamento} />
             </TouchableOpacity>
             {errorImagen2 ? <Text style={styles.error}>{errorImagen2}</Text> : null} 
           </View>
@@ -466,19 +475,7 @@ const { width, height } = Dimensions.get('window');
                   <FormControl>
                     <FormControl.Label>Seleccione un Color:</FormControl.Label>
                     <Pressable onPress={() => setShowColorPicker(true)}>
-                    <View style={{ 
-                        flexDirection: "row",  // Alinear contenido horizontalmente
-                        alignItems: "center",  // Alinear verticalmente el contenido en el centro
-                        width: width * 0.60, 
-                        height: 35, 
-                        backgroundColor: selectedColor,  // Color seleccionado
-                        borderRadius: 10, 
-                        margin: 10, 
-                        borderWidth: 1, 
-                        borderColor: '#878787', 
-                        paddingHorizontal: 10,  // Añadimos padding para los elementos dentro
-                        justifyContent: "space-between" // Espacio entre el color y la flecha
-                      }}>
+                    <View style={[styles.ColorPickerBase,{ backgroundColor: selectedColor}]}>
                         {/* Cuadro de color */}
                         <View style={{ 
                           width: 20, 
@@ -539,11 +536,7 @@ const { width, height } = Dimensions.get('window');
             <TouchableOpacity onPress={handleSubmit} style={styles.button}>
               <Text style={styles.buttonText}> Agregar</Text>
             </TouchableOpacity>
-            <Link asChild href='/'>
-              <Pressable style={styles.button_Secundary}>
-                <Text style={styles.buttonText}>Atras</Text>
-              </Pressable>
-            </Link>
+            
           </View>
           
           
@@ -552,103 +545,10 @@ const { width, height } = Dimensions.get('window');
       </VStack>
       
     </ScrollView>
+</Box>
+    
 
     
     );
  }
- const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#90CAF9',      
-      
-    },
-    page:{
-      flex:1,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      color: '#000000',
-      marginBottom: 20,
-      textAlign: 'center',
-    },
-    form:{
-      backgroundColor: '#BBDEFB',
-      padding: 20,
-      borderRadius: 20,
-      width: width * 0.9,
-      marginBottom:20,
-      marginTop:20,
-      
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.15,
-      shadowRadius: 10,
-      elevation: 8,
-      paddingVertical: 20,
-      textAlign:'left',
-      
-    },
-    input: {
-      width: '100%',
-      padding: 10,
-      borderRadius: 10,                  
-      marginBottom: 10,
-      fontSize: 16,
-      backgroundColor:'#fff',
-    },
-    icon: {
-      width: 100,
-      height: 100,
-      marginBottom: 15,
-      borderRadius: 15,
-      resizeMode:'cover',
-      marginTop:20,
-    
-    },
-    button: {
-      backgroundColor: '#64B5F6',
-      paddingVertical: 10,
-      paddingHorizontal: 30,
-      borderRadius: 10,
-      marginTop: 15,
-    },
-    backButton: {
-      fontSize: 24,
-      marginRight: 16,
-      flexDirection:'row',
-    },
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 10,
-    },
-    button_Secundary: {
-      backgroundColor: '#617371',
-      paddingVertical: 10,
-      paddingHorizontal: 30,
-      borderRadius: 10,
-      marginTop: 15,
-    },
-    buttonText: {
-      color: '#fff',
-      fontSize: 16,
-      fontWeight: 'bold',
-      
-    },
-    textForm: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      paddingBottom: 5,
-    },
-    scrollContainer: {
-      flexGrow: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    error: {
-      color: 'red',
-      marginBottom: 10,
-    },
-  
-  });
+ 

@@ -5,9 +5,9 @@ import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import React,{ useEffect,useState } from "react";
-import {RegisterUser} from "../app/(screens)/RegisterUser";
-import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 
+import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
+import styles from "../Styles/GlobalStyles";
 const { width } = Dimensions.get('window');
 
 export function AlarmHome() {
@@ -73,24 +73,3 @@ export function AlarmHome() {
   );
 }
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    
-  },
-  footbarContainer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-  },
-  nextAlarmContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-  },
-  footbar: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-  }
-});

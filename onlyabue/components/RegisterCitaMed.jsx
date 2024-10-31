@@ -126,7 +126,7 @@ const [errorDetalle, setErrorDetalle]=useState('')
         <View style={styles.middleLeftSemiCircle}/>
         <View style={styles.bottomSemiCircle} />
         <View>
-          <TouchableOpacity onPress={() => router.back()} style={styles.buttonBack}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.BackIconButton}>
             <Ionicons name="arrow-back-circle" size={50} color="black" />
           </TouchableOpacity>
         

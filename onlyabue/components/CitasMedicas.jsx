@@ -5,6 +5,8 @@ import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import { NextDate } from "./NextDate";
 import React,{ useEffect,useState } from "react";
+import { CitaCard } from "./CitasProgramadas";
+import styles from "../Styles/GlobalStyles";
 const { width } = Dimensions.get('window');
 
 export const CitasMedicas = () => {
@@ -19,10 +21,11 @@ export const CitasMedicas = () => {
                 <View alignItems='center'>
                 <Box bg={'#E3F2FD'} rounded="xl" width={(width*0.9)} borderColor={'#4FC3F7'} borderWidth={1}>
                     <Text color='black' fontSize={23} marginLeft={5} marginY={2} fontWeight='bold'>
-                        TUS RECORDATORIOS
+                        TUS CITAS MEDICAS
                     </Text>
                     <View paddingX={3}>
-                   
+                      <CitaCard/>
+                      <CitaCard/>
                     
                     </View>
                 </Box>
@@ -43,26 +46,6 @@ export const CitasMedicas = () => {
     </View>
   )
 }
-const styles = StyleSheet.create({
-    scrollContainer: {
-      flexGrow: 1,
-      
-    },
-    footbarContainer: {
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-    },
-    nextAlarmContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 20,
-    },
-    footbar: {
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-    }
-  });
+
 
 
