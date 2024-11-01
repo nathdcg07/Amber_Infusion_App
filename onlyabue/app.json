@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme":"com.onlyabue",
     "name": "onlyabue",
     "slug": "onlyabue",
     "version": "1.0.0",
@@ -12,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onlyabue"
     },
     "android": {
+      "package": "com.onlyabue",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,6 +28,11 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "791bf8f3-3f94-41ec-a3e9-287f3e131afc"
+      }
+    },
   }
 }

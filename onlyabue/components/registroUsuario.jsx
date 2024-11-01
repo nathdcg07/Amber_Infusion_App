@@ -14,7 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const { width, height } = Dimensions.get('window');
 
-export function RegistroUsuario() {
+export const RegistroUsuario= ({Token}) => {
   const [name, setName] = useState("");
   const [isNameValid, setIsNameValid] = useState(false);
   const [surNamePat, setsurNamePat] = useState("");
