@@ -258,22 +258,15 @@ export const eliminarEtiqueta = async (id) => {
 };
 
 //para el token 
-
-async function verifyTokenAndRedirect(token) {
+export const verificarToken = async (token) => {
   try {
-      const decodedToken = await admin.auth().verifyIdToken(token);
-      const userId = decodedToken.uid;
-      
-      const userRef = admin.firestore().collection("usuarios").doc(userId);
-      const userSnapshot = await userRef.get();
+    const usuariosRef = collection(firestore, 'Usuarios');
+    const q = query(usuariosRef, where('UserID', '==', token));
+    const querySnapshot = await getDocs(q);
 
-      if (userSnapshot.exists) {
-          return { success: true, redirect: "home" };
-      } else {
-          return { success: false, redirect: "registro" };
-      }
+    return !querySnapshot.empty;
   } catch (error) {
-      console.error("Error verificando el token:", error);
-      return { success: false, redirect: "registro" };
+    console.error("Error al verificar el token:", error);
+    return false;
   }
-}
+};
