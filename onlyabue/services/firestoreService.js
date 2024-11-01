@@ -256,3 +256,24 @@ export const actualizarEtiqueta = async (id, data) => {
 export const eliminarEtiqueta = async (id) => {
   await deleteDoc(doc(db, "etiquetas", id));
 };
+
+//para el token 
+
+async function verifyTokenAndRedirect(token) {
+  try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      const userId = decodedToken.uid;
+      
+      const userRef = admin.firestore().collection("usuarios").doc(userId);
+      const userSnapshot = await userRef.get();
+
+      if (userSnapshot.exists) {
+          return { success: true, redirect: "home" };
+      } else {
+          return { success: false, redirect: "registro" };
+      }
+  } catch (error) {
+      console.error("Error verificando el token:", error);
+      return { success: false, redirect: "registro" };
+  }
+}
