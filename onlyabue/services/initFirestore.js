@@ -5,6 +5,7 @@ const initializeCollections = async () => {
     console.log('Initializing collections...');
   try {
     await setDoc(doc(collection(firestore, 'usuarios'), 'placeholder'), {
+      userId:"",
       nombre: "",
       email: "",
       fechaNacimiento: "",
