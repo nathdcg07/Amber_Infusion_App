@@ -270,3 +270,36 @@ export const verificarToken = async (token) => {
     return false;
   }
 };
+
+//funciones para citas medicas crear, buscar, eliminar actualizar
+export const crearCitaMedica = async (cita) => {
+  try {
+    const docRef = await addDoc(collection(firestore, "citas_medicas"), cita);
+    console.log("Cita creada exitosamente. ID:", docRef.id);
+  } catch (error) {
+    console.error("Error al crear la cita:", error);
+  }
+};
+
+export const leerCitaMedica = async (id) => {
+  const docRef = doc(firestore, "citas_medicas", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No se encontró la cita.");
+    return null;
+  }
+};
+
+export const actualizarCitaMedica = async (id, nuevosDatos) => {
+  const docRef = doc(firestore, "citas_medicas", id);
+  await updateDoc(docRef, nuevosDatos);
+  console.log("Cita actualizada con éxito");
+};
+
+export const eliminarCitaMedica = async (id) => {
+  await deleteDoc(doc(firestore, "citas_medicas", id));
+  console.log("Cita eliminada con éxito");
+};
