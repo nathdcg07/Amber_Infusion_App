@@ -1,5 +1,7 @@
-import { LoadScreen } from "../../components/LoadScreen"
-export default function LoadingScreen(){(
-    <LoadScreen/>
-)
+import { LoadScreen } from "../../components/LoadScreen";
+
+export default function LoadingScreen(){
+    return(
+        <LoadScreen/>
+    )
 }

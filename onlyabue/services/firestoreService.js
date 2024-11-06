@@ -124,3 +124,15 @@ export const eliminarRecordatorio = async (recordatorioId) => {
       console.error('Error al eliminar recordatorio:', error);
     }
 };
+
+export const verificarToken = async (token) => {
+  try {
+    const usuariosRef = collection(firestore, 'Usuarios');
+    const q = query(usuariosRef, where('UserID', '==', token));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    return false;
+  }
+};
