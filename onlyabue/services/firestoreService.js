@@ -303,3 +303,17 @@ export const eliminarCitaMedica = async (id) => {
   await deleteDoc(doc(firestore, "citas_medicas", id));
   console.log("Cita eliminada con éxito");
 };
+
+
+//funcion recordaotorio cita medica
+const calcularRecordatorioCita = (fechaCita) => {
+  const unDiaAntes = new Date(fechaCita.getTime() - 24 * 60 * 1000);
+  const dosHorasAntes = new Date(fechaCita.getTime() - 2 * 60 * 1000);
+  
+  return { unDiaAntes, dosHorasAntes };
+};
+
+const fechaCita = new Date('2024-11-04 T15:00');
+const recordatorios = calcularRecordatorioCita(fechaCita);
+console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);
+console.log("Recordatorio 2 horas antes:", recordatorios.dosHorasAntes);
