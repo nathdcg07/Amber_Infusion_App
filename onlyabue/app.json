@@ -27,8 +27,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router",
       "@react-native-google-signin/google-signin",
+      "expo-router",
     ],
     "extra": {
       "eas": {
