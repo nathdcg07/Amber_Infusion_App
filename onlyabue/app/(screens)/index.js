@@ -10,18 +10,19 @@ import LoadingScreen from './LoadingScreen';
 import { setUser } from '../../store/slices/userSlice';
 import * as WebBrowser from 'expo-web-browser';
 import { verificarToken } from '../../services/firestoreService';
-import {GoogleSignin, GoogleSigninButton, statusCodes} from '@react-native-google-signin/google-signin'
 
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Index() {
-  const [error,setError]= useState();
   const router = useRouter();
   const dispatch = useDispatch();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: "119258832773-57b097ei5nemlrrbc29mtq0l1mv8e5nu.apps.googleusercontent.com",
+  });
+
   useEffect(() => {
-    configureGoogleSignIn();
     const checkStoredToken = async () => {
       try {
         const storedToken = await AsyncStorage.getItem("@token");
@@ -52,53 +53,32 @@ export default function Index() {
     }
   }, [response]);
 
-  const configureGoogleSignIn =()=>{
-    GoogleSignin.configure({
-      androidClientId: "119258832773-57b097ei5nemlrrbc29mtq0l1mv8e5nu.apps.googleusercontent.com",
-    });
-  }
-
-  
-
-  const signIn = async () => {
+  const handleTokenResponse = async (token) => {
+    if (!token) return;
     try {
-      // Asegúrate de haber llamado `GoogleSignin.configure()` previamente en tu aplicación
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-
-      // Extraer el token de autenticación
-      const token = userInfo.idToken;
-
-      if (token) {
-        setIsLoading(true);
-
-        // Verificar si el token es válido en la base de datos
-        const tokenExists = await verificarToken(token);
-
-        if (tokenExists) {
-          //Si existe el token en la base de datos lo setea en redux y manda al home
-          dispatch(setUser({ token }));
-          router.push('/(tabs)/Home');
-        } else {
-          //si no existe muestra en el registro de usuario
-          router.push('/RegisterUser');
-        }
+      setIsLoading(true);
+      const tokenExists = await verificarToken(token);
+      if (tokenExists) {
+        dispatch(setUser({ token }));
+        setIsAuthenticated(true);
+        router.push('/(tabs)/Home');
+      } else {
+        router.push('/RegisterUser');
       }
     } catch (e) {
-      console.error('Error al manejar el inicio de sesión con Google:', e);
+      console.log("Error al manejar el token:", e);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Mostrar pantalla de carga si la autenticación está en progreso
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
     <View flex={1}>
-      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <GoogleSigninButton onPress={sigIn}/>}
+      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />}
     </View>
   );
 }
