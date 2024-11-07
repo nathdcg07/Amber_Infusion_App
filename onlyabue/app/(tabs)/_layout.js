@@ -1,5 +1,4 @@
 import {Tabs} from "expo-router";
-import { View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import Fontisto from '@expo/vector-icons/Fontisto';
@@ -7,7 +6,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 export default function TabsLayout(){
 
     return(
-        <Tabs screenOptions={{tabBarInactiveTintColor: 'Black',tabBarActiveTintColor: 'white',tabBarInactiveBackgroundColor: '#ffffff',tabBarActiveBackgroundColor: '#29B6F6',headerShown:false,  
+        <Tabs screenOptions={{tabBarInactiveTintColor: 'Black',tabBarActiveTintColor: 'white',tabBarInactiveBackgroundColor: 'white',tabBarActiveBackgroundColor: '#29B6F6',headerShown:false,  
             tabBarStyle:{height: 80,borderRadius:30, overflow: 'hidden',},
          tabBarLabelStyle: {
             fontSize: 14, marginBottom:15, marginLeft:8}}} >

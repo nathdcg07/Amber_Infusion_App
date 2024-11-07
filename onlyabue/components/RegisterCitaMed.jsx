@@ -121,7 +121,7 @@ const [errorDetalle, setErrorDetalle]=useState('')
 
 
     return(
-      <Box bg="#28B6F6" flex={1} p={4} position="relative" >
+      <Box bg="#027AA7" flex={1} p={4} position="relative" >
         <View style={styles.topSemiCircle} />
         <View style={styles.middleLeftSemiCircle}/>
         <View style={styles.bottomSemiCircle} />
