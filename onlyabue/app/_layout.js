@@ -8,7 +8,7 @@ export default function Layout(){
     return(
         
         <NativeBaseProvider flex={1}>
-            <View flex={1} style={{paddingTop: Constants.statusBarHeight,}}>
+            <View flex={1} style={{paddingTop: Constants.statusBarHeight,backgroundColor:'#red'}}>
                 <Stack screenOptions={{headerShown:false}} />
             </View>
             

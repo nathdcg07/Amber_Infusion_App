@@ -2,10 +2,19 @@ import { StyleSheet,Dimensions } from "react-native";
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', // Para que la imagen ocupe todo el fondo
+    justifyContent: 'center',
+  },
 // ====================== Contenedores =================
     container: {
       flex: 1,      
       alignItems: 'center',
+    },
+    tabBar:{
+      backgroundColor: '#F0F0F0' 
+
     },
     scrollContainer: {
       flexGrow: 1, 
@@ -44,11 +53,9 @@ const styles = StyleSheet.create({
       marginLeft:5,
       marginrigth:5,
       padding: 10,
-      margin:8,
       backgroundColor:'white',
       borderRadius:15,
-      borderWidth:1,
-      borderColor:'#4FC3F7',
+      width:width*0.9,
     },
     
     

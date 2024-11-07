@@ -14,7 +14,7 @@ export function CitaCard(){
                     <Link asChild href='./MedDetails'>
                         <Pressable>                        
                             <HStack space={3} alignItems="center" padding="1">
-                                <Box flex={1}>
+                                <Box alignItems={'center'} flex={1}>
                                     <Text fontSize="2xl" fontWeight="bold">
                                     {NombreMed}
                                     </Text>

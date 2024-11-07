@@ -1,5 +1,5 @@
 import { StatusBar, View, Fab,  Box, Text, Spinner } from "native-base";
-import { ScrollView, StyleSheet,Dimensions } from "react-native";
+import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
@@ -34,17 +34,19 @@ export function AlarmHome() {
   
 
   return (
-    <View flex={1}>
+    <View flex={1} >
+      <ImageBackground  source={require('../assets/FondoVerde.png')}
+        style={styles.backgroundImage}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
           <NextAlarm ListaMed={Medicamentos} />          
         </View>
         
-        <View alignItems='center'>
-       <Box bg={'#E3F2FD'} rounded="xl" width={(width*0.9)} borderColor={'#4FC3F7'} borderWidth={1}>
-       <Text color='black' fontSize={23} marginLeft={5} marginY={2} fontWeight='bold'>
-            TUS RECORDATORIOS
+      <View alignItems='center'>
+       <Box   width={(width*0.95)} shadow={"3"} >
+       <Text alignSelf={'center'} color='white' fontSize={29}  marginY={2} fontWeight='bold'>
+            Tus Recordatorios
           </Text>
           <View paddingX={3}>
           {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
@@ -69,6 +71,7 @@ export function AlarmHome() {
                 right={30}
             />
         </Link>
+        </ImageBackground>
     </View>
   );
 }
