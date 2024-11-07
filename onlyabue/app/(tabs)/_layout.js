@@ -8,7 +8,7 @@ export default function TabsLayout(){
 
     return(
         <Tabs screenOptions={{tabBarInactiveTintColor: 'Black',tabBarActiveTintColor: 'white',tabBarInactiveBackgroundColor: '#ffffff',tabBarActiveBackgroundColor: '#29B6F6',headerShown:false,  
-            tabBarStyle:{height: 80,borderRadius:30, overflow: 'hidden',backgroundColor: '#F0F0F0',},
+            tabBarStyle:{height: 80,borderRadius:30, overflow: 'hidden',},
          tabBarLabelStyle: {
             fontSize: 14, marginBottom:15, marginLeft:8}}} >
             <Tabs.Screen name="index" options={{title: "Medicamentos", tabBarIcon: ({color})=> <Fontisto name="pills" size={28} color={color}/>,  }} />
