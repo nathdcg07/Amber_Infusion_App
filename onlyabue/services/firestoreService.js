@@ -1,5 +1,6 @@
 import { firestore } from './firebaseConfig';
 import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import * as ImagePicker from 'expo-image-picker';
 
 // Para medicamentos
 export const agregarMedicamento = async (medicamentoData) => {
@@ -271,6 +272,64 @@ export const verificarToken = async (token) => {
   }
 };
 
+//agregande funciones para en el token con mas datos
+async function seleccionarImagen() {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.cancelled) {
+    registrarUsuario({
+      token: 'token_example',
+      nombre: 'Juan',
+      apellidoPaterno: 'Pérez',
+      apellidoMaterno: 'López',
+      edad: 65,
+      sexo: 'Masculino',
+      enfermedadesBase: ['Diabetes', 'Hipertensión'],
+      instrumentacionMedica: ['Marcapasos'],
+      tipoSangre: 'O+',
+      imagenURI: result.uri, 
+    });
+  }
+}
+
+export const registrarUsuario = async ({
+  token,
+  nombre,
+  apellidoPaterno,
+  apellidoMaterno,
+  edad,
+  sexo,
+  enfermedadesBase = [],
+  instrumentacionMedica = [],
+  tipoSangre,
+  imagenURI,
+}) => {
+  try {
+    await addDoc(collection(firestore, 'Usuarios'), {
+      token,
+      nombre,
+      apellidoPaterno,
+      apellidoMaterno,
+      edad,
+      sexo,
+      enfermedadesBase, 
+      instrumentacionMedica, 
+      tipoSangre,
+      imagenURI, 
+    });
+
+    console.log("Usuario registrado con éxito");
+  } catch (error) {
+    console.error("Error al registrar el usuario:", error);
+  }
+};
+
+
 //funciones para citas medicas crear, buscar, eliminar actualizar
 export const crearCitaMedica = async (cita) => {
   try {
@@ -305,7 +364,7 @@ export const eliminarCitaMedica = async (id) => {
 };
 
 
-//funcion recordaotorio cita medica
+//funcion recordatorio cita medica
 const calcularRecordatorioCita = (fechaCita) => {
   const unDiaAntes = new Date(fechaCita.getTime() - 24 * 60 * 1000);
   const dosHorasAntes = new Date(fechaCita.getTime() - 2 * 60 * 1000);
@@ -317,3 +376,4 @@ const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
 console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);
 console.log("Recordatorio 2 horas antes:", recordatorios.dosHorasAntes);
+
