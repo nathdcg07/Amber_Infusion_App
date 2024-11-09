@@ -136,14 +136,15 @@ export const verificarToken = async (token) => {
     return false;
   }
 };
-export async function crearUsuario(user) {
+
+/*export async function crearUsuario(user) {
   try {
     await setDoc(doc(collection(firestore, 'usuarios')), user);
     console.log('Usuario creado con éxito');
   } catch (error) {
     console.error('Error creando el usuario: ', error);
   }
-}
+}*/
 
 
 //Recomendaciones de la tabla rec_medicamentos
@@ -157,7 +158,7 @@ export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
 };
 
 //usuarios
-async function crearUsuario(email, fechaNacimiento, genero, nombre) {
+export async function crearUsuario(email, fechaNacimiento, genero, nombre) {
   try {
     const nuevoUsuario = {
       email,
@@ -211,10 +212,6 @@ async function eliminarUsuario(id) {
     console.error('Error eliminando el usuario: ', error);
   }
 }
-
-crearUsuario('email@ejemplo.com', '1990-01-01', 'masculino', 'Miguel Robledo');
-obtenerUsuario('idDelUsuario');
-actualizarUsuario('idDelUsuario', { nombre: 'Nuevo Nombre', genero: 'femenino' });
 
 
 //recomendaciones medicamento
@@ -275,20 +272,6 @@ export const actualizarEtiqueta = async (id, data) => {
 //eliminar etiqueta
 export const eliminarEtiqueta = async (id) => {
   await deleteDoc(doc(db, "etiquetas", id));
-};
-
-//para el token
-export const verificarToken = async (token) => {
-  try {
-    const usuariosRef = collection(firestore, 'Usuarios');
-    const q = query(usuariosRef, where('UserID', '==', token));
-    const querySnapshot = await getDocs(q);
-
-    return !querySnapshot.empty;
-  } catch (error) {
-    console.error("Error al verificar el token:", error);
-    return false;
-  }
 };
 
 //funciones para citas medicas crear, buscar, actualizar, borrar
