@@ -40,19 +40,21 @@ const initializeCollections = async () => {
       observaciones: "",
     });
 
-    await setDoc(doc(collection(firestore, 'citas_medicas'), 'placeholder'), {
-      usuarioId: "",
-      fecha: "",
-      hora: "",
-      doctor: "",
-      especialidad: "",
-      lugar: "",
-      creadoEn: new Date(),
-    });
+      const citaRef = doc(collection(usuarioRef, 'citas_medicas'), 'placeholder');
+      await setDoc(citaRef, {
+          usuarioId: "",
+          fecha: "",
+          hora: "",
+          doctor: "",
+          especialidad: "",
+          lugar: "",
+          creadoEn: new Date(),
+      });
 
-    await setDoc(doc(collection(firestore, 'reco_medicamentos'), 'placeholder'), {
-      medicamentoId: "",
-      usuarioId: "",
+      const recomendacionRef = doc(collection(usuarioRef, 'reco_medicamentos'), 'placeholder');
+      await setDoc(recomendacionRef, {
+          medicamentoId: "",
+          usuarioId: "",
       nombre: "",
       descripcion: "",
       dosis: "",
@@ -67,12 +69,12 @@ const initializeCollections = async () => {
       nombre: "analgésico",
       descripcion: "Medicamento para aliviar el dolor",
       creadoEn: new Date(),
-    });
-
+      });
     console.log('Colecciones inicializadas exitosamente');
   } catch (error) {
     console.error('Error al inicializar las colecciones: ', error);
   }
-};
 
+};
+  
 export default initializeCollections;

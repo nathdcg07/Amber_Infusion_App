@@ -1,26 +1,40 @@
-import React from "react";
-import { useState } from "react";
-import { Box,View,Text,HStack,Icon } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
+import React,{useEffect, useState} from "react";
+import { Box, View, Text, HStack, Icon } from "native-base";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Dimensions } from "react-native";
+
 const { width } = Dimensions.get('window');
 
+export const NextAlarm = ( {ListaMed} ) => {
+  const [medicamentoProximo, setMedicamentoProximo] = useState(null);
+  for(const{ horaInicio: horas, intervalo: inter, nombreComercial: nombre,} of ListaMed)
 
-export const NextAlarm = () => {
   return (
-    <Box backgroundColor="#4FC3F7" borderRadius="15" width={(width*0.9)} height={215} >
-        <View>
-            <HStack alignItems="center" paddingLeft={5} paddingTop={5}> 
-                <Icon as={MaterialIcons} name="alarm" size={29} color="white" />
-                <Text fontSize={24} color="white" ml={2}>Proxima alarma</Text>
-            </HStack>
+    <Box >
+      <View backgroundColor="#ffffff" borderRadius="1000" width={500} height={500} position={"absolute"} top={-240} left={-120}
+      ></View>
+      <View>
+        <HStack alignItems="center" paddingLeft={5} paddingTop={5}>          
+          <Text alignSelf={'center'} fontSize={24} color="black" ml={2}>Próxima alarma</Text>
+        </HStack>
+      </View>
+      {medicamentoProximo ? (
+        <>
+          <View justifyContent="center" paddingBottom={90} alignItems="center">
+            <Text fontSize={60} color="black">{medicamentoProximo.horaInicio}</Text>
+          </View>
+          <FontAwesome6 name="clock-four" size={24} color="black" />
+          <View position="absolute" bottom={5} left={5}>
+            <Text fontSize={45} color="black">{medicamentoProximo.nombreComercial}</Text>
+          </View>
+        </>
+      ) : (
+        <View justifyContent="center" paddingBottom={90} alignItems="center">
+          <Text fontSize={60} color="Black">Sin datos</Text>
+          <FontAwesome6 name="clock-four" size={24} color="black" />
         </View>
-         <View justifyContent="center" alignItems="center">
-         <Text fontSize={60} color="white">  15:20 </Text>
-        </View>
-        <View position="absolute" bottom={5} left={5}>
-            <Text fontSize={45} color="white">Insulina</Text>
-        </View>
+      )}
+      
     </Box>
-  )
-}
+  );
+};

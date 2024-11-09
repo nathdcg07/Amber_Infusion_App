@@ -126,6 +126,27 @@ export const eliminarRecordatorio = async (recordatorioId) => {
     }
 };
 
+export const verificarToken = async (token) => {
+  try {
+    const usuariosRef = collection(firestore, 'Usuarios');
+    const q = query(usuariosRef, where('UserID', '==', token));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    return false;
+  }
+};
+
+/*export async function crearUsuario(user) {
+  try {
+    await setDoc(doc(collection(firestore, 'usuarios')), user);
+    console.log('Usuario creado con éxito');
+  } catch (error) {
+    console.error('Error creando el usuario: ', error);
+  }
+}*/
+
 
 //Recomendaciones de la tabla rec_medicamentos
 export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
@@ -138,7 +159,7 @@ export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
 };
 
 //usuarios
-async function crearUsuario(email, fechaNacimiento, genero, nombre) {
+export async function crearUsuario(email, fechaNacimiento, genero, nombre) {
   try {
     const nuevoUsuario = {
       email,
@@ -169,8 +190,8 @@ async function obtenerUsuario(id) {
   }
 }
 
-import { doc, updateDoc } from 'firebase/firestore';
-import { firestore } from './firebase';
+// import { doc, updateDoc } from 'firebase/firestore';
+// import { firestore } from './firebase';
 
 async function actualizarUsuario(id, nuevosDatos) {
   try {
@@ -192,10 +213,6 @@ async function eliminarUsuario(id) {
     console.error('Error eliminando el usuario: ', error);
   }
 }
-
-crearUsuario('email@ejemplo.com', '1990-01-01', 'masculino', 'Miguel Robledo');
-obtenerUsuario('idDelUsuario');
-actualizarUsuario('idDelUsuario', { nombre: 'Nuevo Nombre', genero: 'femenino' });
 
 
 //recomendaciones medicamento
@@ -376,4 +393,38 @@ const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
 console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);
 console.log("Recordatorio 2 horas antes:", recordatorios.dosHorasAntes);
+
+
+//funciones para citas medicas crear, buscar, actualizar, borrar
+export const crearCitaMedica = async (cita) => {
+  try {
+    const docRef = await addDoc(collection(firestore, "citas_medicas"), cita);
+    console.log("Cita creada exitosamente", docRef.id);
+  } catch (error) {
+    console.error("Error al crear la cita:", error);
+  }
+};
+
+export const leerCitaMedica = async (id) => {
+  const docRef = doc(firestore, "citas_medicas", id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    console.log("No se encontró la cita");
+    return null;
+  }
+};
+
+export const actualizarCitaMedica = async (id, nuevosDatos) => {
+  const docRef = doc(firestore, "citas_medicas", id);
+  await updateDoc(docRef, nuevosDatos);
+  console.log("Cita actualizada con éxito");
+};
+
+export const eliminarCitaMedica = async (id) => {
+  await deleteDoc(doc(firestore, "citas_medicas", id));
+  console.log("Cita eliminada con éxito");
+};
 

@@ -17,6 +17,7 @@ return(
                         size="80px"
                         borderRadius="md"
                         shadow={3}
+                        marginLeft="0.5"
                     />
                     <Box flex={1}>
                         <Text fontSize="2xl" fontWeight="bold">
@@ -46,7 +47,7 @@ container: {
     padding: 10,  // Espaciado interno para estética
     marginTop:4,
     marginBottom:4,
-    backgroundColor:'white',
+    backgroundColor:'#FFF',
     borderRadius:15,
 
 },
