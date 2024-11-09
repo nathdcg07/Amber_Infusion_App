@@ -49,10 +49,24 @@ const initializeCollections = async () => {
           creadoEn: new Date(),
       });
 
-      const recomendacionRef = doc(collection(usuarioRef, 'recomendaciones'), 'placeholder');
+      const recomendacionRef = doc(collection(usuarioRef, 'reco_medicamentos'), 'placeholder');
       await setDoc(recomendacionRef, {
           medicamentoId: "",
           usuarioId: "",
+      nombre: "",
+      descripcion: "",
+      dosis: "",
+      forma: "",
+      cantidadTabletas: '',
+      tipoVenta: "",
+      etiquetas: [], // Este array se llenará con IDs de etiquetas
+      creadoEn: new Date(),
+    });
+
+    await setDoc(doc(collection(firestore, 'etiquetas'), 'placeholder'), {
+      nombre: "analgésico",
+      descripcion: "Medicamento para aliviar el dolor",
+      creadoEn: new Date(),
       });
     console.log('Colecciones inicializadas exitosamente');
   } catch (error) {

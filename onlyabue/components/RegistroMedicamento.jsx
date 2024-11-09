@@ -1,20 +1,22 @@
 import React from "react";
 import { Alert, Dimensions, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useState,useCallback } from 'react';
-import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View } from "native-base";
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import styles from "../Styles/GlobalStyles";
 import ColorPicker from 'react-native-wheel-color-picker';
-
 import { firestore, storage } from '../services/firebaseConfig';
 import { collection, addDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 import CustomImagePicker from './ImagePicker';
 import { primerRecordatorio } from "./recordatorios/notificacionesService";
-import styles from '../assets/stylesheets/RegistroMedicamento.styles';
+const router = useRouter();
+
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
@@ -204,9 +206,9 @@ const { width, height } = Dimensions.get('window');
   };
   
   const validateIntervalo = (text)=> {
-    const regex = /^[0-9]*\.?[0-9]+$/;
+    const regex = /^[0-9]$/;
     if(!regex.test(text)){
-      setErrorIntervalo('Seleccione un intérval.');
+      setErrorIntervalo('Seleccione un intérvalo.');
     }else{
       setErrorIntervalo('');
     }        
@@ -329,12 +331,26 @@ const { width, height } = Dimensions.get('window');
           </View>      
     );}
   }
-  return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+  
+  
+
+  
+    return (
+<Box bg="#28B6F6" flex={1} p={4} position="relative">
+  <View style={styles.topSemiCirclep}></View>
+  <View style={styles.middleRigthSemiCircle}></View>
+  <View style={styles.middleLeftSemiCircle}></View>
+  <View>
+    <TouchableOpacity onPress={() => router.back()} style={styles.BackIconButton}>
+      <Ionicons name="arrow-back-circle" size={50} color="black" />
+    </TouchableOpacity>
+  </View>
+  <ScrollView  contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        
         <StatusBar style='default'></StatusBar>
         <VStack space={4}>  
         <View style={styles.form}>
-        <Text style={styles.title}>Registro de Medicamento</Text>
+        <Text style={styles.Titulo}>Registro de Medicamento</Text>
           <View alignItems={"center"}>
             <Text style={styles.textForm}>Imagen del Medicamento:</Text>
             <CustomImagePicker
@@ -475,19 +491,7 @@ const { width, height } = Dimensions.get('window');
                   <FormControl>
                     <FormControl.Label>Tag Color:</FormControl.Label>
                     <Pressable onPress={() => setShowColorPicker(true)}>
-                    <View style={{ 
-                        flexDirection: "row",  // Alinear contenido horizontalmente
-                        alignItems: "center",  // Alinear verticalmente el contenido en el centro
-                        width: width * 0.60, 
-                        height: 35, 
-                        backgroundColor: selectedColor,  // Color seleccionado
-                        borderRadius: 10, 
-                        margin: 10, 
-                        borderWidth: 1, 
-                        borderColor: '#878787', 
-                        paddingHorizontal: 10,  // Añadimos padding para los elementos dentro
-                        justifyContent: "space-between" // Espacio entre el color y la flecha
-                      }}>
+                    <View style={[styles.ColorPickerBase,{ backgroundColor: selectedColor}]}>
                         {/* Cuadro de color */}
                         <View style={{ 
                           width: 20, 
@@ -556,13 +560,15 @@ const { width, height } = Dimensions.get('window');
                 </TouchableOpacity>
               )}
             </View>
-            <Link asChild href='/'>
-              <Pressable style={styles.button_Secundary}>
-                <Text style={styles.buttonText}>Atras</Text>
-              </Pressable>
-            </Link>
+            
           </View>   
         </View>
       </VStack>
     </ScrollView>
-  );}
+</Box>
+    
+
+    
+    );
+ }
+ 
