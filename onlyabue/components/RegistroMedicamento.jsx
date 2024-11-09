@@ -1,17 +1,22 @@
 import React from "react";
-import {Alert,Dimensions, StyleSheet, Text,  Image, StatusBar,TouchableOpacity,  ScrollView} from 'react-native';
-import {useState,useCallback} from 'react';
-import { Input, VStack, Select, Pressable, Modal, Button, FormControl,View, Center, Box  } from "native-base";
-import * as ImagePicker from 'expo-image-picker';
+import { Alert, Dimensions, StyleSheet, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { useState,useCallback } from 'react';
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
 import { Link, useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import styles from "../Styles/GlobalStyles";
-
 import ColorPicker from 'react-native-wheel-color-picker';
+import { firestore, storage } from '../services/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
+import CustomImagePicker from './ImagePicker';
 const router = useRouter();
+
+
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
@@ -22,11 +27,13 @@ const { width, height } = Dimensions.get('window');
   const [Tamanio, setTamanio]=useState('');
   const [Unidad, setUnidad]=useState('');
   const [Presentacion, setPresentacion]=useState('');
-  const [SelectedImagen1,setSelectedImagen1]=useState(null);
-  const [SelectedImagen2,setSelectedImagen2]=useState(null);
+  const [selectedImageMed, setSelectedImageMed] = useState('');
+  const [selectedImageBox, setSelectedImageBox] = useState('');
   const [Cantidad,setCantidad]=useState('');
   const [selectedColor, setSelectedColor] = useState('#ffffff'); // Estado para el color seleccionado
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       setNombreComercial('');
@@ -36,8 +43,8 @@ const { width, height } = Dimensions.get('window');
       setTamanio('');
       setUnidad('');
       setPresentacion('');
-      setSelectedImagen1(null);
-      setSelectedImagen2(null);
+      setSelectedImageMed(null);
+      setSelectedImageBox(null);
       setCantidad('');
       setSelectedColor('');
       setSelectedTime('');
@@ -47,25 +54,22 @@ const { width, height } = Dimensions.get('window');
       setErrorDosis('');
       setErrorIntervalo('');    
       setTamanio('');
-      setErrorImagen1('');
-      setErrorImagen2('');
-      setCantidad('');
-      
-
+      setErrorImageMed('');
+      setErrorImageBox('');
+      setCantidad('');     
     }, [])
   );
 
-  const handleSubmit = () => {
-
+  const handleSubmit = async () => {
     if (
       !errorNombreComercial &&
       !errorNombreGenerico &&
       !errorDosis &&
       !errorIntervalo && 
-      !errorImagen1 &&     
-      !errorImagen2 &&
-      SelectedImagen1 &&
-      SelectedImagen2 &&
+      !errorImageMed &&     
+      !errorImageBox &&
+      selectedImageMed &&
+      selectedImageBox &&
       NombreComercial &&
       NombreGenerico &&
       Intervalo &&
@@ -74,74 +78,86 @@ const { width, height } = Dimensions.get('window');
       Presentacion &&
       Cantidad &&
       selectedColor
-
-      
     ) {
       console.log({
         NombreComercial,
-      NombreGenerico,
-      Dosis,
-      Intervalo,
-      Tamanio,
-      Unidad,
-      Presentacion,
-      SelectedImagen1,
-      SelectedImagen2,
-      Cantidad,
-      selectedColor,
-      selectedTime,
+        NombreGenerico,
+        Dosis,
+        Intervalo,
+        Tamanio,
+        Unidad,
+        Presentacion,
+        SelectedImagen1,
+        SelectedImagen2,
+        Cantidad,
+        selectedColor,
+        selectedTime,
       });
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
+
+    try {
+      if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
+        alert('Debe seleccionar una imagen');
+        return;
+      }
+      setLoading(true);
+      const imageMedUrl = await uploadImage(selectedImageMed);
+      const imageBoxUrl = await uploadImage(selectedImageBox);
+      const docRef = await addDoc(collection(firestore, 'medicamentos'), {
+        imagenMedUrl: imageMedUrl,
+        imagenBoxUrl: imageBoxUrl,
+        nombreComercial: NombreComercial,
+        nombreGenerico: NombreGenerico,
+        dosis: Dosis,
+        intervalo: Intervalo,
+        tamanio: Tamanio,
+        unidad: Unidad,
+        presentacion: Presentacion,
+        cantidad: Cantidad,
+        color: selectedColor,
+        hora: selectedTime,
+        creadoEn: new Date(),
+      });
+  
+      alert('Medicamento registrado correctamente');
+      console.log("Medicamento agregado con ID: ", docRef.id);
+
+    } catch (error) {
+      console.error("Error agregando el medicamento: ", error);
+      alert('Error al registrar el medicamento');
+    } finally {
+      setLoading(false);
+    }
   };  
-  let openImagePickerAsync = async()=>{
-    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if(permissionResult.granted===false){
-      alert('Los permisos a galeria de imagenes son requeridos para continuar');
-      return;
-      }
-      const PickResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:ImagePicker.MediaTypeOptions.Images,
-        allowsEditing:true,
-        aspect:[4,3],
-        quality:1,
-      });     
-      
-      
-  if(PickResult.canceled===true){
-    setErrorImagen1('Seleccione una imagen')
-    return;
+  async function uploadImage(uri) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const storageRef = ref(storage, "Imagenes/" + new Date().getTime());
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Progreso: " + progress + "% terminado.");
+        },
+        (error) => {
+          console.error("Error durante la subida: ", error);
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
   }
-  const uri = PickResult.assets?.[0]?.uri;
-     setSelectedImagen1(uri);
-     setErrorImagen1('');
-  }
-  let openImagePickerAsync2 = async()=>{
-    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if(permissionResult.granted===false){
-      alert('Los permisos a galeria de imagenes son requeridos para continuar');
-      return;
-      }
-      const PickResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:ImagePicker.MediaTypeOptions.Images,
-        allowsEditing:true,
-        aspect:[4,3],
-        quality:1,
-      });     
-      
-      
-  if(PickResult.canceled===true){
-    setErrorImagen2('Seleccione una imagen')
-    return;
-  }
-  const uri = PickResult.assets?.[0]?.uri;
-     setSelectedImagen2(uri);
-     setErrorImagen2('');
-  }
+
   const handleColorChange = (color) => {
     setSelectedColor(color); 
-    
   };
  
 // Estados de errores
@@ -150,8 +166,8 @@ const { width, height } = Dimensions.get('window');
   const [errorDosis, setErrorDosis] = useState('');
   const [errorIntervalo, setErrorIntervalo] = useState('');
   const [errorTamanio,setErrorTamanio]=useState('');
-  const [errorImagen1, setErrorImagen1]=useState('');
-  const [errorImagen2, setErrorImagen2]=useState('');
+  const [errorImageMed, setErrorImageMed]=useState('');
+  const [errorImageBox, setErrorImageBox]=useState('');
   const [errorCantidad,setErrorCantidad]=useState('');
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -159,46 +175,47 @@ const { width, height } = Dimensions.get('window');
   
   //validaciones
   const validateNombreComercial = (text) => {
-    const regex =  /^[a-zA-Z\s]{2,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/; // Solo letras y espacios
     if (!regex.test(text)) {
-      setErrorNombreComercial('El nombre comercial debe contener solo letras');
+      setErrorNombreComercial('El nombre comercial no debe estar vacío.');
     } else {
       setErrorNombreComercial('');
     }
     setNombreComercial(text);
   };
   const validateNombreGenerico = (text) => {
-    const regex = /^[a-zA-Z\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
     if (!regex.test(text)) {
-      setErrorNombreGenerico('El nombre comercial debe contener solo letras y un minimo de 2 caracteres');
+      setErrorNombreGenerico('El nombre comercial no debe estar vacío.');
     } else {
       setErrorNombreGenerico('');
     }
     setNombreGenerico(text);
   };
   
-  const validateIntervalo = ()=>{
-    if(Intervalo == null){
-      setErrorIntervalo('seleccione un intervalo');
+  const validateIntervalo = (text)=> {
+    const regex = /^[0-9]$/;
+    if(!regex.test(text)){
+      setErrorIntervalo('Seleccione un intérvalo.');
     }else{
       setErrorIntervalo('');
-    }    
-    
+    }        
   }
   
   const validateCantidad = (text)=>{
-    const regex = /^[1-9]{1,3}$/;
+    const regex = /^[0-9]*\.?[0-9]+$/;
     if(!regex.test(text)){
-      setErrorCantidad('Ingrese un valor numerico valido');
+      setErrorCantidad('Ingrese un valor numérico válido.');
     }else{
       setErrorCantidad('');
     }
     setCantidad(text);
   }
+
   const validateTamanio = (text)=>{
-    const regex = /^[1-9]{1,}$/;
+    const regex = /^[0-9]*\.?[0-9]+$/;
     if(!regex.test(text)){
-      setErrorTamanio('Ingrese un numero valido');
+      setErrorTamanio('Ingrese un valor numérico válido.');
     }else{
       setErrorTamanio('');
     }
@@ -221,11 +238,12 @@ const { width, height } = Dimensions.get('window');
       }
       return(flecha);
   }
+
   const ComponentesSegunPresentacion = ()=>{
     switch(Presentacion){
       case 'Inyectable':
         return('');
-      case 'Locion Topica':
+      case 'Loción Tópica':
         return('');
       case 'Polvo':
         return('');
@@ -235,7 +253,7 @@ const { width, height } = Dimensions.get('window');
           <Text style={styles.textForm}>Dosis:</Text> 
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
               borderRadius={7}
-              marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+              marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Dosis del Medicamento."
             onValueChange={(itemValue) => setDosis(itemValue)}>
             <Select.Item label='1.25 ml' value="1.25" />
             <Select.Item label='2.5 ml' value="2.5"/>
@@ -245,13 +263,13 @@ const { width, height } = Dimensions.get('window');
           </Select>
         </View>
         );
-        case 'Solucion Liquida':
+        case 'Solución Líquida':
           return(
             <View>
             <Text style={styles.textForm}>Dosis:</Text> 
             <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
-                marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+                marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Dosis Diaria del Medicamento."
               onValueChange={(itemValue) => setDosis(itemValue)}>
               <Select.Item label='5 gotas' value="5" />
               <Select.Item label='10 gotas' value="10"/>
@@ -265,13 +283,13 @@ const { width, height } = Dimensions.get('window');
             </Select>
           </View>
           );
-          case 'Capsula Blanda':
+          case 'Cápsula Blanda':
             return(
             <View>
               <Text style={styles.textForm}>Dosis:</Text> 
               <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                   borderRadius={7}
-                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Dosis Diaria del Medicamento."
                 onValueChange={(itemValue) => setDosis(itemValue)}>
                  
                 <Select.Item label='1' value="1"/>
@@ -288,7 +306,7 @@ const { width, height } = Dimensions.get('window');
               <Text style={styles.textForm}>Dosis:</Text> 
               <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                   borderRadius={7}
-                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
+                  marginTop={1} selectedValue={Dosis} minWidth="200"  placeholder="Dosis Diaria del Medicamento."
                 onValueChange={(itemValue) => setDosis(itemValue)}>
                 <Select.Item label='1/4' value="1/4" />
                 <Select.Item label='1/2' value="1/2"/>
@@ -298,10 +316,8 @@ const { width, height } = Dimensions.get('window');
                 <Select.Item label='3' value="3"/>
                 <Select.Item label='4' value="4"/>
               </Select>
-          </View>
-        
-    );
-    }
+          </View>      
+    );}
   }
   
   
@@ -320,35 +336,23 @@ const { width, height } = Dimensions.get('window');
   <ScrollView  contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
         <StatusBar style='default'></StatusBar>
-        <VStack space={4}>
-        
+        <VStack space={4}>  
         <View style={styles.form}>
         <Text style={styles.Titulo}>Registro de Medicamento</Text>
           <View alignItems={"center"}>
             <Text style={styles.textForm}>Imagen del Medicamento:</Text>
-            <TouchableOpacity onPress={openImagePickerAsync}>
-{/* imagen medicamento */}
-              <Image    
-                source={{
-                  uri : SelectedImagen1 !== null
-              ?  SelectedImagen1  // URI dinámica
-              : 'https://via.placeholder.com/100'// Placeholder local
-              }}style={styles.iconRegistroMedicamento} />
-            </TouchableOpacity>
-            {errorImagen1 ? <Text style={styles.error}>{errorImagen1}</Text> : null}
-          </View>
-          <View alignItems={"center"}>
-            <Text style={styles.textForm}>Imagen Caja Medicamento:</Text>
-            <TouchableOpacity onPress={openImagePickerAsync2}>
-{/* imagen caja medicamento */}
-              <Image    
-                source={{
-                  uri : SelectedImagen2 !== null
-              ?  SelectedImagen2  // URI dinámica
-              : 'https://via.placeholder.com/100'// Placeholder local
-              }}style={styles.iconRegistroMedicamento} />
-            </TouchableOpacity>
-            {errorImagen2 ? <Text style={styles.error}>{errorImagen2}</Text> : null} 
+            <CustomImagePicker
+              selectedImage={selectedImageMed}
+              setSelectedImage={setSelectedImageMed}
+              errorImage={errorImageMed}
+              setErrorImage={setErrorImageMed}
+            />
+            <CustomImagePicker
+              selectedImage={selectedImageBox}
+              setSelectedImage={setSelectedImageBox}
+              errorImage={errorImageBox}
+              setErrorImage={setErrorImageBox}
+            />
           </View>
 
           <Text style={styles.textForm}>Nombre Medicamento:</Text>
@@ -360,7 +364,7 @@ const { width, height } = Dimensions.get('window');
                 ></Input>
           {errorNombreComercial ? <Text style={styles.error}>{errorNombreComercial}</Text> : null}
 
-          <Text style={styles.textForm}>Nombre Generico:</Text>
+          <Text style={styles.textForm}>Nombre Genérico:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
                 marginTop={1}
@@ -368,10 +372,10 @@ const { width, height } = Dimensions.get('window');
                 onChangeText={validateNombreGenerico}
           ></Input>
            {errorNombreGenerico ? <Text style={styles.error}>{errorNombreGenerico}</Text> : null}
-          <Text style={styles.textForm}>Presentacion del medicamento:</Text>
+          <Text style={styles.textForm}>Presentación del Medicamento:</Text>
           <Select size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
-                marginTop={1} selectedValue={Presentacion} minWidth="200"  placeholder="presentacion del Medicamento"
+                marginTop={1} selectedValue={Presentacion} minWidth="200"  placeholder="Presentación del Medicamento"
             onValueChange={(itemValue) => {setPresentacion(itemValue); 
                                           setDosis('');}}>
               <Select.Item label="Comprimido" value="Comprimido"/>
@@ -380,10 +384,10 @@ const { width, height } = Dimensions.get('window');
               <Select.Item label="Loción Tópica" value="Locion Topica"/>
               <Select.Item label="Polvo" value="Polvo"/>
               <Select.Item label="Jarabe" value="Jarabe"/>
-              <Select.Item label="Solucion Liquida" value="Solucion Liquida"/>
+              <Select.Item label="Solución Líquida" value="Solucion Liquida"/>
 
           </Select>
-          <Text style={styles.textForm}>Cantidad:</Text>
+          <Text style={styles.textForm}>Cantidad Total del Medicamento:</Text>
           <Input size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
                 marginTop={1}
@@ -394,7 +398,7 @@ const { width, height } = Dimensions.get('window');
           {ComponentesSegunPresentacion()}
           
           {errorDosis ? <Text style={styles.error}>{errorDosis}</Text> : null}
-          <Text style={styles.textForm}>Tamaño y unidad:</Text>
+          <Text style={styles.textForm}>Gramaje:</Text>
           <View style={{
             flexDirection:"row",
             justifyContent: "space-between"
@@ -410,7 +414,7 @@ const { width, height } = Dimensions.get('window');
            ></Input> 
            <Select size={"sm"} variant={"outline"} backgroundColor={'white'} fontSize={14}
                 borderRadius={7}
-                marginTop={1} selectedValue={Unidad} minWidth="200"  placeholder="Selecciones Unidad"
+                marginTop={1} selectedValue={Unidad} minWidth="200"  placeholder="Unidad de Gramaje"
                 onValueChange={(itemValue) => setUnidad(itemValue)}>
             <Select.Item label="mg" value="mg"/>
             <Select.Item label="ml" value="ml"/>
@@ -427,11 +431,11 @@ const { width, height } = Dimensions.get('window');
           <Modal isOpen={ModalConfig} onClose={()=>setModalConfig(false)}>
               <Modal.Content maxWidth="400px">
               <Modal.CloseButton />
-              <Modal.Header >Configuracion Alarma</Modal.Header>
+              <Modal.Header >Configuración Alarma</Modal.Header>
               <Modal.Body>
                 <VStack space={3}>
                   <FormControl>
-                  <FormControl.Label>Hora Seleccionada:</FormControl.Label>
+                  <FormControl.Label>Hora Inicial:</FormControl.Label>
                     <Button  variant="outline" backgroundColor="white" endIcon={<MaterialIcons name="arrow-forward-ios" size={18} color="#878787" />}
                      onPress={()=>setShowTimePicker(true)}>
                       <Text>{selectedTime ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No seleccionada'}</Text>
@@ -449,7 +453,7 @@ const { width, height } = Dimensions.get('window');
                   </FormControl>
                  
                   <View>
-                    <Text>Intervalo:</Text>
+                    <Text>Intérvalo:</Text>
                     <Select size={"lg"} 
                         variant={"outline"}
                          backgroundColor={'white'} 
@@ -473,7 +477,7 @@ const { width, height } = Dimensions.get('window');
                     {errorIntervalo ? <Text style={styles.error}>{errorIntervalo}</Text>: null}
                   </View>
                   <FormControl>
-                    <FormControl.Label>Seleccione un Color:</FormControl.Label>
+                    <FormControl.Label>Tag Color:</FormControl.Label>
                     <Pressable onPress={() => setShowColorPicker(true)}>
                     <View style={[styles.ColorPickerBase,{ backgroundColor: selectedColor}]}>
                         {/* Cuadro de color */}
@@ -507,8 +511,7 @@ const { width, height } = Dimensions.get('window');
                                 style={{ width: '100%', height: '100%' }} // Tamaño reducido
                                
                               />
-                          </ScrollView>
-                          
+                          </ScrollView>                         
                         </Modal.Body>
                         <Modal.Footer> 
                           <Button  onPress={()=>setShowColorPicker(false)}>Confirmar</Button>                         
@@ -525,7 +528,7 @@ const { width, height } = Dimensions.get('window');
                   </Button>
                   <Button onPress={()=>{setModalConfig(false)
                   }}>
-                    Enviar
+                    Aceptar
                   </Button>
                 </Button.Group>
               </Modal.Footer>
@@ -533,17 +536,22 @@ const { width, height } = Dimensions.get('window');
           </Modal>
          
           <View alignItems={"center"}>
-            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-              <Text style={styles.buttonText}> Agregar</Text>
-            </TouchableOpacity>
+            <View style={styles.loading}>
+              {loading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                  <Text>Subiendo datos...</Text>
+                </View>
+              ) : (
+                <TouchableOpacity onPress={handleSubmit} style={styles.button} disabled={loading}>
+                  <Text style={styles.buttonText}>Registrar</Text>
+                </TouchableOpacity>
+              )}
+            </View>
             
-          </View>
-          
-          
-        
+          </View>   
         </View>
       </VStack>
-      
     </ScrollView>
 </Box>
     

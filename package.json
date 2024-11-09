@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@react-native-firebase/storage": "^21.0.0",
+    "expo": "^51.0.38",
+    "expo-router": "^3.5.23",
+    "firebase": "^11.0.1"
+  }
+}
