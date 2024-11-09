@@ -3,6 +3,7 @@
     "name": "onlyabue",
     "slug": "onlyabue",
     "version": "1.0.0",
+    "scheme": "abueapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
