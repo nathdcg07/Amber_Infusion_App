@@ -125,6 +125,26 @@ export const eliminarRecordatorio = async (recordatorioId) => {
     }
 };
 
+export const verificarToken = async (token) => {
+  try {
+    const usuariosRef = collection(firestore, 'Usuarios');
+    const q = query(usuariosRef, where('UserID', '==', token));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    return false;
+  }
+};
+export async function crearUsuario(user) {
+  try {
+    await setDoc(doc(collection(firestore, 'usuarios')), user);
+    console.log('Usuario creado con éxito');
+  } catch (error) {
+    console.error('Error creando el usuario: ', error);
+  }
+}
+
 
 //Recomendaciones de la tabla rec_medicamentos
 export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {

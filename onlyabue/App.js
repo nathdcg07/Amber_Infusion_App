@@ -5,6 +5,8 @@ import { NativeBaseProvider } from 'native-base';
 import Constants from "expo-constants";
 import initializeCollections from './services/initFirestore';
 
+
+
 export default function App() {
   
   useEffect(() => {
@@ -18,14 +20,16 @@ export default function App() {
 
     init();
   }, []);
-
+  
   return (
+   
     <NativeBaseProvider>
       <View flex={1} style={{paddingTop: Constants.statusBarHeight,}}>
       <StatusBar style='default' />
       <ProductScreen/>
     </View>
     </NativeBaseProvider>
+
     
   );
 }

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Image, Dimensions, StyleSheet, ScrollView } from 'react-native';
 import {StatusBar,Input,  Text,VStack,HStack,Button,Tag,Badge,Select} from 'native-base';
 import Feather from '@expo/vector-icons/Feather';
-
+import { crearUsuario } from '../services/firestoreService';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'expo-router';
 
 
@@ -10,6 +11,8 @@ const { width, height } = Dimensions.get('window');
 
 
 export const RegisterUserExtra = ({User}) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [Datos, setDatos] = useState(User);
   const [enfermedades, setEnfermedades] = useState([]);
   const [instrumentacion, setInstrumentacion] = useState([]);
@@ -41,14 +44,15 @@ export const RegisterUserExtra = ({User}) => {
 
   const handleButtonRegister = () => {
     
-    setDatos({
-      ...Datos,
+    const usuario = [{ ...Datos,
       enfermedades,
       instrumentacion,
-      tipoSangre: Sangre
-    });
-    console.log(Datos);
-    
+      tipoSangre: Sangre}];
+      crearUsuario(usuario);
+      const token = Datos.token;
+      
+      dispatch(setUser(token));
+      router.push('/(tabs)/Home');
   }
   
   

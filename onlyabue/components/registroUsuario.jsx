@@ -11,9 +11,8 @@ import * as ImagePicker from 'expo-image-picker';
 import styles from '../Styles/GlobalStyles'
 
 
-
-
-export function RegistroUsuario() {
+export const RegistroUsuario= ({Token}) => {
+  let token = Token;
   const [name, setName] = useState("");
   const [isNameValid, setIsNameValid] = useState(false);
   const [surNamePat, setsurNamePat] = useState("");
@@ -26,7 +25,7 @@ export function RegistroUsuario() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [errorImage, setErrorImagen]=useState('');
   const [SelectedImagen,setSelectedImagen]=useState(null);
-  const router = useRouter();  // Inicializa el router
+  const router = useRouter();
   
   const [touched, setTouched] = useState({
     name: false,
@@ -87,6 +86,7 @@ export function RegistroUsuario() {
 
   const handleButtonNext = () => {
     const user = {
+      token,
       name,
       surNamePat,
       surNameMat,
@@ -95,7 +95,6 @@ export function RegistroUsuario() {
       SelectedImagen
     };
     router.push({
-      
       pathname: '/RegisterUserExtra',  // Asegúrate de que la ruta exista
       params: { user: JSON.stringify(user) }  // Envía los datos como string JSON
     });
