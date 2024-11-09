@@ -10,6 +10,7 @@ import LoadingScreen from './LoadingScreen';
 import { setUser } from '../../store/slices/userSlice';
 import * as WebBrowser from 'expo-web-browser';
 import { verificarToken } from '../../services/firestoreService';
+import * as AuthSession from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -20,6 +21,9 @@ export default function Index() {
   const [isLoading, setIsLoading] = useState(true);
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: "119258832773-57b097ei5nemlrrbc29mtq0l1mv8e5nu.apps.googleusercontent.com",
+    redirectUri: AuthSession.makeRedirectUri({
+      scheme: "com.onlyabue.app",
+    }),
   });
 
   useEffect(() => {
@@ -63,7 +67,10 @@ export default function Index() {
         setIsAuthenticated(true);
         router.push('/(tabs)/Home');
       } else {
-        router.push('/RegisterUser');
+        router.push({
+          pathname: '/RegisterUser', 
+          params: { Token: token }  
+        });
       }
     } catch (e) {
       console.log("Error al manejar el token:", e);

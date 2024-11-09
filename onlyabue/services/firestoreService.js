@@ -136,3 +136,11 @@ export const verificarToken = async (token) => {
     return false;
   }
 };
+export async function crearUsuario(user) {
+  try {
+    await setDoc(doc(collection(firestore, 'usuarios')), user);
+    console.log('Usuario creado con éxito');
+  } catch (error) {
+    console.error('Error creando el usuario: ', error);
+  }
+}
