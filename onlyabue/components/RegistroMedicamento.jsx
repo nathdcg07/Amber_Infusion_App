@@ -1,19 +1,19 @@
 import React from "react";
-import { Alert, Dimensions, StyleSheet, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { Alert, Dimensions, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useState,useCallback } from 'react';
 import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
 import { Link } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import ColorPicker from 'react-native-wheel-color-picker';
 
 import { firestore, storage } from '../services/firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 import CustomImagePicker from './ImagePicker';
+import { primerRecordatorio } from "./recordatorios/notificacionesService";
 import styles from '../assets/stylesheets/RegistroMedicamento.styles';
 
 const { width, height } = Dimensions.get('window');
@@ -86,8 +86,8 @@ const { width, height } = Dimensions.get('window');
         Tamanio,
         Unidad,
         Presentacion,
-        SelectedImagen1,
-        SelectedImagen2,
+        imagenMedUrl,
+        imagenBoxUrl,
         Cantidad,
         selectedColor,
         selectedTime,
@@ -102,9 +102,11 @@ const { width, height } = Dimensions.get('window');
         return;
       }
       setLoading(true);
+      const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), 'usuario1234');
       const imageMedUrl = await uploadImage(selectedImageMed);
       const imageBoxUrl = await uploadImage(selectedImageBox);
-      const docRef = await addDoc(collection(firestore, 'medicamentos'), {
+
+      const docRef = await addDoc(collection(usuarioPruebaRef, 'medicamentos'), {
         imagenMedUrl: imageMedUrl,
         imagenBoxUrl: imageBoxUrl,
         nombreComercial: NombreComercial,
@@ -119,6 +121,15 @@ const { width, height } = Dimensions.get('window');
         hora: selectedTime,
         creadoEn: new Date(),
       });
+      const recordatorioData = {
+        medicamentoId: docRef.id,
+        usuarioId: usuarioPruebaRef.id,
+        intervalo: Intervalo,
+        horaInicial: selectedTime
+      };
+      if (selectedTime != '') {
+        await primerRecordatorio(recordatorioData);
+      }
   
       alert('Medicamento registrado correctamente');
       console.log("Medicamento agregado con ID: ", docRef.id);

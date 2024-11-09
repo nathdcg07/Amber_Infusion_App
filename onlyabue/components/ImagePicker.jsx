@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity, Image, Text } from 'react-native';
 import styles from '../assets/stylesheets/RegistroMedicamento.styles';
