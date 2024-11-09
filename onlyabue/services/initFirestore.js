@@ -3,69 +3,57 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 
 const initializeCollections = async () => {
     console.log('Initializing collections...');
-  try {
-    await setDoc(doc(collection(firestore, 'usuarios'), 'placeholder'), {
-      nombre: "",
-      email: "",
-      fechaNacimiento: "",
-      genero: "",
-      creadoEn: new Date(),
-    });
-    
-    await setDoc(doc(collection(firestore, 'medicamentos'), 'placeholder'), {
-      nombre: "",
-      dosis: "",
-      dias: [],  
-      horas: [],
-      imagen: "",
-      color: "",
-    });
+    try {
+      const usuarioRef = doc(collection(firestore, 'usuarios'), 'placeholder');
+      await setDoc(usuarioRef, {
+        nombre: "usuario1234",
+        email: "usuario1234@correo.com",
+        fechaNacimiento: "2000-01-01",
+        genero: "masculino",
+        creadoEn: new Date(),
+      });
+      const medicamentoRef = doc(collection(usuarioRef, 'medicamentos'), 'placeholder');
+      await setDoc(medicamentoRef, {
+        nombre: "",
+        dosis: "",
+        intervalo: "",
+        horaInicial: "",  
+        imagen: "",
+        color: "",
+        creadoEn: new Date(),
+      });
+      const recordatorioRef = doc(collection(medicamentoRef, 'recordatorios'), 'placeholder');
+      await setDoc(recordatorioRef, {
+        tipo: "medicamento",
+        proximaToma: "",
+        estado: "pendiente",
+        creadoEn: new Date(),
+      });
+      const historialRef = doc(collection(usuarioRef, 'historial_medicamentos'), 'placeholder');
+      await setDoc(historialRef, {
+          usuarioId: "",
+          medicamentoId: "",
+          fecha: "",
+          dosisTomada: "",
+          observaciones: "",
+      });
 
-    await setDoc(doc(collection(firestore, 'recordatorios'), 'placeholder'), {
-      tipo: ["medicamento", "cita medica"],
-      fecha: "",
-      hora: "",
-      repeticion: "",
-      usuarioId: "",
-      medicamentoId: "",
-      creadoEn: new Date(),
-    });
+      const citaRef = doc(collection(usuarioRef, 'citas_medicas'), 'placeholder');
+      await setDoc(citaRef, {
+          usuarioId: "",
+          fecha: "",
+          hora: "",
+          doctor: "",
+          especialidad: "",
+          lugar: "",
+          creadoEn: new Date(),
+      });
 
-    await setDoc(doc(collection(firestore, 'historial_medicamentos'), 'placeholder'), {
-      usuarioId: "",
-      medicamentoId: "",
-      fecha: "",
-      dosisTomada: "",
-      observaciones: "",
-    });
-
-    await setDoc(doc(collection(firestore, 'citas_medicas'), 'placeholder'), {
-      usuarioId: "",
-      fecha: "",
-      hora: "",
-      doctor: "",
-      especialidad: "",
-      lugar: "",
-      creadoEn: new Date(),
-    });
-
-    await setDoc(doc(collection(firestore, 'recomendaciones'), 'placeholder'), {
-      medicamentoId: "",
-      usuarioId: "",
-    });
-
-    
-  await setDoc(doc(collection(firestore, 'reco_medicamentos'), 'placeholder'), {
-    nombre: "Ibuprofeno",
-    descripcion: "Antiinflamatorio y analgésico",
-    dosis: "200mg",
-    forma: "tabletas",
-    cantidadTabletas: 30,
-    tipoVenta: "Venta Libre",
-    etiquetas: [], // Este array se llenará con IDs de etiquetas
-    creadoEn: new Date(),
-  });
-  
+      const recomendacionRef = doc(collection(usuarioRef, 'recomendaciones'), 'placeholder');
+      await setDoc(recomendacionRef, {
+          medicamentoId: "",
+          usuarioId: "",
+      });
     console.log('Colecciones inicializadas exitosamente');
   } catch (error) {
     console.error('Error al inicializar las colecciones: ', error);
