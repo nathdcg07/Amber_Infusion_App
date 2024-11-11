@@ -5,6 +5,8 @@ import Feather from '@expo/vector-icons/Feather';
 import { crearUsuario } from '../services/firestoreService';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { setUser } from '../store/slices/userSlice';
+import { saveToken } from '../store/slices/userSlice';
 
 
 const { width, height } = Dimensions.get('window');
@@ -13,7 +15,7 @@ const { width, height } = Dimensions.get('window');
 export const RegisterUserExtra = ({User}) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [Datos, setDatos] = useState(User);
+  const [Datos, setDatos] = useState({User});
   const [enfermedades, setEnfermedades] = useState([]);
   const [instrumentacion, setInstrumentacion] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -44,14 +46,13 @@ export const RegisterUserExtra = ({User}) => {
 
   const handleButtonRegister = () => {
     
-    const usuario = [{ ...Datos,
+    const usuario = [{ ...Datos.User,
       enfermedades,
       instrumentacion,
       tipoSangre: Sangre}];
       crearUsuario(usuario);
-      const token = Datos.token;
-      
-      dispatch(setUser(token));
+      const token = JSON.stringify(usuario[0].Token);
+      dispatch(saveToken(token));
       router.push('/(tabs)/Home');
   }
   

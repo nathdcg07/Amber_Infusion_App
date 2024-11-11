@@ -14,7 +14,7 @@ export const CitasMedicas = () => {
     
   return (
     <View flex={1}>
-        <ImageBackground  source={require('../assets/FondoVerde.png')}
+        <ImageBackground
         style={styles.backgroundImage}>
       
         <StatusBar/>

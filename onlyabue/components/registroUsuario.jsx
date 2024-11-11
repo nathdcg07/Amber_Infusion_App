@@ -12,7 +12,7 @@ import styles from '../Styles/GlobalStyles'
 
 
 export const RegistroUsuario= ({Token}) => {
-  let token = Token;
+  const [token,setToken] = useState({Token});
   const [name, setName] = useState("");
   const [isNameValid, setIsNameValid] = useState(false);
   const [surNamePat, setsurNamePat] = useState("");
@@ -86,7 +86,7 @@ export const RegistroUsuario= ({Token}) => {
 
   const handleButtonNext = () => {
     const user = {
-      token,
+      ...token,
       name,
       surNamePat,
       surNameMat,
@@ -98,6 +98,7 @@ export const RegistroUsuario= ({Token}) => {
       pathname: '/RegisterUserExtra',  // Asegúrate de que la ruta exista
       params: { user: JSON.stringify(user) }  // Envía los datos como string JSON
     });
+
   };
   
   let openImagePickerAsync = async()=>{

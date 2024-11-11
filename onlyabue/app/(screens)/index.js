@@ -15,7 +15,7 @@ import * as AuthSession from 'expo-auth-session';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Index() {
-  const router = useRouter();
+ const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,17 +29,14 @@ export default function Index() {
   useEffect(() => {
     const checkStoredToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("@token");
+        const storedToken = await AsyncStorage.getItem("authToken");
         if (storedToken) {
-          const tokenExists = await verificarToken(storedToken);
-          if (tokenExists) {
-            setIsAuthenticated(true);
-            router.push('/(tabs)/Home');
-          } else {
-            setIsAuthenticated(false);
-          }
-        } else {
+          setIsAuthenticated(true);
+          alert("existe hay redux");
+        } 
+        else {
           setIsAuthenticated(false);
+          alert("no esta en redux");
         }
       } catch (error) {
         console.log("Error al verificar el token almacenado:", error);

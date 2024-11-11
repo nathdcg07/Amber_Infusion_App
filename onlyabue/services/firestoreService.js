@@ -1,5 +1,5 @@
 import { firestore } from './firebaseConfig';
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc,setDoc, deleteDoc, query, where } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
 
 // Para medicamentos
@@ -126,15 +126,25 @@ export const eliminarRecordatorio = async (recordatorioId) => {
     }
 };
 
-/*export async function crearUsuario(user) {
+export async function crearUsuario(user) {
   try {
-    await setDoc(doc(collection(firestore, 'usuarios')), user);
+    // Verifica si `user` es un array y accede al primer objeto si es necesario
+    if (Array.isArray(user)) {
+      user = user[0]; // Accede al primer objeto del array
+    }
+
+    // Verifica que `user` sea un objeto plano y no un array
+    if (typeof user !== 'object' || Array.isArray(user)) {
+      throw new Error("El parámetro 'user' debe ser un objeto plano.");
+    }
+
+    // Procede con la adición a la colección de Firebase
+    await addDoc(collection(firestore, 'usuarios'), user);
     console.log('Usuario creado con éxito');
   } catch (error) {
     console.error('Error creando el usuario: ', error);
   }
-}*/
-
+}
 
 //Recomendaciones de la tabla rec_medicamentos
 export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
@@ -147,7 +157,7 @@ export const agregarRecomendacionMedicamentos = async (recomendacionesData) => {
 };
 
 //usuarios
-export async function crearUsuario(email, fechaNacimiento, genero, nombre) {
+/*export async function crearUsuario(email, fechaNacimiento, genero, nombre) {
   try {
     const nuevoUsuario = {
       email,
@@ -162,7 +172,7 @@ export async function crearUsuario(email, fechaNacimiento, genero, nombre) {
     console.error('Error creando el usuario: ', error);
   }
 }
-
+*/
 async function obtenerUsuario(id) {
   try {
     const docRef = doc(firestore, 'usuarios', id);
@@ -269,7 +279,6 @@ export const verificarToken = async (token) => {
     const usuariosRef = collection(firestore, 'Usuarios');
     const q = query(usuariosRef, where('UserID', '==', token));
     const querySnapshot = await getDocs(q);
-
     return !querySnapshot.empty;
   } catch (error) {
     console.error("Error al verificar el token:", error);

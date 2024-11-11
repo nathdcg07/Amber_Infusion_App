@@ -5,8 +5,8 @@ import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import React,{ useEffect,useState } from "react";
-
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
+
 import styles from "../Styles/GlobalStyles";
 const { width } = Dimensions.get('window');
 
@@ -35,7 +35,7 @@ export function AlarmHome() {
 
   return (
     <View flex={1} >
-      <ImageBackground  source={require('../assets/FondoVerde.png')}
+      <ImageBackground 
         style={styles.backgroundImage}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
