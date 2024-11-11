@@ -4,7 +4,6 @@
     "slug": "onlyabue",
     "scheme": "com.onlyabue.app",
     "version": "1.0.0",
-    "scheme": "abueapp",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
