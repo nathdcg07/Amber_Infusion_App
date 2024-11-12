@@ -203,6 +203,9 @@ const styles = StyleSheet.create({
       bottom: -250,  // Posición ajustada hacia abajo
       right: 0,  // Ajuste para la posición derecha
     },
+    AlarmCircle:{
+      
+    }
     
 
 });

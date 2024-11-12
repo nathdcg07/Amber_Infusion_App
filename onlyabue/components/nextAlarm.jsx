@@ -1,18 +1,17 @@
 import React,{useEffect, useState} from "react";
-import { Box, View, Text, HStack, Icon } from "native-base";
+import { Box, View, Text, HStack, Icon, Center } from "native-base";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Dimensions } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width,height } = Dimensions.get('window');
 
 export const NextAlarm = ( {ListaMed} ) => {
   const [medicamentoProximo, setMedicamentoProximo] = useState(null);
   for(const{ horaInicio: horas, intervalo: inter, nombreComercial: nombre,} of ListaMed)
 
   return (
-    <Box >
-      <View backgroundColor="#ffffff" borderRadius="1000" width={500} height={500} position={"absolute"} top={-240} left={-120}
-      ></View>
+    <View >
+      
       <View>
         <HStack alignItems="center" paddingLeft={5} paddingTop={5}>          
           <Text alignSelf={'center'} fontSize={24} color="black" ml={2}>Próxima alarma</Text>
@@ -35,6 +34,6 @@ export const NextAlarm = ( {ListaMed} ) => {
         </View>
       )}
       
-    </Box>
+    </View>
   );
 };

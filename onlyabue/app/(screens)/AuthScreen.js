@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, View, Text } from 'react-native';
+import { Button, View, Text,  } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function AuthScreen({ onSignIn }) {

@@ -10,8 +10,7 @@ export const NextDate = ( {ListaMed} ) => {
   
     return (
       <Box>
-        <View backgroundColor="#ffffff" borderRadius="1000" width={500} height={500} position={"absolute"} top={-240} left={-120}
-        ></View>
+        
         <View>
           <HStack alignItems="center" paddingLeft={5} paddingTop={5}>            
             <Text fontSize={24} color="black" ml={2}>Próxima Cita medica</Text>

@@ -1,4 +1,4 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner } from "native-base";
+import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner,Circle } from "native-base";
 import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link } from "expo-router";
@@ -7,20 +7,26 @@ import { NextDate } from "./NextDate";
 import React,{ useEffect,useState } from "react";
 import { CitaCard } from "./CitasProgramadas";
 import styles from "../Styles/GlobalStyles";
+import backogoundo from '../assets/icons/Fondo.jpg'
 
-const { width } = Dimensions.get('window');
-
+const { width,height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const topPosition = aspectRatio > 1.6 ? -200 : -150;
 export const CitasMedicas = () => {
     
   return (
     <View flex={1}>
-        <ImageBackground
+        <ImageBackground source={backogoundo}
         style={styles.backgroundImage}>
       
         <StatusBar/>
             <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+                <View style={styles.nextAlarmContainer}>
+                  <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
+                  ></Circle>
+                  <NextDate />
+                </View>
                 
-                <NextDate />
                 
                 <View alignContent='center'>
                 <Box >

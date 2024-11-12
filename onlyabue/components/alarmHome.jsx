@@ -1,4 +1,4 @@
-import { StatusBar, View, Fab,  Box, Text, Spinner } from "native-base";
+import { StatusBar, View, Fab,  Box, Text, Spinner ,Circle, Hidden} from "native-base";
 import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
@@ -6,9 +6,12 @@ import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import React,{ useEffect,useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
+import backograundo from '../assets/icons/Fondo.jpg'
 
 import styles from "../Styles/GlobalStyles";
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+const aspectRatio = height / width;
+const topPosition = aspectRatio > 1.6 ? -200 : -150;
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
@@ -35,11 +38,13 @@ export function AlarmHome() {
 
   return (
     <View flex={1} >
-      <ImageBackground 
+      <ImageBackground source={backograundo}
         style={styles.backgroundImage}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
+          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
+          ></Circle>
           <NextAlarm ListaMed={Medicamentos} />          
         </View>
         
