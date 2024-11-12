@@ -276,10 +276,21 @@ export const eliminarEtiqueta = async (id) => {
 //para el token 
 export const verificarToken = async (token) => {
   try {
-    const usuariosRef = collection(firestore, 'Usuarios');
-    const q = query(usuariosRef, where('UserID', '==', token));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
+    const usuariosRef = collection(firestore,'usuarios');
+    const usuariosSnapshot = await getDocs(usuariosRef);
+    let tokenEncontrado=false;
+
+    usuariosSnapshot.forEach((doc)=>{
+      const data = doc.data();
+      const tokenArray = data.token || [];
+
+      tokenArray.forEach((tokenObj)=>{
+        if(tokenObj.token === token){
+          tokenEncontrado = true;
+        }
+      });
+    });
+    return tokenEncontrado;
   } catch (error) {
     console.error("Error al verificar el token:", error);
     return false;
