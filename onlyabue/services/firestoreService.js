@@ -276,21 +276,21 @@ export const eliminarEtiqueta = async (id) => {
 //para el token 
 export const verificarToken = async (token) => {
   try {
-    const usuariosRef = collection(firestore,'usuarios');
+    // Referencia a la colección 'usuarios'
+    const usuariosRef = collection(firestore, 'usuarios');
     const usuariosSnapshot = await getDocs(usuariosRef);
-    let tokenEncontrado=false;
-
-    usuariosSnapshot.forEach((doc)=>{
+    
+    // Búsqueda del token en cada documento de la colección
+    for (const doc of usuariosSnapshot.docs) {
       const data = doc.data();
-      const tokenArray = data.token || [];
-
-      tokenArray.forEach((tokenObj)=>{
-        if(tokenObj.token === token){
-          tokenEncontrado = true;
-        }
-      });
-    });
-    return tokenEncontrado;
+      
+      // Verifica si el campo 'Token' del documento coincide con el token proporcionado
+      if (data.Token === token) {
+        return true;  // Token encontrado
+      }
+    }
+    // Si ningún documento tiene el token, devuelve false
+    return false;
   } catch (error) {
     console.error("Error al verificar el token:", error);
     return false;

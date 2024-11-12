@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { Button } from 'native-base';
 import { useRouter, Redirect } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import * as Google from 'expo-auth-session/providers/google';
@@ -17,7 +18,7 @@ import { saveToken } from '../../store/slices/userSlice';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Index() {
- const router = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -97,8 +98,8 @@ export default function Index() {
   if (isLoading) {
     return <LoadingScreen />;
   }
+ 
   
-
   return (
     <View flex={1}>
       {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />}
