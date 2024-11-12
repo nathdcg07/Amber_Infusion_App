@@ -36,11 +36,9 @@ export default function Index() {
         const storedToken = await AsyncStorage.getItem("authToken");
         if (storedToken) {
           setIsAuthenticated(true);
-          alert("existe hay redux");
         } 
         else {
           setIsAuthenticated(false);
-          alert("no esta en redux");
         }
       } catch (error) {
         console.log("Error al verificar el token almacenado:", error);
@@ -78,7 +76,7 @@ export default function Index() {
   
       if (tokenExists) {
         // Almacena el token y establece el estado de autenticación en Redux
-        saveToken(hashedEmail)
+        dispatch(saveToken(hashedEmail));
         setIsAuthenticated(true);
         router.push('/(tabs)/Home');
       } else {
