@@ -43,7 +43,6 @@ export const saveToken = (token) => async (dispatch) => {
     // Guarda el token en AsyncStorage y Redux
     await AsyncStorage.setItem('authToken', tokenString);
     dispatch(setUser(tokenString)); // Guarda el token en Redux
-    console.log("Token guardado correctamente en AsyncStorage");
   } catch (error) {
     alert('Error al guardar el token en AsyncStorage:', error);
   }
