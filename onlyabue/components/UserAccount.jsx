@@ -39,9 +39,8 @@ export const UserAccount = () => {
             <Image source={{
                             uri: "https://via.placeholder.com/200"
                           }}
-                      size={'xl'}
-                      borderRadius={100}
-                      
+                      size={'2xl'}
+                      borderRadius={"full"}                      
                       mb={5}
             />
             <Text fontSize={25} fontWeight={"bold"}>{Nombre+' '+ApellidoPat + ' ' + ApellidMat}</Text>
@@ -63,7 +62,10 @@ export const UserAccount = () => {
           </HStack> 
             
         </VStack>       
-        
+        <View>
+            <Text fontSize={28} fontWeight={"bold"}>Enfermedades de Base:</Text>
+            
+        </View>
         
         </ScrollView>
     </View>

@@ -6,8 +6,8 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 export default function TabsLayout(){
 
     return(
-        <Tabs screenOptions={{tabBarInactiveTintColor: 'Black',tabBarActiveTintColor: 'white',tabBarInactiveBackgroundColor: 'white',tabBarActiveBackgroundColor: '#29B6F6',headerShown:false,  
-            tabBarStyle:{height: 80,borderRadius:30, overflow: 'hidden',},
+        <Tabs screenOptions={{tabBarInactiveTintColor: 'Black',tabBarActiveTintColor: 'white',tabBarInactiveBackgroundColor: 'white',tabBarActiveBackgroundColor: '#29B6F6',headerShown:false, 
+            tabBarStyle:{height: 80,borderRadius:30, overflow: 'hidden', backgroundColor:'red'},
          tabBarLabelStyle: {
             fontSize: 14, marginBottom:15, marginLeft:8, color:'black'}}} >
             <Tabs.Screen name="Home" options={{title: "Medicamentos", tabBarIcon: ({color})=> <Fontisto name="pills" size={28} color={color}/>,}} />
