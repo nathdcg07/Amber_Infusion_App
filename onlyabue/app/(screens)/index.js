@@ -102,6 +102,7 @@ export default function Index() {
     <View flex={1}>
       {/* isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} /> */}
       <Redirect href="/(tabs)/Home" />
+      {/* <Redirect href="/(screens)/AuthScreen" /> */}
     </View>
   );
 }
