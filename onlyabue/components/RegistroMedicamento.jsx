@@ -336,7 +336,7 @@ const { width, height } = Dimensions.get('window');
 
   
     return (
-<Box bg="#28B6F6" flex={1} p={4} position="relative">
+<Box bg="#027AA7" flex={1} p={4} position="relative">
   <View style={styles.topSemiCirclep}></View>
   <View style={styles.middleRigthSemiCircle}></View>
   <View style={styles.middleLeftSemiCircle}></View>

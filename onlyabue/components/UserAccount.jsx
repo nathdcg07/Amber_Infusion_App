@@ -1,10 +1,13 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Circle,Image,HStack,VStack,Divider } from "native-base";
+import { StatusBar, View, Fab, Center, Pressable, Box, Text, Circle,Image,HStack,VStack,Divider,Wrap } from "native-base";
 import { ScrollView, StyleSheet,Dimensions } from "react-native";
 import React,{ useEffect,useState } from "react";
 import logo from '../assets/icons/logoPill.png';
 import styles from "../Styles/GlobalStyles";
 import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import imgPlaceholder from '../assets/icons/Image-placeholder.png'
+import CuadroInf from './InfAdicional'
+
 
 const { width,height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -27,7 +30,7 @@ export const UserAccount = () => {
   const [Edad,setEdad] = useState('80');
   const [TipoSangre,setTipoSangre]=useState('O+');
   const [Sexo,setSexo]=useState('Femenino');
-
+  const [ImagenPerfil,setImagenPerfil] = useState(imgPlaceholder);
   return (
     <View flex={1}>
         <StatusBar backgroundColor={'black'} barStyle={'light-content'}/>  
@@ -36,9 +39,7 @@ export const UserAccount = () => {
           
        
         <VStack marginTop={5} alignItems="center">            
-            <Image source={{
-                            uri: "https://via.placeholder.com/200"
-                          }}
+            <Image source={ImagenPerfil}
                       size={'2xl'}
                       borderRadius={"full"}                      
                       mb={5}
@@ -63,8 +64,29 @@ export const UserAccount = () => {
             
         </VStack>       
         <View>
-            <Text fontSize={28} fontWeight={"bold"}>Enfermedades de Base:</Text>
+            <Text left={6} fontSize={28} fontWeight={"bold"}>Enfermedades de Base:</Text>
+            <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
+            marginTop={6}>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+            </View>
             
+            
+        </View>
+        <View>
+            <Text left={6} fontSize={28} fontWeight={"bold"}>Instrumentaria Medica:</Text>
+            <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
+            marginTop={6}>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+              <CuadroInf></CuadroInf>
+            </View>
+        </View>
+        <View>
+          <Text left={3} fontSize={28} fontWeight={"bold"}> Historial</Text>
         </View>
         
         </ScrollView>

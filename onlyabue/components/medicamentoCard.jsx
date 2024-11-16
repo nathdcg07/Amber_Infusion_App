@@ -1,17 +1,16 @@
 import {  HStack, Box,Text, Pressable,View  } from "native-base";
 import { Link } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Touchable} from 'react-native'
 import styles from "../Styles/GlobalStyles";
 
 
 export default function MedCard({medicamento}){
     return(
-        <View style={styles.CardsContainer} shadow={"6"} >
+        <View alignSelf={'center'} style={styles.CardsContainer} shadow={"6"} >
             
-                <Link asChild href='./MedDetails'>
+                <Link asChild href='/(screens)/MedDetails'>
                     <Pressable>                        
-                        <HStack space={3} alignItems="center" padding="1">
+                        <HStack space={3} alignItems="center" >
                             <Box alignItems={'center'}flex={1} >
                                 <Text  fontWeight={'bold'} fontSize={'md'} color={'#0D94B9'}> 
                                     

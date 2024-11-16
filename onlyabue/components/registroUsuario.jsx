@@ -9,7 +9,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import styles from '../Styles/GlobalStyles'
-
+import CustomImagePicker from './ImagePicker';
 
 export const RegistroUsuario= ({Token}) => {
   const [token,setToken] = useState({Token});
@@ -101,29 +101,6 @@ export const RegistroUsuario= ({Token}) => {
 
   };
   
-  let openImagePickerAsync = async()=>{
-    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if(permissionResult.granted===false){
-      alert('Los permisos a galeria de imagenes son requeridos para continuar');
-      return;
-      }
-      const PickResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:ImagePicker.MediaTypeOptions.Images,
-        allowsEditing:true,
-        aspect:[4,3],
-        quality:1,
-      });     
-      
-  if(PickResult.canceled===true){
-    setErrorImage('Seleccione una imagen')
-    return;
-  }
-  const uri = PickResult.assets?.[0]?.uri;
-     setSelectedImagen(uri);
-     setErrorImagen('');
-  }
-
-  
 
   return (
     <Box bg="#28B6F6" flex={1} p={4} position="relative">
@@ -135,7 +112,13 @@ export const RegistroUsuario= ({Token}) => {
               <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
                 <View style={styles.registerContainer}>
                   <Text style={styles.Titulo}>Elija una foto suya</Text>
-                <TouchableOpacity onPress={openImagePickerAsync}>
+                <CustomImagePicker
+                  selectedImage={SelectedImagen}
+                  setSelectedImage={setSelectedImagen}
+                  errorImage={errorImage}
+                  setErrorImage={setErrorImagen}
+                />
+                {/* <TouchableOpacity onPress={openImagePickerAsync}>
                   <Image    
                     source={{
                       uri : SelectedImagen !== null
@@ -143,7 +126,7 @@ export const RegistroUsuario= ({Token}) => {
                   : 'https://via.placeholder.com/100'// Placeholder local
                   }}style={styles.iconRegistroUsuario} />
                 </TouchableOpacity>
-                {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
+                {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null} */}
                   <Text style={styles.Titulo}>Ingrese sus datos basicos</Text>
                   <View style={styles.formContainer}>
                     <VStack>

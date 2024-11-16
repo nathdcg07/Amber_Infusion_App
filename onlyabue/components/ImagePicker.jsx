@@ -2,6 +2,7 @@ import React from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { TouchableOpacity, Image, Text } from 'react-native';
 import styles from '../assets/stylesheets/RegistroMedicamento.styles';
+import imgPlaceholder from '../assets/icons/Image-placeholder.png'
 
 const CustomImagePicker = ({ selectedImage, setSelectedImage, errorImage, setErrorImage }) => {
   const openImagePickerAsync = async () => {
@@ -30,9 +31,7 @@ const CustomImagePicker = ({ selectedImage, setSelectedImage, errorImage, setErr
   return (
     <TouchableOpacity onPress={openImagePickerAsync}>
       <Image
-        source={{
-          uri: selectedImage ? selectedImage : 'https://via.placeholder.com/100'
-        }}
+        source={selectedImage ? { uri: selectedImage } : imgPlaceholder}
         style={styles.icon}
       />
       {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
