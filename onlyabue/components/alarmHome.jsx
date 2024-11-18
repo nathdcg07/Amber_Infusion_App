@@ -7,6 +7,7 @@ import MedCard from "./medicamentoCard";
 import React,{ useEffect,useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from '../assets/icons/Fondo.jpg'
+import { getNameFromAsyncStorage,loadMedsFromFile,saveMedsToFile } from "../services/frontServices";
 
 import styles from "../Styles/GlobalStyles";
 const { width, height } = Dimensions.get('window');
@@ -16,21 +17,42 @@ const topPosition = aspectRatio > 1.6 ? -200 : -150;
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const user = getNameFromAsyncStorage();
 
   useEffect(() => {
-    setIsLoading(true);
-      fetchMeds('usuario1234');
-      
- }, []);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const dataMeds = await loadMedsFromFile();     
+        if (dataMeds && dataMeds.length > 0) {
+          setMedicamentos(dataMeds);
+          setIsLoading(false);
+        } else {
+
+          await fetchMeds(user);
+        }
+      } catch (error) {
+        console.error("Error al cargar medicamentos:", error);
+      }
+    };
+    
+    fetchData();
+  }, []);
+  
+
  async function fetchMeds(user) {
   try {
+    const data = await obtenerMedicamentosPorUsuario(user);
 
-      const data = await obtenerMedicamentosPorUsuario(user);
-      setMedicamentos(data);
-      setIsLoading(false);
+    // Guardar en el estado
+    setMedicamentos(data);
+
+    // Guardar en un archivo
+    await saveMedsToFile(data);
+
+    setIsLoading(false);
   } catch (error) {
-      console.error("Error fetching meds:", error);
+    console.error("Error fetching meds:", error);
   }
 }
 

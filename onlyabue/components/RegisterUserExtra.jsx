@@ -6,7 +6,7 @@ import { crearUsuario } from '../services/firestoreService';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'expo-router';
 import { setUser } from '../store/slices/userSlice';
-import { saveToken } from '../store/slices/userSlice';
+import { saveToken,saveName } from '../store/slices/userSlice';
 
 
 const { width, height } = Dimensions.get('window');
@@ -50,7 +50,8 @@ export const RegisterUserExtra = ({User}) => {
       enfermedades,
       instrumentacion,
       tipoSangre: Sangre}];
-      crearUsuario(usuario);
+      const user =crearUsuario(usuario);
+      dispatch(saveName(user));
       const token = JSON.stringify(usuario[0].Token);
       dispatch(saveToken(token));
       router.push('/(tabs)/Home');

@@ -6,54 +6,57 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     token: null,
+    name: null, // Nuevo campo para almacenar el nombre del usuario
     isAuthenticated: false,
   },
   reducers: {
     setUser: (state, action) => {
       state.token = action.payload;
-      state.isAuthenticated = !!action.payload; // Establece isAuthenticated si hay un token
+      state.isAuthenticated = !!action.payload;
+    },
+    setName: (state, action) => {
+      state.name = action.payload; // Almacena el nombre en el estado de Redux
     },
     clearUser: (state) => {
       state.token = null;
+      state.name = null; // Limpia también el nombre
       state.isAuthenticated = false;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, setName, clearUser } = userSlice.actions;
 export default userSlice.reducer;
 
-// Asynchronous functions to handle AsyncStorage
-export const loadToken = () => async (dispatch) => {
-  try {
-    const token = await AsyncStorage.getItem('authToken');
-    if (token) {
-      dispatch(setUser(token)); // Carga el token desde AsyncStorage
-    }
-  } catch (error) {
-    console.error('Error loading token from AsyncStorage:', error);
-  }
-};
 
 export const saveToken = (token) => async (dispatch) => {
   try {
-    // Verifica si el token es un objeto, conviértelo en string si es necesario
     const tokenString = typeof token === 'string' ? token : JSON.stringify(token);
-
-    // Guarda el token en AsyncStorage y Redux
     await AsyncStorage.setItem('authToken', tokenString);
-    dispatch(setUser(tokenString)); // Guarda el token en Redux
+    dispatch(setUser(tokenString));
   } catch (error) {
     alert('Error al guardar el token en AsyncStorage:', error);
   }
 };
 
+// Nueva función para guardar el nombre
+export const saveName = (name) => async (dispatch) => {
+  try {
+    await AsyncStorage.setItem('userName', name); // Guarda el nombre en AsyncStorage
+    dispatch(setName(name)); // Actualiza Redux con el nombre
+  } catch (error) {
+    console.error('Error al guardar el nombre en AsyncStorage:', error);
+  }
+};
+
+
 
 export const clearStoredToken = () => async (dispatch) => {
   try {
     await AsyncStorage.removeItem('authToken');
-    dispatch(clearUser()); // Limpia el token en Redux
+    await AsyncStorage.removeItem('userName'); // Limpia también el nombre
+    dispatch(clearUser());
   } catch (error) {
-    console.error('Error clearing token from AsyncStorage:', error);
+    console.error('Error clearing token and name from AsyncStorage:', error);
   }
 };
