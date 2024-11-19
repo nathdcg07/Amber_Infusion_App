@@ -1,4 +1,4 @@
-import { StatusBar, View, Fab,  Box, Text, Spinner ,Circle, Hidden} from "native-base";
+import { StatusBar, View, Fab,  Box, Text, Spinner ,Circle, Hidden, Button} from "native-base";
 import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
@@ -8,6 +8,7 @@ import React,{ useEffect,useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from '../assets/icons/Fondo.jpg'
 import { getNameFromAsyncStorage,loadMedsFromFile,saveMedsToFile } from "../services/frontServices";
+import { obtenerDocumentoPorToken } from "../services/firestoreService";
 
 import styles from "../Styles/GlobalStyles";
 const { width, height } = Dimensions.get('window');
@@ -17,28 +18,41 @@ const topPosition = aspectRatio > 1.6 ? -200 : -150;
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const user = getNameFromAsyncStorage();
+  const [user, setUser] = useState(null);
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const dataMeds = await loadMedsFromFile();     
-        if (dataMeds && dataMeds.length > 0) {
-          setMedicamentos(dataMeds);
-          setIsLoading(false);
-        } else {
-
-          await fetchMeds(user);
-        }
-      } catch (error) {
-        console.error("Error al cargar medicamentos:", error);
-      }
-    };
-    
+    fetchUser();
     fetchData();
   }, []);
-  
+
+  const fetchUser = async () => {
+    try{
+      const fetchedUser = await getNameFromAsyncStorage();
+      alert(fetchedUser)
+    setUser(fetchedUser);
+    }catch(e){
+      alert("error en el token",e);
+    }
+    
+  };
+
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const dataMeds = await loadMedsFromFile();     
+      if (dataMeds && dataMeds.length > 0) {
+        setMedicamentos(dataMeds);
+        setIsLoading(false);
+      } else {
+
+        await fetchMeds(user);
+      }
+    } catch (error) {
+      console.error("Error al cargar medicamentos:", error);
+    }
+  };
 
  async function fetchMeds(user) {
   try {
@@ -55,6 +69,7 @@ export function AlarmHome() {
     console.error("Error fetching meds:", error);
   }
 }
+
 
   
 
@@ -81,7 +96,7 @@ export function AlarmHome() {
               <MedCard key={med.id} medicamento={med}/>
             ))
           )}
-          
+           
           </View>
        </Box>
        </View>

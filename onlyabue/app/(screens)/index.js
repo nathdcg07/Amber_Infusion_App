@@ -78,8 +78,8 @@ export default function Index() {
   
       if (tokenExists) {
         // Almacena el token y establece el estado de autenticación en Redux
-        const user = obtenerDocumentoPorToken(hashedEmail);
-        dispatch(saveName(user));
+        const userDocumentId = await obtenerDocumentoPorToken(hashedEmail);
+        dispatch(saveName(userDocumentId));
         dispatch(saveToken(hashedEmail));
         setIsAuthenticated(true);
         router.push('/(tabs)/Home');
@@ -100,11 +100,10 @@ export default function Index() {
     return <LoadingScreen />;
   }
  
-  
   return (
     <View flex={1}>
       {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} /> }
-      
+
     </View>
   );
 }

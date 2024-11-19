@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Dimensions, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { useState,useCallback } from 'react';
+import { useState,useCallback,useEffect } from 'react';
 import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
 import { Link, useRouter } from "expo-router";
@@ -12,15 +12,16 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import { firestore, storage } from '../services/firebaseConfig';
 import { collection, addDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-
+import { getNameFromAsyncStorage } from "../services/frontServices";
 import CustomImagePicker from './ImagePicker';
 import { primerRecordatorio } from "./recordatorios/notificacionesService";
-const router = useRouter();
+
 
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
+  const router = useRouter();
   const [NombreComercial,setNombreComercial] = useState('');
   const [NombreGenerico,setNombreGenerico] = useState('');
   const [Dosis,setDosis] = useState('');
@@ -34,6 +35,15 @@ const { width, height } = Dimensions.get('window');
   const [selectedColor, setSelectedColor] = useState('#ffffff'); // Estado para el color seleccionado
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const fetchUser = async () => {
+    const fetchedUser = await getNameFromAsyncStorage();
+    setUser(fetchedUser);
+  };
+  fetchUser();
+}, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -104,7 +114,7 @@ const { width, height } = Dimensions.get('window');
         return;
       }
       setLoading(true);
-      const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), 'usuario1234');
+      const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), user);
       const imageMedUrl = await uploadImage(selectedImageMed);
       const imageBoxUrl = await uploadImage(selectedImageBox);
 

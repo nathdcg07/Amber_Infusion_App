@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 
 export const getNameFromAsyncStorage = async () => {
   try {
-    const name = await AsyncStorage.getItem('name'); // 'name' es la clave usada para guardar el dato
+    const name = await AsyncStorage.getItem('userName'); // 'name' es la clave usada para guardar el dato
     if (name) {
       console.log('Nombre recuperado:', name);
       return name; // Devuelve el nombre si existe
