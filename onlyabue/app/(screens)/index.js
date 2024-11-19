@@ -99,11 +99,10 @@ export default function Index() {
   if (isLoading) {
     return <LoadingScreen />;
   }
- 
+
   return (
     <View flex={1}>
       {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} /> }
-
     </View>
   );
 }

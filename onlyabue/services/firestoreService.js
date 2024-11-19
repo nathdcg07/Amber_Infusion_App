@@ -1,5 +1,5 @@
 import { firestore } from './firebaseConfig';
-import { collection, addDoc, getDocs, updateDoc, doc,setDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc,setDoc, deleteDoc, query, where, getDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
 
 // Para medicamentos
@@ -24,14 +24,33 @@ export const obtenerMedicamentos = async () => {
 
 export const obtenerMedicamentosPorUsuario = async (usuarioId) => {
   try {
-    const q = query(collection(firestore, 'medicamentos'), where('usuarioId', '==', usuarioId));
-    const medicamentosSnapshot = await getDocs(q);
-    const listaMedicamentos = medicamentosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Referencia al documento del usuario con el ID proporcionado
+    const usuarioDocRef = doc(firestore, 'usuarios', usuarioId);
+
+    // Verificar si el documento existe
+    const usuarioDoc = await getDoc(usuarioDocRef);
+    if (!usuarioDoc.exists()) {
+      console.error(`No se encontró un usuario con el ID: ${usuarioId}`);
+      return [];
+    }
+
+    // Acceder a la subcolección "medicamentos" del usuario
+    const medicamentosCollectionRef = collection(usuarioDocRef, 'medicamentos');
+    const medicamentosSnapshot = await getDocs(medicamentosCollectionRef);
+
+    // Mapear los documentos de la subcolección a un array
+    const listaMedicamentos = medicamentosSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
     return listaMedicamentos;
   } catch (error) {
     console.error('Error al obtener medicamentos:', error);
+    return [];
   }
 };
+
 
 export const actualizarMedicamento = async (medicamentoId, nuevosDatos) => {
   try {

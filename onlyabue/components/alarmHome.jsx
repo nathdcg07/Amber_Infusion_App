@@ -29,7 +29,6 @@ export function AlarmHome() {
   const fetchUser = async () => {
     try{
       const fetchedUser = await getNameFromAsyncStorage();
-      alert(fetchedUser)
     setUser(fetchedUser);
     }catch(e){
       alert("error en el token",e);
