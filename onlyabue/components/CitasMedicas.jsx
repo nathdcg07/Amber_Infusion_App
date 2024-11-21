@@ -30,7 +30,7 @@ export const CitasMedicas = () => {
                 
                 <View alignContent='center'>
                 <Box >
-                    <Text alignSelf={'center'} color='white' fontSize={23} fontWeight='bold'>
+                    <Text alignSelf={'center'} color='white' fontSize={29} fontWeight='bold'>
                         Citas Medicas
                     </Text>
                     <View paddingX={3}>
