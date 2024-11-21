@@ -13,7 +13,9 @@ import * as WebBrowser from 'expo-web-browser';
 import { verificarToken } from '../../services/firestoreService';
 import * as AuthSession from 'expo-auth-session';
 import CryptoJS from 'crypto-js'
-import { saveToken } from '../../store/slices/userSlice';
+import { saveToken,saveName } from '../../store/slices/userSlice';
+import { obtenerDocumentoPorToken } from '../../services/firestoreService';
+
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -76,11 +78,12 @@ export default function Index() {
   
       if (tokenExists) {
         // Almacena el token y establece el estado de autenticación en Redux
+        const userDocumentId = await obtenerDocumentoPorToken(hashedEmail);
+        dispatch(saveName(userDocumentId));
         dispatch(saveToken(hashedEmail));
         setIsAuthenticated(true);
         router.push('/(tabs)/Home');
       } else {
-        // Redirige a la pantalla de registro con el token y el correo electrónico
         router.push({
           pathname: '/RegisterUser', 
           params: { Token: hashedEmail }  
@@ -97,12 +100,10 @@ export default function Index() {
     return <LoadingScreen />;
   }
  
-  
   return (
     <View flex={1}>
-      {/* isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} /> */}
-      <Redirect href="/(tabs)/Home" />
-      {/* <Redirect href="/(screens)/AuthScreen" /> */}
+      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} /> }
+
     </View>
   );
 }

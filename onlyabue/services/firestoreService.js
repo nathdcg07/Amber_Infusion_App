@@ -138,11 +138,13 @@ export async function crearUsuario(user) {
       throw new Error("El parámetro 'user' debe ser un objeto plano.");
     }
 
-    // Procede con la adición a la colección de Firebase
-    await addDoc(collection(firestore, 'usuarios'), user);
-    console.log('Usuario creado con éxito');
+    // Agrega el documento a la colección y recupera su referencia
+    const docRef = await addDoc(collection(firestore, 'usuarios'), user);
+    console.log(`Usuario creado con éxito. ID del documento: ${docRef.id}`);
+    return docRef.id;
   } catch (error) {
     console.error('Error creando el usuario: ', error);
+    return null; // Retorna null en caso de error
   }
 }
 
@@ -294,6 +296,30 @@ export const verificarToken = async (token) => {
   } catch (error) {
     console.error("Error al verificar el token:", error);
     return false;
+  }
+};
+
+//Para obtener el nombre del doc
+export const obtenerDocumentoPorToken = async (token) => {
+  try {
+    // Referencia a la colección 'usuarios'
+    const usuariosRef = collection(firestore, 'usuarios');
+    const usuariosSnapshot = await getDocs(usuariosRef);
+
+    // Itera sobre los documentos en la colección
+    for (const doc of usuariosSnapshot.docs) {
+      const data = doc.data();
+
+      // Verifica si el campo 'Token' coincide con el token proporcionado
+      if (data.Token === token) {
+        return doc.id; // Devuelve el ID del documento donde se encontró el token
+      }
+    }
+    // Si no se encuentra el token, devuelve null
+    return null;
+  } catch (error) {
+    console.error("Error al obtener el documento por token:", error);
+    return null;
   }
 };
 
