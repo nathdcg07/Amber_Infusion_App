@@ -25,7 +25,7 @@ const [Dosis,setDosis] = useState('1/2');
 const [Unidad,setUnidad]= useState('Gr.');
 
     return(
-      <Box flex={1} p={4} position="relative">
+      <Box flex={1} p={2} position="relative">
         <View>
                 <TouchableOpacity onPress={() => router.back()} style={styles.BackIconButton}>
                     <Ionicons name="arrow-back-circle" size={50} color="black" />
@@ -63,15 +63,11 @@ const [Unidad,setUnidad]= useState('Gr.');
                 />
                 <Text bold textAlign="center" mt={2} color={'white'}>Dosis: {Dosis}</Text>
             </Box>
-        </HStack>
-         <VStack w="90%" space={2}>
-            <Text fontWeight={'bold'} fontSize={24}>Descipcion:</Text>
-            <Text fontSize={25}>{Descripcion}</Text>
-         </VStack>
+        </HStack>        
          <VStack>
             
          </VStack>
-         <HStack space={4}>
+         <HStack marginTop={5} space={4}>
             <VStack marginRight={22}  alignItems={'center'}>
                 <Text color={'#0D94B9'} fontWeight={'bold'} fontSize={15}>Cada {Intervalo} Horas.</Text>
                 <Text>{Dias}</Text>
