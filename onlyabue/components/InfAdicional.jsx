@@ -1,8 +1,10 @@
 import { Text, View,Box } from "native-base";
 import { useState, } from "react";
 
-const [InfoAdicional, setInfoAdicional]= useState('Hipertencion');
-export default function CuadroInf  (){
+
+
+export default function CuadroInf  ({enfermedad}){
+    const [InfoAdicional, setInfoAdicional]= useState(enfermedad);
 return(
     <View margin={2} >
         <Box backgroundColor={'#0D94B9'} borderRadius={15}> 

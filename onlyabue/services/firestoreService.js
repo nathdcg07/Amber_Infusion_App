@@ -442,6 +442,27 @@ const calcularRecordatorioCita = (fechaCita) => {
   return { unDiaAntes, dosHorasAntes };
 };
 
+//funcion para recuperdar datos del usuario
+
+export const getUserData = async(usuarioId) =>{
+  try{
+    const usuarioDocRef = doc(firestore, 'usuarios', usuarioId);
+    // Verificar si el documento existe
+    const usuarioDoc = await getDoc(usuarioDocRef);
+    if(usuarioDoc.exists()){
+      return usuarioDoc.data();
+    }
+    else{
+      return [];
+    }
+  }
+  catch(e){
+    console.error('error al obtener datos',e);
+    return [];
+  }
+
+}
+
 const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
 console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);
