@@ -205,7 +205,13 @@ const styles = StyleSheet.create({
     },
     AlarmCircle:{
       
-    }
+    },
+    row: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "flex-start",
+      marginTop: 6,
+    },
     
 
 });

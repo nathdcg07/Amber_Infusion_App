@@ -1,96 +1,160 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Circle,Image,HStack,VStack,Divider,Wrap } from "native-base";
-import { ScrollView, StyleSheet,Dimensions } from "react-native";
-import React,{ useEffect,useState } from "react";
-import logo from '../assets/icons/logoPill.png';
+import React, { useState } from "react";
+import {  ScrollView,  Dimensions,  StyleSheet,  TouchableOpacity,} from "react-native";
+import {  StatusBar,  View,  Box,  Circle,  VStack,  Image,  Text,  HStack,  Divider,  Card, Button,} from "native-base";
+import Foundation from "@expo/vector-icons/Foundation";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import CuadroInf from "./InfAdicional";
+import imgPlaceholder from "../assets/icons/Image-placeholder.png";
 import styles from "../Styles/GlobalStyles";
-import Foundation from '@expo/vector-icons/Foundation';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import imgPlaceholder from '../assets/icons/Image-placeholder.png'
-import CuadroInf from './InfAdicional'
-
-
-const { width,height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
-function sexoFunc(Sexo){
-  if(Sexo == 'Masculino'){
+
+function sexoFunc(Sexo) {
+  if (Sexo === "Masculino") {
     return <Foundation name="male-symbol" size={24} color="white" />;
-  }else if(Sexo == 'Femenino'){
-    return <Foundation name="female-symbol" size={24} color="white" />
-  }else{
-    return <AntDesign name="minus" size={24} color="white" />
+  } else if (Sexo === "Femenino") {
+    return <Foundation name="female-symbol" size={24} color="white" />;
+  } else {
+    return <AntDesign name="minus" size={24} color="white" />;
   }
-
 }
+
 export const UserAccount = () => {
+  const [Nombre] = useState("pepito");
+  const [ApellidoPat] = useState("juares");
+  const [ApellidMat] = useState("cadima");
+  const [Edad] = useState("80");
+  const [TipoSangre] = useState("O+");
+  const [Sexo] = useState("Femenino");
+  const [EnfermedadesBase] = useState(["enfermedad1", "enfermedad2"]);
+  const [InstrumentalMed] = useState(["marca paso", "cuack"]);
+  const [ImagenPerfil] = useState(imgPlaceholder);
+  const cardsData = [
+    { id: 1, title: "Card 1", image: "https://via.placeholder.com/150" },
+    { id: 2, title: "Card 2", image: "https://via.placeholder.com/150" },
+    { id: 3, title: "Card 3", image: "https://via.placeholder.com/150" },
+  ];
 
-  const [Nombre,setNombre]= useState('pepito');
-  const [ApellidoPat,setApellidoPat] = useState('juares');
-  const [ApellidMat,setApellidoMat] = useState('cadima');
-  const [Edad,setEdad] = useState('80');
-  const [TipoSangre,setTipoSangre]=useState('O+');
-  const [Sexo,setSexo]=useState('Femenino');
-  const [ImagenPerfil,setImagenPerfil] = useState(imgPlaceholder);
   return (
-    <View flex={1}>
-        <StatusBar backgroundColor={'black'} barStyle={'light-content'}/>  
-        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <Circle backgroundColor="#027AA7"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}/>             
-          
-       
-        <VStack marginTop={5} alignItems="center">            
-            <Image source={ImagenPerfil}
-                      size={'2xl'}
-                      borderRadius={"full"}                      
-                      mb={5}
-            />
-            <Text fontSize={25} fontWeight={"bold"}>{Nombre+' '+ApellidoPat + ' ' + ApellidMat}</Text>
-            <HStack background={'#0D94B9'} borderRadius={10} space={3} mt={5} mb={5}>
-            <Box   p={3} alignItems="center">
-              <Text color="white" fontSize="lg">{Edad} años</Text>
-              <Text color="white" fontSize="sm">Edad </Text>
+    <ScrollView contentContainerStyle={styles.contentContainer}
+    >
+      <StatusBar backgroundColor="black" barStyle="light-content" />
+      <Circle
+        backgroundColor="#027AA7"
+        width={width * 1.1}
+        height={height * 0.5}
+        position="absolute"
+        zIndex={-1}
+        top={topPosition}
+      />
+      <Box>
+        <VStack mt={10} alignItems="center">
+          <Image
+            source={ImagenPerfil}
+            size="2xl"
+            borderRadius="full"
+            mb={5}
+            alt="Perfil"
+          />
+          <Text fontSize={25} fontWeight="bold">
+            {`${Nombre} ${ApellidoPat} ${ApellidMat}`}
+          </Text>
+          <HStack
+            background="#0D94B9"
+            borderRadius={10}
+            space={3}
+            mt={5}
+            mb={5}
+            p={3}
+          >
+            <Box alignItems="center">
+              <Text color="white" fontSize="lg">
+                {Edad} años
+              </Text>
+              <Text color="white" fontSize="sm">
+                Edad
+              </Text>
             </Box>
-            <Divider orientation="vertical" thickness="2" ></Divider>
-            <Box  p={3} alignItems="center">
-              <Text color="white" fontSize="lg">{TipoSangre}</Text>
-              <Text color="white" fontSize="sm">Sangre </Text>
+            <Divider orientation="vertical" thickness={2} />
+            <Box alignItems="center">
+              <Text color="white" fontSize="lg">
+                {TipoSangre}
+              </Text>
+              <Text color="white" fontSize="sm">
+                Sangre
+              </Text>
             </Box>
-            <Divider orientation="vertical" thickness="2"></Divider>
-            <Box p={3} alignItems="center">
-              {sexoFunc(Sexo)}              
-              <Text color="white" fontSize="sm">{Sexo} </Text>
+            <Divider orientation="vertical" thickness={2} />
+            <Box alignItems="center">
+              {sexoFunc(Sexo)}
+              <Text color="white" fontSize="sm">
+                {Sexo}
+              </Text>
             </Box>
-          </HStack> 
-            
-        </VStack>       
-        <View>
-            <Text left={6} fontSize={28} fontWeight={"bold"}>Enfermedades de Base:</Text>
-            <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
-            marginTop={6}>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-            </View>
-            
-            
+          </HStack>
+        </VStack>
+      </Box>
+      <Box px={4}>
+        <Text fontSize={28} fontWeight="bold">
+          Enfermedades de Base:
+        </Text>
+        <View style={styles.row}>
+          {EnfermedadesBase.map((enfermedad, index) => (
+            <CuadroInf key={index} info={enfermedad} />
+          ))}
         </View>
-        <View>
-            <Text left={6} fontSize={28} fontWeight={"bold"}>Instrumentaria Medica:</Text>
-            <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
-            marginTop={6}>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-              <CuadroInf></CuadroInf>
-            </View>
+      </Box>
+      <Box px={4}>
+        <Text fontSize={28} fontWeight="bold">
+          Instrumentaria Médica:
+        </Text>
+        <View style={styles.row}>
+          {InstrumentalMed.map((instrumento, index) => (
+            <CuadroInf key={index} info={instrumento} />
+          ))}
         </View>
-        <View>
-          <Text left={3} fontSize={28} fontWeight={"bold"}> Historial</Text>
-        </View>
+      </Box>
+      <Box px={4}>
+        <HStack space={2}>
+          <Text fontSize={28} fontWeight="bold">
+            Historial
+          </Text>
+          <TouchableOpacity style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
+        </HStack>
         
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {cardsData.map((card) => (
+            <TouchableOpacity key={card.id}>
+              <Card
+                style={{
+                  marginHorizontal: 10,
+                  width: 200,
+                  height: 250,
+                  borderRadius: 20,
+                }}
+              >
+                <Image
+                  source={{ uri: card.image }}
+                  alt={card.title}
+                  style={{
+                    height: 150,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                  }}
+                />
+                <Box p={3} borderRadius={20}>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {card.title}
+                  </Text>
+                </Box>
+              </Card>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
-    </View>
-  )
-}
+      </Box>
+    </ScrollView>
+  );
+};
+
 
