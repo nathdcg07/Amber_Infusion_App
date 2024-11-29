@@ -159,7 +159,7 @@ export const UserAccount = () => {
           <Text fontSize={28} fontWeight="bold">
             Historial
           </Text>
-          <TouchableOpacity style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
+          <TouchableOpacity onPress={verMas} style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
         </HStack>
         <HStack>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
