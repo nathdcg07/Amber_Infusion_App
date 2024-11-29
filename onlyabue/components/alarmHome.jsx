@@ -13,16 +13,16 @@ import { obtenerDocumentoPorToken } from "../services/firestoreService";
 import styles from "../Styles/GlobalStyles";
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
-const topPosition = aspectRatio > 1.6 ? -200 : -150;
+const topPosition = aspectRatio > 1.6 ? -240 : -150;
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('W2H5OUAzK5maXu5jcww5');
 
 
   useEffect(() => {
-    fetchUser();
+    //fetchUser();
     fetchData();
   }, []);
 
@@ -31,7 +31,7 @@ export function AlarmHome() {
       const fetchedUser = await getNameFromAsyncStorage();
     setUser(fetchedUser);
     }catch(e){
-      alert("error en el token",e);
+      alert("error en el nombre",e);
     }
     
   };
@@ -45,8 +45,7 @@ export function AlarmHome() {
         setMedicamentos(dataMeds);
         setIsLoading(false);
       } else {
-
-        await fetchMeds(user);
+        await fetchMeds('W2H5OUAzK5maXu5jcww5');
       }
     } catch (error) {
       console.error("Error al cargar medicamentos:", error);
@@ -79,7 +78,7 @@ export function AlarmHome() {
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
-          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
+          <Circle backgroundColor="#ffffff"  width={width * 1.2} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
           ></Circle>
           <NextAlarm ListaMed={Medicamentos} />          
         </View>

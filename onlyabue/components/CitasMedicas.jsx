@@ -7,12 +7,26 @@ import { NextDate } from "./NextDate";
 import React,{ useEffect,useState } from "react";
 import { CitaCard } from "./CitasProgramadas";
 import styles from "../Styles/GlobalStyles";
-import backogoundo from '../assets/icons/Fondo.jpg'
+import backogoundo from '../assets/icons/Fondo.jpg';
+import { getNameFromAsyncStorage } from "../services/frontServices";
 
 const { width,height } = Dimensions.get('window');
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
 export const CitasMedicas = () => {
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+const fetchUser = async () => {
+    try{
+      const fetchedUser = await getNameFromAsyncStorage();
+    setUser(fetchedUser);
+    }catch(e){
+      alert("error en el token",e);
+    }
+    
+};
     
   return (
     <View flex={1}>
