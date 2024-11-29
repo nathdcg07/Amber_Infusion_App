@@ -6,7 +6,9 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import CuadroInf from "./InfAdicional";
 import imgPlaceholder from "../assets/icons/Image-placeholder.png";
 import styles from "../Styles/GlobalStyles";
-const { width, height } = Dimensions.get("window");
+import { HistorialHCard } from "./HistorialHCard";
+import { router } from "expo-router";
+const { width, height } = Dimensions.get("window");1
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
 
@@ -35,6 +37,9 @@ export const UserAccount = () => {
     { id: 2, title: "Card 2", image: "https://via.placeholder.com/150" },
     { id: 3, title: "Card 3", image: "https://via.placeholder.com/150" },
   ];
+  const verMas=()=>{
+    router.push('(screens)/HistorialCompleto')
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}
@@ -120,36 +125,13 @@ export const UserAccount = () => {
           <Text fontSize={28} fontWeight="bold">
             Historial
           </Text>
-          <TouchableOpacity style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
+          <TouchableOpacity onPress={verMas} style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
         </HStack>
         
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={true}>
           {cardsData.map((card) => (
-            <TouchableOpacity key={card.id}>
-              <Card
-                style={{
-                  marginHorizontal: 10,
-                  width: 200,
-                  height: 250,
-                  borderRadius: 20,
-                }}
-              >
-                <Image
-                  source={{ uri: card.image }}
-                  alt={card.title}
-                  style={{
-                    height: 150,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  }}
-                />
-                <Box p={3} borderRadius={20}>
-                  <Text fontSize="lg" fontWeight="bold">
-                    {card.title}
-                  </Text>
-                </Box>
-              </Card>
-            </TouchableOpacity>
+            
+            <HistorialHCard></HistorialHCard>
           ))}
         </ScrollView>
       </Box>

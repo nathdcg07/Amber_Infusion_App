@@ -117,6 +117,14 @@ const styles = StyleSheet.create({
       alignItems:'flex-end',
       margin:8,
   },
+  imgHistorialCard:{
+    width:140,
+    height:150,
+    borderRadius:10,
+  },
+  imgHistorialContainer:{
+    marginRight:10,
+  },
     CitaText:{
       fontSize:24,
       fontWeight:'bold',
@@ -127,6 +135,7 @@ const styles = StyleSheet.create({
       fontSize:18,
       
     },
+    
 //======================== Botones ===============================
     BackIconButton:{
       width: 50, 
