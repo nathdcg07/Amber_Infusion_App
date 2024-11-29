@@ -1,7 +1,10 @@
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Circle,Image,HStack,VStack,Divider,Wrap,Spinner } from "native-base";
-import { ScrollView, StyleSheet,Dimensions } from "react-native";
-import React,{ useEffect,useState } from "react";
-import logo from '../assets/icons/logoPill.png';
+import React, { useState } from "react";
+import {  ScrollView,  Dimensions,  StyleSheet,  TouchableOpacity,} from "react-native";
+import {  StatusBar,  View,  Box,  Circle,  VStack,  Image,  Text,  HStack,  Divider,  Card, Button,} from "native-base";
+import Foundation from "@expo/vector-icons/Foundation";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import CuadroInf from "./InfAdicional";
+import imgPlaceholder from "../assets/icons/Image-placeholder.png";
 import styles from "../Styles/GlobalStyles";
 import Foundation from '@expo/vector-icons/Foundation';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -13,16 +16,17 @@ import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 const { width,height } = Dimensions.get('window');
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
-function sexoFunc(Sexo){
-  if(Sexo == 'Masculino'){
-    return <Foundation name="male-symbol" size={24} color="white" />;
-  }else if(Sexo == 'Femenino'){
-    return <Foundation name="female-symbol" size={24} color="white" />
-  }else{
-    return <AntDesign name="minus" size={24} color="white" />
-  }
 
+function sexoFunc(Sexo) {
+  if (Sexo === "Masculino") {
+    return <Foundation name="male-symbol" size={24} color="white" />;
+  } else if (Sexo === "Femenino") {
+    return <Foundation name="female-symbol" size={24} color="white" />;
+  } else {
+    return <AntDesign name="minus" size={24} color="white" />;
+  }
 }
+
 export const UserAccount = () => {
 
   const [Nombre,setNombre]= useState('pepito');
@@ -111,13 +115,47 @@ useEffect(() => {
               </View>
             )}
         </View>
-        <View>
-          <Text left={3} fontSize={28} fontWeight={"bold"}> Historial</Text>
-        </View>
-        </>)}
+      </Box>
+      <Box px={4}>
+        <HStack space={2}>
+          <Text fontSize={28} fontWeight="bold">
+            Historial
+          </Text>
+          <TouchableOpacity style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
+        </HStack>
         
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {cardsData.map((card) => (
+            <TouchableOpacity key={card.id}>
+              <Card
+                style={{
+                  marginHorizontal: 10,
+                  width: 200,
+                  height: 250,
+                  borderRadius: 20,
+                }}
+              >
+                <Image
+                  source={{ uri: card.image }}
+                  alt={card.title}
+                  style={{
+                    height: 150,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+                  }}
+                />
+                <Box p={3} borderRadius={20}>
+                  <Text fontSize="lg" fontWeight="bold">
+                    {card.title}
+                  </Text>
+                </Box>
+              </Card>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
-    </View>
-  )
-}
+      </Box>
+    </ScrollView>
+  );
+};
+
 

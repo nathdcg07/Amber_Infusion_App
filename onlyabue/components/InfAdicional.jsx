@@ -8,7 +8,7 @@ export default function CuadroInf  ({enfermedad}){
 return(
     <View margin={2} >
         <Box backgroundColor={'#0D94B9'} borderRadius={15}> 
-            <Text margin={2} alignSelf={'center'} color={'white'} fontWeight={'bold'} fontSize={'22'}>{InfoAdicional}</Text>
+            <Text margin={2} alignSelf={'center'} color={'white'} fontWeight={'bold'} fontSize={'22'}>{info}</Text>
         </Box>        
     </View>
 );

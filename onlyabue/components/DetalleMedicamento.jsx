@@ -1,178 +1,57 @@
 import React, { useState } from 'react';
-import { Text } from 'native-base';
-import { View,  Image, StyleSheet,StatusBar, TouchableOpacity, ScrollView } from 'react-native';
-import RecomendacionMedicamiento from './RecomendacionMedicamentos';
+import {  Box, HStack, Text, View, VStack } from 'native-base';
+import {  StyleSheet,StatusBar,  Image, TouchableOpacity, ScrollView, Pressable, } from 'react-native';
+import styles from "../Styles/GlobalStyles";
 import { Navigator,useRouter } from 'expo-router';
+import placeholdo from "../assets/icons/Image-placeholder.png"
 import Ionicons from '@expo/vector-icons/Ionicons';
+import CuadroInf from './InfAdicional';
 
-export const ProductScreen = ({Med}) => {
-  const [Titulo,setTitulo]=useState('Medicamentos');
-  const [NombreCom,setNombreCom]=useState('Aspirina');
-  const [NombreGen,setNombGen]=useState('Acido acetilsalicico');
-  const[Cantidad,setCantidad]=useState('12')
-  const [Descipcion,setDescripcion]=useState('Analgésico: Bloquea la formación del impulso del dolor a través de una acción central, posiblemente localizada en el hipotálamo. Ayuda a reducir o aliviar el dolor en general, se puede utilizar para dolores de cabeza, musculares, artríticos, entre muchos otros más');
-  const[Gramaje,setGramaje]=useState('500 mg')
+
+export const ProductScreen = () => {
   const router = useRouter();
+  const [NombComercial,setNombComercial ] = useState('paracetamol');
+  const [NombGenerico,setNombGenerico] = useState('acetaminofen');
+  const [Presentacion, setPresentacion] = useState('comprimido');
+  const [Descipcion,setDescripcion] = useState('texto texto largo xd');
+  const [EfectosSecundarios, setEfectosSecundarios] = useState(["muerte1","muerte2","modrido"]);
+  const [Precauciones,setPrecauciones] = useState('evitar exeder dosis recomendada');
   return (
 
-    <ScrollView style={styles.container}>
-      <StatusBar style='default'></StatusBar>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.buttonBack}>
-          <Ionicons name="arrow-back-circle" size={50} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.title} >{Titulo}</Text>
-      </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <HStack justifyContent={'space-between'} marginTop={4} marginBottom={5} px={4} space={3}>
+          <Pressable  onPress={() => router.back()} style={styles.BackIconButton}>
+            <Ionicons name="arrow-back-circle" size={50} color="black" />
+          </Pressable>
+          <Text flex={1} fontSize={28} fontWeight={'bold'} textAlign={'center'} left={-20} >Detalles</Text>
+      </HStack>
+      <View>
+            
+            <Box alignItems={'center'}>
+              <Image borderRadius={10} source={placeholdo}></Image>
+            </Box>
+            <VStack marginBottom={2} space={2}>
+              <Text textAlign={'center'} fontSize={24} fontWeight={'bold'} color={'#0D94B9'}>{NombComercial}</Text>
+              <Text textAlign={'center'} fontSize={20} color={'gray.500'}>{NombGenerico}</Text>
+            </VStack>
+            
+            <View>
+              <Text fontWeight={'bold'} fontSize={22}>Presentacion:</Text>
+              <CuadroInf info={Presentacion}></CuadroInf>              
+            </View>
+            <View>
+              <Text fontWeight={'bold'} fontSize={22}>Descripcion:</Text>
+              <Text fontSize={18}>{Descipcion}</Text>
+            </View>
+            <Text fontSize={22} fontWeight={'bold'}>Efectos Secundarios:</Text>
+            <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}>
+            {EfectosSecundarios.map((efecto, index) => (
+            <CuadroInf key={index} info={efecto} />
+            ))}
+              
+            </View>
 
-      
-      <View style={styles.productCard}>
-        <View style={styles.imagePlaceholder}>
-          <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.productImage} />
-        </View>
-        <View style={styles.productDetails}>
-          <Text  fontSize='3xl' >{NombreCom}</Text>
-          <Text fontSize='2xs' style={styles.productIngredient}>{NombreGen}</Text>
-          <Text style={styles.productQuantity}>Cantidad: {Cantidad}</Text>
-        </View>
-      </View>
-
-      {/* Description */}
-      <View style={styles.description}>
-        <Text fontSize='2xl' style={styles.sectionTitle}>Descripción</Text>
-        <Text fontSize='2xl' style={styles.paragraph}>
-          {Descipcion}
-        </Text>
-        
-      </View>
-      <ScrollView>
-        <Text style={styles.titleSimilares}>Medicamentos Similares:</Text>
-        <RecomendacionMedicamiento/>
-        <RecomendacionMedicamiento/>
-        <RecomendacionMedicamiento/>
-        <TouchableOpacity style={styles.VerMas}>
-          <Text fontSize='lg' fontWeight='bold'>Ver Mas ---&gt; </Text>
-        </TouchableOpacity>
-      </ScrollView>
-      
-        
-    
-      
+          </View>
     </ScrollView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#90CAF9',
-    paddingHorizontal: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  backButton: {
-    fontSize: 24,
-    marginRight: 16,
-  },
-  buttonBack:{
-    paddingRight:5,
-  },
-  title:{
-    paddingTop:5,
-    marginTop:5,
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
-  titleSimilares: {
-    paddingTop:8,
-    paddingBottom:2,
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginTop:5,
-    marginBottom:5,
-  },
-  productCard: {
-    flexDirection: 'row',
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor:'#FFF',
-    padding:10,
-    borderRadius:15
-  },
-  imagePlaceholder: {
-    width: 100,
-    height: 100,
-    backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 20,
-    borderRadius:60
-  },
-  productImage: {
-    width: 100,
-    height: 100,
-    borderRadius:40
-  },
-  productDetails: {
-    flex: 1,
-  },
-  
-  productIngredient: {
-    margin:5,
-    fontSize: 16,
-    color: '#666',
-  },
-  productQuantity: {
-    fontSize: 18,
-    color: '#666',
-    fontWeight:'bold',
-  },
-  description: {
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor:'#FFF',
-    borderRadius: 15,
-    borderBlockColor:'#000000',
-    padding:10,
-    paddingLeft:15,
-    paddingRight:15,
-    marginTop:15,
-
-  },
-  sectionTitle: {
-    
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  paragraph: {
-    
-    marginBottom: 8,
-  },
-  boldText: {
-    fontWeight: 'bold',
-  },
-  similarProducts: {
-    paddingVertical: 20,
-  },
-  similarItem: {
-    paddingVertical: 10,
-  },
-  similarProductName: {
-    fontSize: 16,
-    color: '#000',
-  },
-  VerMas:{
-    flex:3,    
-    fontWeight:'bold',
-    alignItems:'flex-end',
-    margin:8,
-    marginBottom:10,
-
-  }
-});
-
-
+}
