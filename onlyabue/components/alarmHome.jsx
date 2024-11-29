@@ -18,12 +18,12 @@ const topPosition = aspectRatio > 1.6 ? -240 : -150;
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState('W2H5OUAzK5maXu5jcww5');
+  const [user, setUser] = useState([]);
 
 
   useEffect(() => {
-    //fetchUser();
-    fetchData();
+    fetchUser();
+    fetchData(user);
   }, []);
 
   const fetchUser = async () => {
@@ -37,7 +37,7 @@ export function AlarmHome() {
   };
 
 
-  const fetchData = async () => {
+  const fetchData = async (nameUser) => {
     setIsLoading(true);
     try {
       const dataMeds = await loadMedsFromFile();     
@@ -45,7 +45,7 @@ export function AlarmHome() {
         setMedicamentos(dataMeds);
         setIsLoading(false);
       } else {
-        await fetchMeds('W2H5OUAzK5maXu5jcww5');
+        await fetchMeds(nameUser);
       }
     } catch (error) {
       console.error("Error al cargar medicamentos:", error);

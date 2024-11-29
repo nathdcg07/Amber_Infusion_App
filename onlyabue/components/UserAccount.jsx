@@ -1,6 +1,7 @@
 import { StatusBar, View, Fab, Center, Pressable, Box, Text, Circle, Image, HStack, VStack, Divider, Wrap, Spinner,Card, Button } from "native-base";
 import { ScrollView, StyleSheet, Dimensions,TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
+import { Link } from "expo-router";
 import logo from '../assets/icons/logoPill.png';
 import styles from "../Styles/GlobalStyles";
 import Foundation from '@expo/vector-icons/Foundation';
@@ -10,6 +11,7 @@ import CuadroInf from './InfAdicional'
 import { getUserData } from "../services/firestoreService";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { loadMedsFromFile } from "../services/frontServices";
+import { HistorialHCard } from "./HistorialHCard";
 
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
@@ -36,21 +38,21 @@ export const UserAccount = () => {
   const [load, setLoad] = useState(false);
   const [user, setUser] = useState(null);
   const [userData, setUserData] = useState();
-  const cardsData = [
-    { id: 1, title: "Card 1", image: "https://via.placeholder.com/150" },
-    { id: 2, title: "Card 2", image: "https://via.placeholder.com/150" },
-    { id: 3, title: "Card 3", image: "https://via.placeholder.com/150" },
-  ];
+  const [meds, setMeds] = useState([]);
 
   useEffect(() => {
     setLoad(true);
     const fetchUser = async () => {
-      //const user = await getNameFromAsyncStorage();
-      const fetchedUser = await getUserData('W2H5OUAzK5maXu5jcww5');
+      const user = await getNameFromAsyncStorage();
+      const fetchedUser = await getUserData(user);
       setUserData(fetchedUser);
-      console.log(userData);
+      const listaMed = await loadMedsFromFile();
+      setMeds(listaMed);  
       setLoad(false);
     };
+    const fetchMeds =async ()=>{
+
+    }
     fetchUser();
   }, []);
 
@@ -79,7 +81,7 @@ export const UserAccount = () => {
             alt="Perfil"
           />
           <Text fontSize={25} fontWeight="bold">
-            {`${Nombre} ${ApellidoPat} ${ApellidMat}`}
+            {`${userData.name} ${userData.surNamePat} ${userData.surNameMat}`}
           </Text>
           <HStack
             background="#0D94B9"
@@ -91,7 +93,7 @@ export const UserAccount = () => {
           >
             <Box alignItems="center">
               <Text color="white" fontSize="lg">
-                {Edad} años
+                {userData.age} años
               </Text>
               <Text color="white" fontSize="sm">
                 Edad
@@ -100,7 +102,7 @@ export const UserAccount = () => {
             <Divider orientation="vertical" thickness={2} />
             <Box alignItems="center">
               <Text color="white" fontSize="lg">
-                {TipoSangre}
+                {userData.tipoSangre}
               </Text>
               <Text color="white" fontSize="sm">
                 Sangre
@@ -108,9 +110,9 @@ export const UserAccount = () => {
             </Box>
             <Divider orientation="vertical" thickness={2} />
             <Box alignItems="center">
-              {sexoFunc(Sexo)}
+              {sexoFunc(userData.Sex)}
               <Text color="white" fontSize="sm">
-                {Sexo}
+                {userData.Sex}
               </Text>
             </Box>
           </HStack>
@@ -121,7 +123,7 @@ export const UserAccount = () => {
           Enfermedades de Base:
         </Text>
         <View style={styles.row}>
-        {/*userData.enfermedades?.length > 0 ? (
+        {userData.enfermedades?.length > 0 ? (
               userData.enfermedades?.map((enfermedad, index) => (
                 <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
             marginTop={6}>
@@ -132,7 +134,7 @@ export const UserAccount = () => {
               <View margin={4}>
               <Text fontSize={20} alignSelf={'center'}>No tiene enfermedades de base registradas</Text>
               </View>
-            )*/}
+            )}
         </View>
       </Box>
       <Box px={4}>
@@ -140,7 +142,7 @@ export const UserAccount = () => {
           Instrumentaria Médica:
         </Text>
         <View style={styles.row}>
-        {/*userData.instrumentacion?.length > 0 ? (
+        {userData.instrumentacion?.length > 0 ? (
               userData.instrumentacion?.map((instrumento, index) => (
                 <View flexDirection={"row"} flexWrap={'wrap'} justifyContent={'flex-start'}
             marginTop={6}>
@@ -151,7 +153,7 @@ export const UserAccount = () => {
               <View margin={4}>
               <Text fontSize={20} alignSelf={'center'}>No tiene instrumentacion registradas</Text>
               </View>
-            )*/}
+            )}
         </View>
       </Box>
       <Box px={4}>
@@ -159,37 +161,15 @@ export const UserAccount = () => {
           <Text fontSize={28} fontWeight="bold">
             Historial
           </Text>
-          <TouchableOpacity onPress={verMas} style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></TouchableOpacity>
+          <Link asChild href="/HistorialCompleto" style={styles.DetallesCard}><Text>Ver Mas ---&gt;</Text></Link>
         </HStack>
         <HStack>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
-          {cardsData.map((card) => (
-            <TouchableOpacity key={card.id}>
-              <Card
-                style={{
-                  marginHorizontal: 10,
-                  width: 200,
-                  height: 250,
-                  borderRadius: 1,
-                }}
-              >
-                <Image
-                  source={{ uri: card.image }}
-                  alt={card.title}
-                  style={{
-                    height: 150,
-                    borderTopLeftRadius: 10,
-                    borderTopRightRadius: 10,
-                  }}
-                />
-                <Box p={3} borderRadius={20}>
-                  <Text fontSize="lg" fontWeight="bold">
-                    {card.title}
-                  </Text>
-                </Box>
-              </Card>
-            </TouchableOpacity>
-          ))}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollHorizontalContainer}>
+          {meds.length > 0 ? (meds.map((medicamentos) => (
+            <HistorialHCard medicamento={medicamentos}/>
+          ))):(<View margin={4}>
+            <Text fontSize={20} alignSelf={'center'}>No tiene Medicamentos registrados</Text>
+            </View>)}
         </ScrollView>
         </HStack>
       </Box></>)}

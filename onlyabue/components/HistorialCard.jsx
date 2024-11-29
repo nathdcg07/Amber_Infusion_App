@@ -1,5 +1,6 @@
 import { View, Image, Text, Box, HStack, VStack, Center, Button } from "native-base";
 import styles from "../Styles/GlobalStyles";
+
 export const HistorialCard=({medicamento})=>{
 
     return(

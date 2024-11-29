@@ -23,6 +23,13 @@ const styles = StyleSheet.create({
       paddingVertical: 20,
       paddingTop:10,
     },
+    scrollHorizontalContainer: {
+      flexGrow: 1, 
+      justifyContent: 'flex-start',
+      alignItems: 'center',      
+      paddingVertical: 20,
+      paddingTop:10,
+    },
     registerContainer: {
       // backgroundColor: '#BBDEFB',
       width: width * 0.9,
