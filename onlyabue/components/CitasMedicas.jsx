@@ -13,7 +13,11 @@ import { getNameFromAsyncStorage } from "../services/frontServices";
 const { width,height } = Dimensions.get('window');
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
+
+
 export const CitasMedicas = () => {
+  const [user, setUser] = useState();
+  
   useEffect(() => {
     fetchUser();
   }, []);

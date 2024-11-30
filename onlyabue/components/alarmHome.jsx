@@ -13,63 +13,40 @@ import { obtenerDocumentoPorToken } from "../services/firestoreService";
 import styles from "../Styles/GlobalStyles";
 const { width, height } = Dimensions.get('window');
 const aspectRatio = height / width;
-const topPosition = aspectRatio > 1.6 ? -240 : -150;
+const topPosition = aspectRatio > 1.6 ? -200 : -150;
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
 
 
   useEffect(() => {
-    fetchUser();
-    fetchData(user);
+    const initialize = async () => {
+      try {
+        const fetchedUser = await getNameFromAsyncStorage();
+        setUser(fetchedUser);
+  
+        const dataMeds = await loadMedsFromFile();
+        if (Array.isArray(dataMeds) && dataMeds.length > 0) {
+          setMedicamentos(dataMeds);
+        } else {
+          const remoteData = await obtenerMedicamentosPorUsuario(fetchedUser);
+          setMedicamentos(remoteData);
+          await saveMedsToFile(remoteData);
+        }
+      } catch (error) {
+        console.error("Error durante la inicialización:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    initialize();
   }, []);
 
-  const fetchUser = async () => {
-    try{
-      const fetchedUser = await getNameFromAsyncStorage();
-    setUser(fetchedUser);
-    }catch(e){
-      alert("error en el nombre",e);
-    }
-    
-  };
 
 
-  const fetchData = async (nameUser) => {
-    setIsLoading(true);
-    try {
-      const dataMeds = await loadMedsFromFile();     
-      if (dataMeds && dataMeds.length > 0) {
-        setMedicamentos(dataMeds);
-        setIsLoading(false);
-      } else {
-        await fetchMeds(nameUser);
-      }
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-    }
-  };
-
- async function fetchMeds(user) {
-  try {
-    const data = await obtenerMedicamentosPorUsuario(user);
-
-    // Guardar en el estado
-    setMedicamentos(data);
-
-    // Guardar en un archivo
-    await saveMedsToFile(data);
-
-    setIsLoading(false);
-  } catch (error) {
-    console.error("Error fetching meds:", error);
-  }
-}
-
-
-  
 
   return (
     <View flex={1} >
@@ -78,11 +55,11 @@ export function AlarmHome() {
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
-          <Circle backgroundColor="#ffffff"  width={width * 1.2} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
+          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
           ></Circle>
           <NextAlarm ListaMed={Medicamentos} />          
         </View>
-        
+
       <View alignItems='center'>
        <Box   width={(width*0.95)} shadow={"3"} >
        <Text alignSelf={'center'} color='white' fontSize={29}  marginY={2} fontWeight='bold'>
@@ -91,10 +68,10 @@ export function AlarmHome() {
           <View paddingX={3}>
           {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
             Medicamentos.map((med) => (
-              <MedCard key={med.id} medicamento={med}/>
+              <MedCard medicamento={med}/>
             ))
           )}
-           
+
           </View>
        </Box>
        </View>
@@ -115,4 +92,3 @@ export function AlarmHome() {
     </View>
   );
 }
-
