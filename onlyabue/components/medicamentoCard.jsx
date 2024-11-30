@@ -5,6 +5,7 @@ import styles from "../Styles/GlobalStyles";
 
 
 export default function MedCard({medicamento}){
+    
     return(
         <View alignSelf={'center'} style={styles.CardsContainer} shadow={"6"} >
             

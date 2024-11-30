@@ -7,7 +7,7 @@ import { TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
-export const DetalleMedRegistrado = (medicamento)=>{
+export const DetalleMedRegistrado = ({medicamento})=>{
 const router = useRouter();
 const [NombMedicamento,setNombMedicamento] = useState('Aspirina');
 const [Gramaje,setGramaje] = useState('200');
