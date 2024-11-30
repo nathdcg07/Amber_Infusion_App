@@ -1,0 +1,38 @@
+{
+  "expo": {  
+    "name": "onlyabue",
+    "slug": "onlyabue",
+    "scheme": "com.onlyabue.app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onlyabue.app"
+    },
+    "android": {
+      "package": "com.onlyabue.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "791bf8f3-3f94-41ec-a3e9-287f3e131afc"
+      }
+    }
+  }
+}
