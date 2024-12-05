@@ -9,7 +9,7 @@ export const NextDate = ( {ListaMed} ) => {
     const [CitaProxima, setCitaProxima] = useState(null);
   
     return (
-      <Box>
+      <View zIndex={1} overflow={'hidden'} top={"-10%"}>
         
         <View>
           <HStack alignItems="center" paddingLeft={5} paddingTop={5}>            
@@ -21,7 +21,7 @@ export const NextDate = ( {ListaMed} ) => {
             <View justifyContent="center" alignItems="center">
               <Text fontSize={60} color="black">{CitaProxima.horaInicio}</Text>
             </View>
-            <View paddingBottom={60} position="absolute" bottom={5} left={5}>
+            <View alignContent={'center'} paddingBottom={60} position="absolute" bottom={5} left={5} >
               <Text fontSize={45} color="black">{CitaProxima.nombreMedico} {CitaProxima.ApellidoMedico}</Text>
             </View>
           </>
@@ -37,7 +37,7 @@ export const NextDate = ( {ListaMed} ) => {
           
 
         )}
-      </Box>
+      </View>
     );
   };
   

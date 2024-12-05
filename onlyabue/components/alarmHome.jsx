@@ -4,6 +4,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
+import CardPlaceholder from "./CardPlaceholder";
 import React,{ useEffect,useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from '../assets/icons/Fondo.jpg'
@@ -19,7 +20,7 @@ export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-
+  const [PlaceHolderF,setPlaceholderF]= useState(false);
 
   useEffect(() => {
     fetchUser();
@@ -45,9 +46,13 @@ export function AlarmHome() {
       if (dataMeds && dataMeds.length > 0) {
         setMedicamentos(dataMeds);
         setIsLoading(false);
+        
       } else {
 
         await fetchMeds(user);
+      }
+      if (!dataMeds || dataMeds.length === 0) {
+        setPlaceholder();        
       }
     } catch (error) {
       console.error("Error al cargar medicamentos:", error);
@@ -70,18 +75,42 @@ export function AlarmHome() {
   }
 }
 
+const setPlaceholder = ()=>{
+  const placeholderMed=[{
+    nombreComercial:"Sin Medicamento",
+    dias:"-"
+  }]
+  setPlaceholderF(true);
+  setMedicamentos(placeholderMed);
+}
 
+const setCards=()=>{
+  console.log('llegue a la funcion')
+  if(PlaceHolderF==true){
+    console.log('llegue al if true')
+    return Medicamentos.map((med) => (
+    <CardPlaceholder medicamento={med}/>
+    ))
+  }else{
+    return Medicamentos.map((med) => (
+      <MedCard key={med.id} medicamento={med}/>
+    ))
+  }
+  
+}
   
 
   return (
+    
     <View flex={1} >
       <ImageBackground source={backograundo}
         style={styles.backgroundImage}>
       <StatusBar/>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
       <View style={styles.nextAlarmContainer}>
-          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} position={"absolute"}  top={topPosition} overflow={'hidden'}
-          ></Circle>
+        <Box position={'absolute'}  zIndex={-1}>
+          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} top={topPosition} />
+        </Box>
           <NextAlarm ListaMed={Medicamentos} />          
         </View>
         
@@ -91,10 +120,9 @@ export function AlarmHome() {
             Tus Recordatorios
           </Text>
           <View paddingX={3}>
-          {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
-            Medicamentos.map((med) => (
-              <MedCard key={med.id} medicamento={med}/>
-            ))
+          {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):
+          (
+            setCards()
           )}
            
           </View>
