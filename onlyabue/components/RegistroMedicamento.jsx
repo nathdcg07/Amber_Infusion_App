@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Dimensions, Text, StatusBar, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useState,useCallback,useEffect } from 'react';
-import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box } from "native-base";
+import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box,Checkbox } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
 import { Link, useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -36,6 +36,34 @@ const { width, height } = Dimensions.get('window');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+
+
+  const [selectedDays, setSelectedDays] = useState([]); // Estado para los días seleccionados
+  const daysOfWeek = [
+    { label: 'Lunes', value: 'Lunes' },
+    { label: 'Martes', value: 'Martes' },
+    { label: 'Miércoles', value: 'Miercoles' },
+    { label: 'Jueves', value: 'Jueves' },
+    { label: 'Viernes', value: 'Viernes' },
+    { label: 'Sábado', value: 'Sabado' },
+    { label: 'Domingo', value: 'Domingo' },
+  ];
+
+  const handleCheckboxChange = (day) => {
+      setSelectedDays((prevDays) => {
+      if (prevDays.includes(day)) {
+        // Si el día ya está seleccionado, lo eliminamos
+        return prevDays.filter((selectedDay) => selectedDay !== day);
+      } else {
+        // Si el día no está seleccionado, lo añadimos
+        return [...prevDays, day];
+      }
+    });
+  };
+  const aceptarFunc=()=>{
+    console.log(selectedDays);
+    setModalConfig(false) 
+  }
 
 useEffect(() => {
   const fetchUser = async () => {
@@ -104,54 +132,55 @@ useEffect(() => {
         selectedColor,
         selectedTime,
       });
+      try {
+        if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
+          alert('Debe seleccionar una imagen');
+          return;
+        }
+        setLoading(true);
+        const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), user);
+        const imageMedUrl = await uploadImage(selectedImageMed);
+        const imageBoxUrl = await uploadImage(selectedImageBox);
+  
+        const docRef = await addDoc(collection(usuarioPruebaRef, 'medicamentos'), {
+          imagenMedUrl: imageMedUrl,
+          imagenBoxUrl: imageBoxUrl,
+          nombreComercial: NombreComercial,
+          nombreGenerico: NombreGenerico,
+          dosis: Dosis,
+          intervalo: Intervalo,
+          tamanio: Tamanio,
+          unidad: Unidad,
+          presentacion: Presentacion,
+          cantidad: Cantidad,
+          color: selectedColor,
+          hora: selectedTime,
+          creadoEn: new Date(),
+        });
+        const recordatorioData = {
+          medicamentoId: docRef.id,
+          usuarioId: usuarioPruebaRef.id,
+          intervalo: Intervalo,
+          horaInicial: selectedTime
+        };
+        if (selectedTime != '') {
+          await primerRecordatorio(recordatorioData);
+        }
+    
+        alert('Medicamento registrado correctamente');
+        console.log("Medicamento agregado con ID: ", docRef.id);
+  
+      } catch (error) {
+        console.error("Error agregando el medicamento: ", error);
+        alert('Error al registrar el medicamento');
+      } finally {
+        setLoading(false);
+      }
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
 
-    try {
-      if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
-        alert('Debe seleccionar una imagen');
-        return;
-      }
-      setLoading(true);
-      const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), user);
-      const imageMedUrl = await uploadImage(selectedImageMed);
-      const imageBoxUrl = await uploadImage(selectedImageBox);
-
-      const docRef = await addDoc(collection(usuarioPruebaRef, 'medicamentos'), {
-        imagenMedUrl: imageMedUrl,
-        imagenBoxUrl: imageBoxUrl,
-        nombreComercial: NombreComercial,
-        nombreGenerico: NombreGenerico,
-        dosis: Dosis,
-        intervalo: Intervalo,
-        tamanio: Tamanio,
-        unidad: Unidad,
-        presentacion: Presentacion,
-        cantidad: Cantidad,
-        color: selectedColor,
-        hora: selectedTime,
-        creadoEn: new Date(),
-      });
-      const recordatorioData = {
-        medicamentoId: docRef.id,
-        usuarioId: usuarioPruebaRef.id,
-        intervalo: Intervalo,
-        horaInicial: selectedTime
-      };
-      if (selectedTime != '') {
-        await primerRecordatorio(recordatorioData);
-      }
-  
-      alert('Medicamento registrado correctamente');
-      console.log("Medicamento agregado con ID: ", docRef.id);
-
-    } catch (error) {
-      console.error("Error agregando el medicamento: ", error);
-      alert('Error al registrar el medicamento');
-    } finally {
-      setLoading(false);
-    }
+    
   };  
   async function uploadImage(uri) {
     const response = await fetch(uri);
@@ -215,9 +244,9 @@ useEffect(() => {
     setNombreGenerico(text);
   };
   
-  const validateIntervalo = (text)=> {
-    const regex = /^[0-9]$/;
-    if(!regex.test(text)){
+  const validateIntervalo = ()=> {
+    
+    if(Intervalo==null){
       setErrorIntervalo('Seleccione un intérvalo.');
     }else{
       setErrorIntervalo('');
@@ -543,13 +572,27 @@ useEffect(() => {
                   </FormControl>
                 </VStack>
               </Modal.Body>
+              <FormControl ml={10} pb={5}>
+              <FormControl.Label>Días de la semana:</FormControl.Label>
+                <ScrollView>
+                  {daysOfWeek.map((day) => (
+                    <Checkbox
+                      key={day.value}
+                      isChecked={selectedDays.includes(day.value)} // Verificar si el día está seleccionado
+                      onChange={() => handleCheckboxChange(day.value)} // Manejar el cambio manualmente
+                      onPress
+                    >
+                      {day.label}
+                    </Checkbox>
+                  ))}
+                </ScrollView>
+              </FormControl>
               <Modal.Footer>
                 <Button.Group space={2}>
                   <Button variant="ghost" onPress={() => setModalConfig(false)}>
                     Cancelar
                   </Button>
-                  <Button onPress={()=>{setModalConfig(false)
-                  }}>
+                  <Button onPress={aceptarFunc}>
                     Aceptar
                   </Button>
                 </Button.Group>

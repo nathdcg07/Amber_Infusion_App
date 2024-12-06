@@ -10,7 +10,7 @@ export const NextAlarm = ( {ListaMed} ) => {
   for(const{ horaInicio: horas, intervalo: inter, nombreComercial: nombre,} of ListaMed)
 
   return (
-    <View >
+    <View zIndex={1} overflow={'hidden'} top={"-10%"}>
       
       <View>
         <HStack alignItems="center" paddingLeft={5} paddingTop={5}>          

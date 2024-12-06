@@ -3,9 +3,12 @@ import { DetalleMedRegistrado } from "../../components/detalleMedicamentoRegistr
 import { HistorialCard } from "../../components/HistorialCard";
 import { Historial } from "../../components/HistorialCompleto";
 import { HistorialHCard } from "../../components/HistorialHCard";
+import { BusquedaCard } from "../../components/BusquedaCard";
+
 export default function pruebas(){
     return(
-        <DetalleMedRegistrado></DetalleMedRegistrado>
+        <Buscador/>
+        // <DetalleMedRegistrado></DetalleMedRegistrado>
         // <Historial></Historial>
         // <HistorialHCard></HistorialHCard>
     )
