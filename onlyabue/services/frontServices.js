@@ -56,5 +56,21 @@ export async function loadMedsFromFile() {
       return null;  // En caso de error, retornar null
     }
   }
+
+export async function deleteMedsFile() {
+  try {
+    const fileUri = FileSystem.documentDirectory + 'medicamentos.json'; // Ruta del archivo
+    const fileInfo = await FileSystem.getInfoAsync(fileUri); // Verifica si el archivo existe
+
+    if (fileInfo.exists) {
+      await FileSystem.deleteAsync(fileUri); // Elimina el archivo
+      console.log('Archivo eliminado:', fileUri);
+    } else {
+      console.log('El archivo no existe, no se necesita eliminar.');
+    }
+  } catch (error) {
+    console.error('Error eliminando el archivo:', error);
+  }
+}
   
   

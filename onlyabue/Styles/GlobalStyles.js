@@ -64,6 +64,16 @@ const styles = StyleSheet.create({
       borderRadius:15,
       width:width*0.9,
     },
+    CardsContainerPlaceHolder:{
+      backgroundColor: "#9b9b9b" ,
+      marginTop:10,
+      marginBottom:10,
+      marginLeft:5,
+      marginrigth:5,
+      padding: 10,
+      borderRadius:15,
+      width:width*0.9,
+    },
     
     
     footbarContainer: {

@@ -1,14 +1,14 @@
-import { StatusBar, View, Fab,  Box, Text, Spinner ,Circle, Hidden, Button} from "native-base";
-import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
+import { StatusBar, View, Fab, Box, Text, Spinner, Circle, Hidden, Button } from "native-base";
+import { ScrollView, StyleSheet, Dimensions, ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import CardPlaceholder from "./CardPlaceholder";
-import React,{ useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from '../assets/icons/Fondo.jpg'
-import { getNameFromAsyncStorage,loadMedsFromFile,saveMedsToFile } from "../services/frontServices";
+import { getNameFromAsyncStorage, loadMedsFromFile, saveMedsToFile, deleteMedsFile } from "../services/frontServices";
 import { obtenerDocumentoPorToken } from "../services/firestoreService";
 
 import styles from "../Styles/GlobalStyles";
@@ -20,127 +20,103 @@ export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [PlaceHolderF,setPlaceholderF]= useState(false);
+  const [PlaceHolderF, setPlaceholderF] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
       try {
-        const fetchedUser = await getNameFromAsyncStorage();
+        //const fetchedUser = await getNameFromAsyncStorage();
+        const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
         setUser(fetchedUser);
-  
         const dataMeds = await loadMedsFromFile();
         if (Array.isArray(dataMeds) && dataMeds.length > 0) {
           setMedicamentos(dataMeds);
+          setPlaceholderF(false);
         } else {
           const remoteData = await obtenerMedicamentosPorUsuario(fetchedUser);
           setMedicamentos(remoteData);
           await saveMedsToFile(remoteData);
         }
+        if (!dataMeds || dataMeds.length === 0) {
+          setPlaceholder();        
+        }
       } catch (error) {
         console.error("Error durante la inicialización:", error);
       } finally {
         setIsLoading(false);
-        
-      } else {
-
-        await fetchMeds(user);
-      }
-      if (!dataMeds || dataMeds.length === 0) {
-        setPlaceholder();        
-      }
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-    }
-  };
-
- async function fetchMeds(user) {
-  try {
-    const data = await obtenerMedicamentosPorUsuario(user);
-
-    // Guardar en el estado
-    setMedicamentos(data);
-
-    // Guardar en un archivo
-    await saveMedsToFile(data);
-
-    setIsLoading(false);
-  } catch (error) {
-    console.error("Error fetching meds:", error);
-  }
-}
       }
     };
   
     initialize();
   }, []);
 
-const setPlaceholder = ()=>{
-  const placeholderMed=[{
-    nombreComercial:"Sin Medicamento",
-    dias:"-"
+const setPlaceholder = () => {
+  const placeholderMed = [{
+    nombreComercial: "Sin Medicamento",
+    dias: "-"
   }]
   setPlaceholderF(true);
   setMedicamentos(placeholderMed);
 }
 
-const setCards=()=>{
+const setCards = () => {
   console.log('llegue a la funcion')
-  if(PlaceHolderF==true){
+  if (PlaceHolderF == true) {
     console.log('llegue al if true')
     return Medicamentos.map((med) => (
-    <CardPlaceholder medicamento={med}/>
+      <CardPlaceholder medicamento={med} />
     ))
-  }else{
+  } else {
     return Medicamentos.map((med) => (
-      <MedCard key={med.id} medicamento={med}/>
+      <MedCard key={med.id} medicamento={med} />
     ))
   }
-  
+
 }
 
 
-  return (
-    
-    <View flex={1} >
-      <ImageBackground source={backograundo}
-        style={styles.backgroundImage}>
-      <StatusBar/>
+return (
+
+  <View flex={1} >
+    <ImageBackground source={backograundo}
+      style={styles.backgroundImage}>
+      <StatusBar />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-      <View style={styles.nextAlarmContainer}>
-        <Box position={'absolute'}  zIndex={-1}>
-          <Circle backgroundColor="#ffffff"  width={width * 1.1} height={height*0.6} top={topPosition} />
-        </Box>
-          <NextAlarm ListaMed={Medicamentos} />          
+        <View style={styles.nextAlarmContainer}>
+          <Box position={'absolute'} zIndex={-1}>
+            <Circle backgroundColor="#ffffff" width={width * 1.1} height={height * 0.6} top={topPosition} />
+          </Box>
+          <NextAlarm ListaMed={Medicamentos} />
         </View>
 
-      <View alignItems='center'>
-       <Box   width={(width*0.95)} shadow={"3"} >
-       <Text alignSelf={'center'} color='white' fontSize={29}  marginY={2} fontWeight='bold'>
-            Tus Recordatorios
-          </Text>
-          <View paddingX={3}>
-          {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):
-          (
-            setCards()
-          )}
+        <View alignItems='center'>
+          <Box width={(width * 0.95)} shadow={"3"} >
+            <Text alignSelf={'center'} color='white' fontSize={29} marginY={2} fontWeight='bold'>
+              Tus Recordatorios
+            </Text>
+            <View paddingX={3}>
+              {isLoading ? (<Spinner size="lg" paddingTop={5} marginBottom={10} />) :
+                (
+                  setCards()
+                )}
 
-          </View>
-       </Box>
-       </View>
+            </View>
+          </Box>
+        </View>
       </ScrollView>
       <Link asChild href="/RegisterMed">
-            <Fab
-                renderInPortal={false}
-                shadow={2}
-                size="sm"
-                icon={<AntDesign name="plus" size={25} color="white" />}
-                backgroundColor="#29B6F6"
-                position="absolute"
-                bottom={10}
-                right={30}
-            />
-        </Link>
-        </ImageBackground>
-    </View>
-  );
+        <Fab
+          renderInPortal={false}
+          shadow={2}
+          size="sm"
+          icon={<AntDesign name="plus" size={25} color="white" />}
+          backgroundColor="#29B6F6"
+          position="absolute"
+          bottom={10}
+          right={30}
+        />
+      </Link>
+    </ImageBackground>
+  </View>
+);
 }
