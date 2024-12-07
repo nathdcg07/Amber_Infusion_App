@@ -1,28 +1,29 @@
 import { View, ScrollView, Text, Image, VStack,HStack,Box,Button, Pressable } from "native-base";
 import React, {useState} from "react";
 import placeholder from '../assets/icons/Image-placeholder.png';
-import { Navigator,useRouter } from 'expo-router';
+import { Navigator,useRouter,useLocalSearchParams } from 'expo-router';
 import styles from "../Styles/GlobalStyles";
 import { TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
-export const DetalleMedRegistrado = ({medicamento})=>{
+export const DetalleMedRegistrado = ()=>{
 const router = useRouter();
-const [NombMedicamento,setNombMedicamento] = useState('Aspirina');
-const [Gramaje,setGramaje] = useState('200');
-const [NombGenerico,setNombGenerico] = useState('acetaminofén');
-const [UrlImagen1, setUrlImagen1] = useState(placeholder);
-const [UrlImagen2, setUrlImagen2] = useState(placeholder);
-const [Presentacion, setPresentacion] = useState('comprimido');
-const [Descripcion, setDescripcion] = useState('Las pastillas están en la mesa de noche, justo al lado de la cama. Asegúrate de tomarlas con dos vasos de agua, no menos, para que sea más fácil pasarlas y funcionen bien. ');
-const [Intervalo,setIntervalo] = useState('24');
-const [Dias,setDias] = useState('Lunes,Martes');
-const [InicioTratamiento,setInicioTratamiento]= useState('10/11/2024');
-const [FinTratamiento,setFinTratamiento] = useState('-');
-const [Cantidad,setCantidad] = useState('12');
-const [Dosis,setDosis] = useState('1/2');
-const [Unidad,setUnidad]= useState('Gr.');
+const { medicamentoDoc } = useLocalSearchParams();
+const { medicamento } = useLocalSearchParams();
+const {medBox} = useLocalSearchParams();
+const {imagenMed} = useLocalSearchParams();
+const medicamentoObj = JSON.parse(decodeURIComponent(medicamento));
+
+const fechaCreacion = new Date(medicamentoObj.creadoEn.seconds * 1000 + medicamentoObj.creadoEn.nanoseconds / 1000000);
+
+const opcionesFormato = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+};
+const fechaLegible = fechaCreacion.toLocaleDateString("es-ES", opcionesFormato);
+
 
     return(
         <ScrollView >
@@ -35,33 +36,35 @@ const [Unidad,setUnidad]= useState('Gr.');
             <VStack  alignItems={'center'}>
                 <HStack space={4} alignItems="center" px={3} py={3}>
                     <VStack >
-                        <Text fontSize={28} bold color="cyan.700">{medicamento.NombMedicamento}</Text>
-                        <Text fontSize={24} color={'black'} >{medicamento.NombGenerico}</Text>
+                        <Text fontSize={28} bold color="cyan.700">{medicamentoObj.nombreComercial}</Text>
+                        <Text fontSize={24} color={'black'} >{medicamentoObj.nombreGenerico}</Text>
                     </VStack>
                     <VStack >
-                        <Text fontSize={20}> {medicamento.Gramaje}{medicamento.Unidad}</Text> 
-                        <Text fontSize={18}>{medicamento.Presentacion}</Text>
+                        <Text fontSize={20}> {medicamentoObj.tamanio}{medicamentoObj.unidad}</Text> 
+                        <Text fontSize={18}>{medicamentoObj.presentacion}</Text>
                         
                     </VStack>
                 </HStack>
                 <HStack w="80%" justifyContent="space-between">
-                    <Box padding={3} backgroundColor={'#0C85AD'} borderRadius={18}> 
+                    <Box padding={3} backgroundColor={'#0C85AD'} borderRadius={18} alignItems={'center'}> 
                         <Image
-                        source={medicamento.UrlImagen1 }
+                        resizeMode="cover"
+                        source={{uri: imagenMed} }
                         alt="medicine image"
-                        size="lg"
+                        size="xl"
                         borderRadius="md"
                         />
-                        <Text bold textAlign="center" mt={2} color={'white'} fontSize={20}>Cantidad: {medicamento.Cantidad}</Text>
+                        <Text bold textAlign="center" mt={2} color={'white'} fontSize={20}>Cantidad: {medicamentoObj.cantidad}</Text>
                     </Box>
-                    <Box padding={3} backgroundColor={'#0C85AD'} borderRadius={18}>
+                    <Box padding={3} backgroundColor={'#0C85AD'} borderRadius={18} alignItems={'center'}>
                         <Image
-                        source={ medicamento.UrlImagen2 }
+                        resizeMode="cover"
+                        source={ {uri: medBox} }
                         alt="pill image"
-                        size="lg"
+                        size="xl"
                         borderRadius="md"
                         />
-                        <Text bold textAlign="center" mt={2} color={'white'} fontSize={20}>Dosis: {medicamento.Dosis}</Text>
+                        <Text bold textAlign="center" mt={2} color={'white'} fontSize={20}>Dosis: {medicamentoObj.dosis}</Text>
                     </Box>
                 </HStack>                        
                 <Box
@@ -76,16 +79,14 @@ const [Unidad,setUnidad]= useState('Gr.');
                         <Text color="white" bold fontSize={"28"}>16:30</Text>
                     </Box>   
                     <VStack marginRight={22}  alignItems={'center'}>
-                        <Text color={'#0D94B9'} fontWeight={'bold'} fontSize={20}>Cada {medicamento.Intervalo} Horas.</Text>
-                        <Text>{medicamento.Dias}</Text>
-                        <HStack>
+                        <Text color={'#0D94B9'} fontWeight={'bold'} fontSize={20}>Cada {medicamentoObj.intervalo} Horas.</Text>
+                        
+                        <Text fontSize={18} paddingX={5}>{medicamentoObj.dias+""} </Text>
+                        <HStack alignItems={'center'}>
                             <Text fontSize={20} fontWeight={'bold'}>Inicio tratamiento:</Text>
-                            <Text>{medicamento.InicioTratamiento} </Text>
+                            <Text fontSize={18}>{" "+fechaLegible} </Text>
                         </HStack>
-                        <HStack>
-                        <Text fontSize={20} fontWeight={'bold'}>Fin Tratamiento:</Text>
-                        <Text>{medicamento.FinTratamiento}</Text>
-                        </HStack>
+                        
                         
                     </VStack>
                 <HStack m={5} space={4} w="90%" justifyContent="center">

@@ -1,16 +1,27 @@
 import {  HStack, Box,Text, Pressable,View  } from "native-base";
-import { Link } from "expo-router";
+import { Link,useRouter } from "expo-router";
 import React, { useState } from "react";
 import styles from "../Styles/GlobalStyles";
 
 
 export default function MedCard({medicamento}){
-    
+    const router = useRouter();
+    const handlePush = () => {
+        router.push({
+          pathname: '/(screens)/MedDetails',
+          params: {
+            medicamentoDoc: medicamento.id,
+            medicamento: encodeURIComponent(JSON.stringify(medicamento)),
+            medBox: encodeURI(medicamento.imagenBoxUrl),
+            imagenMed: encodeURI(medicamento.imagenMedUrl), // Codifica el objeto serializado
+          },
+        });
+      };
     return(
         <View alignSelf={'center'} style={styles.CardsContainer} shadow={"6"} >
             
-                <Link asChild href='/(screens)/MedDetails'>
-                    <Pressable>                        
+                
+                    <Pressable onPress={handlePush}>                        
                         <HStack space={3} alignItems="center" >
                             <Box alignItems={'center'}flex={1} >
                                 <Text  fontWeight={'bold'} fontSize={'md'} color={'#0D94B9'}> 
@@ -26,12 +37,13 @@ export default function MedCard({medicamento}){
                                 <Box style={styles.DetallesCard}>
                                     <Text>
                                         Detalles ---&gt;
+                                        
                                     </Text>
                                 </Box>                                
                             </Box>
                         </HStack>
                     </Pressable>
-                </Link>
+               
                 
         </View>
 )};

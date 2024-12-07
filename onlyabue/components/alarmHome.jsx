@@ -1,18 +1,17 @@
-import { StatusBar, View, Fab, Box, Text, Spinner, Circle, Hidden, Button } from "native-base";
-import { ScrollView, StyleSheet, Dimensions, ImageBackground } from "react-native";
-import AntDesign from '@expo/vector-icons/AntDesign';
+import React, { useEffect, useState, useCallback } from "react";
+import { StatusBar, View, Fab, Box, Text, Spinner, Circle } from "native-base";
+import { ScrollView, StyleSheet, Dimensions, ImageBackground, RefreshControl } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { NextAlarm } from "./nextAlarm";
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import CardPlaceholder from "./CardPlaceholder";
-import React, { useEffect, useState } from "react";
 import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
-import backograundo from '../assets/icons/Fondo.jpg'
-import { getNameFromAsyncStorage, loadMedsFromFile, saveMedsToFile, deleteMedsFile } from "../services/frontServices";
-import { obtenerDocumentoPorToken } from "../services/firestoreService";
-
+import backograundo from "../assets/icons/Fondo.jpg";
+import { loadMedsFromFile, saveMedsToFile } from "../services/frontServices";
 import styles from "../Styles/GlobalStyles";
-const { width, height } = Dimensions.get('window');
+
+const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
 
@@ -21,13 +20,15 @@ export function AlarmHome() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [PlaceHolderF, setPlaceholderF] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
 
   useEffect(() => {
     const initialize = async () => {
       try {
-        //const fetchedUser = await getNameFromAsyncStorage();
-        const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
+        // const fetchedUser = await getNameFromAsyncStorage();
+        const fetchedUser = "W2H5OUAzK5maXu5jcww5";
         setUser(fetchedUser);
+
         const dataMeds = await loadMedsFromFile();
         if (Array.isArray(dataMeds) && dataMeds.length > 0) {
           setMedicamentos(dataMeds);
@@ -38,7 +39,7 @@ export function AlarmHome() {
           await saveMedsToFile(remoteData);
         }
         if (!dataMeds || dataMeds.length === 0) {
-          setPlaceholder();        
+          setPlaceholder();
         }
       } catch (error) {
         console.error("Error durante la inicialización:", error);
@@ -46,77 +47,84 @@ export function AlarmHome() {
         setIsLoading(false);
       }
     };
-  
+
     initialize();
   }, []);
 
-const setPlaceholder = () => {
-  const placeholderMed = [{
-    nombreComercial: "Sin Medicamento",
-    dias: "-"
-  }]
-  setPlaceholderF(true);
-  setMedicamentos(placeholderMed);
-}
+  const setPlaceholder = () => {
+    const placeholderMed = [
+      {
+        nombreComercial: "Sin Medicamento",
+        dias: "-",
+      },
+    ];
+    setPlaceholderF(true);
+    setMedicamentos(placeholderMed);
+  };
 
-const setCards = () => {
-  console.log('llegue a la funcion')
-  if (PlaceHolderF == true) {
-    console.log('llegue al if true')
-    return Medicamentos.map((med) => (
-      <CardPlaceholder medicamento={med} />
-    ))
-  } else {
-    return Medicamentos.map((med) => (
-      <MedCard key={med.id} medicamento={med} />
-    ))
-  }
+  const setCards = () => {
+    if (PlaceHolderF) {
+      return Medicamentos.map((med) => <CardPlaceholder key={med.nombreComercial} medicamento={med} />);
+    } else {
+      return Medicamentos.map((med) => <MedCard key={med.id} medicamento={med} />);
+    }
+  };
 
-}
+  // Función de refresco al deslizar
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const remoteData = await obtenerMedicamentosPorUsuario(user);
+      setMedicamentos(remoteData);
+      await saveMedsToFile(remoteData);
 
+    } catch (error) {
 
-return (
+    } finally {
+      setRefreshing(false);
+    }
+  }, [user]);
 
-  <View flex={1} >
-    <ImageBackground source={backograundo}
-      style={styles.backgroundImage}>
-      <StatusBar />
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={styles.nextAlarmContainer}>
-          <Box position={'absolute'} zIndex={-1}>
-            <Circle backgroundColor="#ffffff" width={width * 1.1} height={height * 0.6} top={topPosition} />
-          </Box>
-          <NextAlarm ListaMed={Medicamentos} />
-        </View>
+  return (
+    <View flex={1}>
+      <ImageBackground source={backograundo} style={styles.backgroundImage}>
+        <StatusBar />
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // Agregar RefreshControl
+        >
+          <View style={styles.nextAlarmContainer}>
+            <Box position={"absolute"} zIndex={-1}>
+              <Circle backgroundColor="#ffffff" width={width * 1.1} height={height * 0.6} top={topPosition} />
+            </Box>
+            <NextAlarm ListaMed={Medicamentos} />
+          </View>
 
-        <View alignItems='center'>
-          <Box width={(width * 0.95)} shadow={"3"} >
-            <Text alignSelf={'center'} color='white' fontSize={29} marginY={2} fontWeight='bold'>
-              Tus Recordatorios
-            </Text>
-            <View paddingX={3}>
-              {isLoading ? (<Spinner size="lg" paddingTop={5} marginBottom={10} />) :
-                (
-                  setCards()
-                )}
-
-            </View>
-          </Box>
-        </View>
-      </ScrollView>
-      <Link asChild href="/RegisterMed">
-        <Fab
-          renderInPortal={false}
-          shadow={2}
-          size="sm"
-          icon={<AntDesign name="plus" size={25} color="white" />}
-          backgroundColor="#29B6F6"
-          position="absolute"
-          bottom={10}
-          right={30}
-        />
-      </Link>
-    </ImageBackground>
-  </View>
-);
+          <View alignItems="center">
+            <Box width={width * 0.95} shadow={"3"}>
+              <Text alignSelf={"center"} color="white" fontSize={29} marginY={2} fontWeight="bold">
+                Tus Recordatorios
+              </Text>
+              <View paddingX={3}>
+                {isLoading ? <Spinner size="lg" paddingTop={5} marginBottom={10} /> : setCards()}
+              </View>
+            </Box>
+          </View>
+        </ScrollView>
+        <Link asChild href="/RegisterMed">
+          <Fab
+            renderInPortal={false}
+            shadow={2}
+            size="sm"
+            icon={<AntDesign name="plus" size={25} color="white" />}
+            backgroundColor="#29B6F6"
+            position="absolute"
+            bottom={10}
+            right={30}
+          />
+        </Link>
+      </ImageBackground>
+    </View>
+  );
 }

@@ -22,7 +22,7 @@ export async function saveMedsToFile(data) {
     try {
       const fileUri = FileSystem.documentDirectory + 'medicamentos.json'; // Ruta del archivo
       await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(data, null, 2)); // Guardar como JSON
-      console.log('Medicamentos guardados en el archivo:', fileUri);
+      console.log('Medicamentos guardados en el archivo:');
     } catch (error) {
       console.error('Error guardando medicamentos en el archivo:', error);
     }
@@ -48,7 +48,7 @@ export async function loadMedsFromFile() {
       }
   
       const meds = JSON.parse(fileContent);
-      console.log('Medicamentos cargados desde el archivo:', meds);
+      console.log('Medicamentos cargados desde el archivo');
       return meds;
       
     } catch (error) {

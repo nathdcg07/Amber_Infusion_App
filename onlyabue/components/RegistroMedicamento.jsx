@@ -35,10 +35,9 @@ const { width, height } = Dimensions.get('window');
   const [selectedColor, setSelectedColor] = useState('#ffffff'); // Estado para el color seleccionado
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState('W2H5OUAzK5maXu5jcww5');
+  const [selectedDays, setSelectedDays] = useState([]); 
 
-
-  const [selectedDays, setSelectedDays] = useState([]); // Estado para los días seleccionados
   const daysOfWeek = [
     { label: 'Lunes', value: 'Lunes' },
     { label: 'Martes', value: 'Martes' },
@@ -119,20 +118,7 @@ useEffect(() => {
       Cantidad &&
       selectedColor
     ) {
-      console.log({
-        NombreComercial,
-        NombreGenerico,
-        Dosis,
-        Intervalo,
-        Tamanio,
-        Unidad,
-        Presentacion,
-        imagenMedUrl,
-        imagenBoxUrl,
-        Cantidad,
-        selectedColor,
-        selectedTime,
-      });
+      
       try {
         if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
           alert('Debe seleccionar una imagen');
@@ -142,7 +128,6 @@ useEffect(() => {
         const usuarioPruebaRef = doc(collection(firestore, 'usuarios'), user);
         const imageMedUrl = await uploadImage(selectedImageMed);
         const imageBoxUrl = await uploadImage(selectedImageBox);
-  
         const docRef = await addDoc(collection(usuarioPruebaRef, 'medicamentos'), {
           imagenMedUrl: imageMedUrl,
           imagenBoxUrl: imageBoxUrl,
@@ -157,12 +142,14 @@ useEffect(() => {
           color: selectedColor,
           hora: selectedTime,
           creadoEn: new Date(),
+          dias: selectedDays,
         });
         const recordatorioData = {
           medicamentoId: docRef.id,
           usuarioId: usuarioPruebaRef.id,
           intervalo: Intervalo,
-          horaInicial: selectedTime
+          horaInicial: selectedTime,
+          dias: selectedDays,
         };
         if (selectedTime != '') {
           await primerRecordatorio(recordatorioData);
@@ -387,18 +374,19 @@ useEffect(() => {
   </View>
   <ScrollView  contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         
-        <StatusBar style='default'></StatusBar>
+        <StatusBar style='default'/>
         <VStack space={4}>  
         <View style={styles.form}>
         <Text style={styles.Titulo}>Registro de Medicamento</Text>
           <View alignItems={"center"}>
-            <Text style={styles.textForm}>Imagen del Medicamento:</Text>
+            <Text style={styles.textForm}>Foto del Medicamento:</Text>
             <CustomImagePicker
               selectedImage={selectedImageMed}
               setSelectedImage={setSelectedImageMed}
               errorImage={errorImageMed}
               setErrorImage={setErrorImageMed}
             />
+            <Text style={styles.textForm}>Foto de la caja</Text>
             <CustomImagePicker
               selectedImage={selectedImageBox}
               setSelectedImage={setSelectedImageBox}
