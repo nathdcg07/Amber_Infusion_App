@@ -28,3 +28,11 @@ export const BusquedaCard =({Medicamento})=>{
         
     )
 }
+export const CardVacia=()=>{
+    return(
+        <Center borderWidth={"0.5"} borderRadius={15}  m={5} mb={3} overflow="hidden" padding={1} backgroundColor={'white'}>
+            <Text textAlign={'center'} fontSize="22" fontWeight="bold" color={'#0D94B9'} >Sin Conexion</Text>
+        </Center>
+    );
+    
+}
