@@ -23,7 +23,7 @@ const Medicamento=[
 const [Vacio, setVacio] = useState(false);
 const [Conexion,setConexion]=useState(false);
 const [pagina, setPagina] = useState(1);
-const itemsPorPagina = 5;
+const itemsPorPagina = 3;
 
 // Obtener solo los elementos de la página actual
 const obtenerItemsDePagina = () => {
@@ -81,22 +81,26 @@ const llenado=()=>{
                 {
                 llenado()
                 }
-                <HStack justifyContent="space-between" mt={4} mb={10} px={5}>
-                        <Button 
-                            onPress={retrocederPagina} 
-                            disabled={pagina === 1}
+                <HStack justifyContent={'center'} mt={4} mb={10} px={5}>
+                        {pagina > 1 && (
+                            <Button 
+                            onPress={retrocederPagina}
                             style={styles.button}
-                        >
+                            m={2}
+                            >
                             <Text style={styles.buttonText}>Anterior</Text>
-                        </Button>
+                            </Button>
+                        )}
 
-                        <Button 
-                            onPress={avanzarPagina} 
-                            disabled={!hayMasElementos()}
+                        {hayMasElementos() && (
+                            <Button 
+                            onPress={avanzarPagina}
                             style={styles.button}
-                        >
-                            <Text  style={styles.buttonText} >Siguiente</Text>
-                        </Button>
+                            m={2}
+                            >
+                            <Text style={styles.buttonText}>Siguiente</Text>
+                            </Button>
+                        )}
                     </HStack>
             </ScrollView>
             </ImageBackground>

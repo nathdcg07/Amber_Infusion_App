@@ -4,10 +4,10 @@ import { HistorialCard } from "../../components/HistorialCard";
 import { Historial } from "../../components/HistorialCompleto";
 import { HistorialHCard } from "../../components/HistorialHCard";
 import { BusquedaCard } from "../../components/BusquedaCard";
-
+import {Alarma} from "../../components/Alarma";
 export default function pruebas(){
     return(
-        <Buscador/>
+        <Alarma/>
         // <DetalleMedRegistrado></DetalleMedRegistrado>
         // <Historial></Historial>
         // <HistorialHCard></HistorialHCard>

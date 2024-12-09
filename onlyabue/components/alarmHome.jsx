@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { StatusBar, View, Fab, Box, Text, Spinner, Circle } from "native-base";
+import { StatusBar, View, Fab, Box, Text, Spinner, Circle, HStack, Button } from "native-base";
 import { ScrollView, StyleSheet, Dimensions, ImageBackground, RefreshControl } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { NextAlarm } from "./nextAlarm";
@@ -21,6 +21,35 @@ export function AlarmHome() {
   const [user, setUser] = useState(null);
   const [PlaceHolderF, setPlaceholderF] = useState(false);
   const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
+  //paginacion
+  const [pagina, setPagina] = useState(1);
+  const itemsPorPagina = 2;  
+
+// Obtener solo los elementos de la página actual
+const obtenerItemsDePagina = () => {
+    const inicio = (pagina - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    return Medicamentos.slice(inicio, fin);
+};
+
+// Detectar si hay más elementos para cargar
+const hayMasElementos = () => {
+  return pagina * itemsPorPagina < Medicamentos.length;
+};
+
+ // Retroceder a la página anterior
+ const retrocederPagina = () => {
+    if (pagina > 1) {
+        setPagina(pagina - 1);
+    }
+};
+
+// Avanzar a la siguiente página
+const avanzarPagina = () => {
+    if (hayMasElementos()) {
+        setPagina(pagina + 1);
+    }
+};
 
   useEffect(() => {
     const initialize = async () => {
@@ -31,7 +60,7 @@ export function AlarmHome() {
 
         const dataMeds = await loadMedsFromFile();
         if (Array.isArray(dataMeds) && dataMeds.length > 0) {
-          setMedicamentos(dataMeds);
+          setMedicamentos(dataMeds);          
           setPlaceholderF(false);
         } else {
           const remoteData = await obtenerMedicamentosPorUsuario(fetchedUser);
@@ -40,7 +69,7 @@ export function AlarmHome() {
         }
         if (!dataMeds || dataMeds.length === 0) {
           setPlaceholder();
-        }
+        }        
       } catch (error) {
         console.error("Error durante la inicialización:", error);
       } finally {
@@ -66,7 +95,8 @@ export function AlarmHome() {
     if (PlaceHolderF) {
       return Medicamentos.map((med) => <CardPlaceholder key={med.nombreComercial} medicamento={med} />);
     } else {
-      return Medicamentos.map((med) => <MedCard key={med.id} medicamento={med} />);
+      const itemsVisibles = obtenerItemsDePagina();
+      return itemsVisibles.map((med) => <MedCard key={med.id} medicamento={med} />);
     }
   };
 
@@ -111,6 +141,27 @@ export function AlarmHome() {
               </View>
             </Box>
           </View>
+          <HStack justifyContent="space-between" mt={4} mb={10} px={5}>
+          {pagina > 1 && (
+                <Button 
+                  onPress={retrocederPagina}
+                  style={styles.button}
+                  m={2}
+                >
+                  <Text style={styles.buttonText}>Anterior</Text>
+                </Button>
+              )}
+
+              {hayMasElementos() && (
+                <Button 
+                  onPress={avanzarPagina}
+                  style={styles.button}
+                  m={2}
+                >
+                  <Text style={styles.buttonText}>Siguiente</Text>
+                </Button>
+              )}
+            </HStack>
         </ScrollView>
         <Link asChild href="/RegisterMed">
           <Fab
