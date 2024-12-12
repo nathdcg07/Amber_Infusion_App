@@ -5,6 +5,7 @@ import { Navigator,useRouter,useLocalSearchParams } from 'expo-router';
 import styles from "../Styles/GlobalStyles";
 import { TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Route } from "expo-router/build/Route";
 
 
 export const DetalleMedRegistrado = ()=>{
@@ -16,7 +17,14 @@ const {imagenMed} = useLocalSearchParams();
 const medicamentoObj = JSON.parse(decodeURIComponent(medicamento));
 
 const fechaCreacion = new Date(medicamentoObj.creadoEn.seconds * 1000 + medicamentoObj.creadoEn.nanoseconds / 1000000);
-
+const EditarFunc = ()=>{
+    router.push({
+        pathname: '/(screens)/RegisterMed',
+        params:{
+            medicamento: encodeURIComponent(JSON.stringify(medicamento)),
+        }
+    });
+}
 const opcionesFormato = {
     year: "numeric",
     month: "numeric",

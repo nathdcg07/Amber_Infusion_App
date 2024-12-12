@@ -3,7 +3,7 @@ import { Alert, Dimensions, Text, StatusBar, TouchableOpacity, ScrollView, Activ
 import { useState,useCallback,useEffect } from 'react';
 import { Input, VStack, Select, Pressable, Modal, Button, FormControl, View,Box,Checkbox } from "native-base";
 import { useFocusEffect } from '@react-navigation/native';
-import { Link, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,6 +20,8 @@ import { primerRecordatorio } from "./recordatorios/notificacionesService";
 
 const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
+  
+  const { medicamento } = useLocalSearchParams();
   
   const router = useRouter();
   const [NombreComercial,setNombreComercial] = useState('');
