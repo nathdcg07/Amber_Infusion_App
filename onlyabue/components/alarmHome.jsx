@@ -73,7 +73,6 @@ export function AlarmHome() {
     }
   };
 
-  // Función de refresco al deslizar
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {

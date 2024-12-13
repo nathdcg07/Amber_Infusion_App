@@ -213,10 +213,9 @@ useEffect(() => {
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  
-  //validaciones
+
   const validateNombreComercial = (text) => {
-    const regex = /^[a-zA-Z0-9\s]{2,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/;
     if (!regex.test(text)) {
       setErrorNombreComercial('El nombre comercial no debe estar vacío.');
     } else {
@@ -225,7 +224,7 @@ useEffect(() => {
     setNombreComercial(text);
   };
   const validateNombreGenerico = (text) => {
-    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{3,}$/;
     if (!regex.test(text)) {
       setErrorNombreGenerico('El nombre comercial no debe estar vacío.');
     } else {
@@ -265,9 +264,9 @@ useEffect(() => {
 
   const handleTimeChange = (event, time) => {
     if (time) {
-      setSelectedTime(time); // Guardar la hora seleccionada
+      setSelectedTime(time);
     }
-    setShowTimePicker(false); // Cerrar el selector después de elegir la hora
+    setShowTimePicker(false); 
   };
   
   function FlechaColor(color){
