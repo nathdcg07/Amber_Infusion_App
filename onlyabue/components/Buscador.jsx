@@ -1,4 +1,4 @@
-import {ScrollView,  HStack,Input,VStack, Text,Box, View, Button} from "native-base";
+import {ScrollView,  HStack,Input,VStack, Text,Box, View, Button, Spinner} from "native-base";
 import { Dimensions,ImageBackground } from "react-native";
 import { BusquedaCard, CardVacia } from "./BusquedaCard";
 import { StatusBar,  } from "native-base";
@@ -6,24 +6,17 @@ import styles from "../Styles/GlobalStyles";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import backograundo from "../assets/icons/Fondo.jpg"
 import { useState } from "react";
+import { buscarMedicamento } from "../services/firestoreService";
+
 const { width, height } = Dimensions.get("window");
 export const Buscador=()=>{
-const Medicamento=[
-    { NombreGenerico: "Acetaminofen", NombreComercial: "Paracetamol" },
-    { NombreGenerico: "Ibuprofeno", NombreComercial: "Advil" },
-    { NombreGenerico: "Amoxicilina", NombreComercial: "Amoxil" },
-    { NombreGenerico: "Clorfenamina", NombreComercial: "Clorotrimeton" },
-    { NombreGenerico: "Loratadina", NombreComercial: "Claritin" },
-    { NombreGenerico: "Salbutamol", NombreComercial: "Ventolin" },
-    { NombreGenerico: "Metformina", NombreComercial: "Glucophage" },
-    { NombreGenerico: "Losartán", NombreComercial: "Cozaar" },
-    { NombreGenerico: "Atorvastatina", NombreComercial: "Lipitor" },
-    { NombreGenerico: "Omeprazol", NombreComercial: "Prilosec" }
-];
-const [Vacio, setVacio] = useState(false);
+const [Medicamento,setMedicamentos] = useState([]);
+const [Vacio, setVacio] = useState(true);
 const [Conexion,setConexion]=useState(false);
 const [pagina, setPagina] = useState(1);
 const itemsPorPagina = 3;
+const [textoBuscar, settextoBuscar] = useState("");
+const [loading, setLoading] = useState(false);
 
 // Obtener solo los elementos de la página actual
 const obtenerItemsDePagina = () => {
@@ -50,6 +43,20 @@ const avanzarPagina = () => {
         setPagina(pagina + 1);
     }
 };
+const manejarBusqueda = async ()=>{
+    try{
+        setLoading(true);
+        const resultado = await buscarMedicamento(textoBuscar);
+        setMedicamentos(resultado);
+        setVacio(false);
+        setPagina(1);
+    }catch(error){
+        console.error("Error al buscar medicamentos:", error);
+    }finally{
+        setLoading(false);
+    }
+    
+}
 
 const llenado=()=>{
     if(Vacio){
@@ -61,7 +68,7 @@ const llenado=()=>{
     }else{
         const itemsVisibles = obtenerItemsDePagina();
             return itemsVisibles.map((med, index) => (
-                <BusquedaCard key={index} Medicamento={med} />
+                <BusquedaCard key={index} Medicamento={med} />                
             ));
     }
 }
@@ -70,8 +77,16 @@ const llenado=()=>{
        
         <View flex={1} showsVerticalScrollIndicator={false}>
              <Box space={5}position={"absolute"} top={0} left={0} right={0}  zIndex={1}   paddingBottom={5} >
-                <Input  placeholder="Buscar..." variant="filled" width="90%" borderRadius="10" backgroundColor={'white'} py="3" paddingLeft={5} ml={4} mt={4} mr={4} borderColor={'gray.300'}
-                    InputLeftElement={<Ionicons name="search" paddingLeft={5}  size={24} color="black"  />} 
+                <Input  placeholder="Buscar..."
+                 variant="filled"
+                 width="90%"
+                 borderRadius="10" 
+                 backgroundColor={'white'} 
+                 py="3" paddingLeft={5} ml={4} mt={4} mr={4} borderColor={'gray.300'}
+                onChangeText={(texto) => settextoBuscar(texto)} // Actualiza el texto de búsqueda
+                onSubmitEditing={manejarBusqueda}
+                InputLeftElement={<Ionicons name="search" paddingLeft={5}  size={24} color="black"
+                                />} 
                 />
             </Box>
              <ImageBackground source={backograundo} style={styles.backgroundImage}>
@@ -79,6 +94,11 @@ const llenado=()=>{
             <StatusBar backgroundColor="black" barStyle="light-content" />
             <ScrollView minHeight={height*0.80} mt={"20%"} >
                 {
+                    loading? 
+                    (<HStack space={2} justifyContent="center">
+                        <Spinner accessibilityLabel="Loading posts" />
+                        
+                      </HStack>):
                 llenado()
                 }
                 <HStack justifyContent={'center'} mt={4} mb={10} px={5}>

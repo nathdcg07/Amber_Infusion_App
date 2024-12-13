@@ -2,15 +2,30 @@ import { View, Box, Divider, Image, HStack, Text, VStack, Pressable, Center, Ico
 import {useState} from "react";
 import placeholder from '../assets/icons/Image-placeholder.png'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from "expo-router";
+
 export const BusquedaCard =({Medicamento})=>{
+    const router = useRouter();
     
+    const pressHandle= ()=>{
+        router.push({
+            pathname: '/(screens)/BuscadorMedDetail',
+            params: {
+              MedicamentoRes: encodeURIComponent(JSON.stringify(Medicamento)),
+              ImgUrl: encodeURI(Medicamento.ImagenUrl)
+            },
+        });
+    }
     
     return(
         <View  >
-            <Pressable>
+            <Pressable onPress={pressHandle}>
                 
                     <HStack height={'auto'} borderWidth={"0.5"} borderRadius={15}  m={5} mb={3} overflow="hidden" padding={1} backgroundColor={'white'}>
-                        <Image source={placeholder} size={"lg"} m={5} mr={3} borderRadius={10}/>
+                        <Image source={{uri: Medicamento.ImagenUrl}} size={"lg"} m={5} mr={3} borderRadius={10}/>
+                        {
+                            console.log('Imagen:'+ Medicamento.ImagenUrl)
+                        }
                         <Divider orientation="vertical" height={"70%"} thickness={2} mt={6} mb={8}></Divider>
                         <VStack ml={4} mt={10} flex={1} >
                             <Text fontSize="22" fontWeight="bold" color={'#0D94B9'} numberOfLines={0}>{Medicamento.NombreComercial}</Text>

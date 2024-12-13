@@ -478,6 +478,37 @@ export const eliminarMedicamentoPorUsuario = async (usuarioId, medicamentoId) =>
     return false; // Retornar false si hay un error
   }
 };
+export const buscarMedicamento = async (textoBuscar) =>{
+  try{
+    const ListaMed = collection(firestore,'etiquetas');
+    const querySnapshot = await getDocs(ListaMed);
+
+    // 4. Filtrar los medicamentos que coincidan
+    const resultados = [];
+    querySnapshot.forEach((doc) => {
+      const medicamento = doc.data();
+
+      // Filtrar si el texto está presente en nombre_comercial, nombre_generico o etiquetas
+      if (
+        medicamento.NombreComercial.toLowerCase().includes(textoBuscar.toLowerCase()) ||
+        medicamento.NombreGenerico.toLowerCase().includes(textoBuscar.toLowerCase()) ||
+        medicamento.etiqueta.some((etiqueta) => etiqueta.toLowerCase().includes(textoBuscar.toLowerCase()))
+      ) {
+        resultados.push({
+          id: doc.id,
+          ...medicamento
+        });
+      }
+    });
+
+    console.log('Medicamentos encontrados:', resultados);
+    return resultados;
+  } catch (error) {
+    console.error('Error al buscar medicamentos:', error);
+    throw error;
+  }
+  
+}
 
 const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
