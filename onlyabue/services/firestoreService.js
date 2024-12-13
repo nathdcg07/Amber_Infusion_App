@@ -463,6 +463,22 @@ export const getUserData = async(usuarioId) =>{
 
 }
 
+export const eliminarMedicamentoPorUsuario = async (usuarioId, medicamentoId) => {
+  try {
+    // Referencia al documento del medicamento en la subcolección "medicamentos" del usuario
+    const medicamentoDocRef = doc(firestore, 'usuarios', usuarioId, 'medicamentos', medicamentoId);
+    
+    // Eliminar el documento del medicamento
+    await deleteDoc(medicamentoDocRef);
+    
+    console.log(`Medicamento con ID ${medicamentoId} eliminado exitosamente para el usuario con ID ${usuarioId}.`);
+    return true; // Retornar true si la eliminación fue exitosa
+  } catch (error) {
+    console.error(`Error al eliminar el medicamento con ID ${medicamentoId} para el usuario con ID ${usuarioId}:`, error);
+    return false; // Retornar false si hay un error
+  }
+};
+
 const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
 console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);

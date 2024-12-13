@@ -1,7 +1,8 @@
-import {  HStack, Box,Text, Pressable,View  } from "native-base";
+import {  HStack, Box,Text, Pressable,View, Icon  } from "native-base";
 import { Link,useRouter } from "expo-router";
 import React, { useState } from "react";
 import styles from "../Styles/GlobalStyles";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 
 export default function MedCard({medicamento}){
@@ -36,7 +37,7 @@ export default function MedCard({medicamento}){
                                 </Text>
                                 <Box style={styles.DetallesCard}>
                                     <Text>
-                                        Detalles ---&gt;
+                                        Detalles<Icon as={AntDesign} name="arrowright" size={4} color="black" />
                                         
                                     </Text>
                                 </Box>                                

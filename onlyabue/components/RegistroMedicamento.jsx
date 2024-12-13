@@ -22,7 +22,9 @@ const { width, height } = Dimensions.get('window');
  export function RegistroMedicamento(){
   
   const { medicamento } = useLocalSearchParams();
-  
+  const {medBox} = useLocalSearchParams();
+  const {imagenMed} = useLocalSearchParams();
+
   const router = useRouter();
   const [NombreComercial,setNombreComercial] = useState('');
   const [NombreGenerico,setNombreGenerico] = useState('');
@@ -67,39 +69,22 @@ const { width, height } = Dimensions.get('window');
   }
 
 useEffect(() => {
+  
   const fetchUser = async () => {
     //const fetchedUser = await getNameFromAsyncStorage();
     const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
     setUser(fetchedUser);
   };
   fetchUser();
-}, []);
+  
+  
+  
+},[]);
+const convertirFirestore= (firestore)=>{
+  return new Date(firestore.seconds * 1000);
+}
 
-  useFocusEffect(
-    useCallback(() => {
-      setNombreComercial('');
-      setNombreGenerico('');
-      setDosis('');
-      setIntervalo('');      
-      setTamanio('');
-      setUnidad('');
-      setPresentacion('');
-      setSelectedImageMed(null);
-      setSelectedImageBox(null);
-      setCantidad('');
-      setSelectedColor('');
-      setSelectedTime('');
-// Setear errores            
-      setErrorNombreComercial('');
-      setErrorNombreGenerico('');
-      setErrorDosis('');
-      setErrorIntervalo('');    
-      setTamanio('');
-      setErrorImageMed('');
-      setErrorImageBox('');
-      setCantidad('');     
-    }, [])
-  );
+
 
   const handleSubmit = async () => {
     if (
@@ -213,6 +198,7 @@ useEffect(() => {
   const [ModalConfig, setModalConfig] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [edit,setEdit] = useState(false);
   
   //validaciones
   const validateNombreComercial = (text) => {
@@ -279,6 +265,36 @@ useEffect(() => {
       }
       return(flecha);
   }
+  useEffect(() => {
+  
+    try {
+      if (medicamento) {
+        const medicamentoData = JSON.parse(decodeURIComponent(medicamento));
+        
+        setNombreComercial(medicamentoData.nombreComercial ?? '');      
+        setNombreGenerico(medicamentoData.nombreGenerico ?? '');
+        setDosis(medicamentoData.dosis ?? '');
+        setIntervalo(medicamentoData.intervalo ?? '');
+        setTamanio(medicamentoData.tamanio ?? '');
+        setUnidad(medicamentoData.unidad ?? '');
+        setPresentacion(medicamentoData.presentacion ?? '');
+        setSelectedImageMed(medicamentoData.imagenMedUrl);
+        if (medicamento) {
+          setSelectedImageMed(imagenMed);
+          setSelectedImageBox(medBox);
+          setEdit(true);
+        }
+        
+        setCantidad(medicamentoData.cantidad ?? '');
+        setSelectedColor(medicamentoData.color ?? '#ffffff');
+        setSelectedDays(medicamentoData.dias ?? []);
+        setSelectedTime( convertirFirestore(medicamentoData.hora) ?? null);
+      }
+    } catch (error) {
+      console.error('Error al parsear el medicamento:', error);
+    }
+    
+  }, [medicamento]);
 
   const ComponentesSegunPresentacion = ()=>{
     switch(Presentacion){
@@ -387,6 +403,7 @@ useEffect(() => {
               setSelectedImage={setSelectedImageMed}
               errorImage={errorImageMed}
               setErrorImage={setErrorImageMed}
+              edit={edit}
             />
             <Text style={styles.textForm}>Foto de la caja</Text>
             <CustomImagePicker
@@ -599,10 +616,16 @@ useEffect(() => {
                   <Text>Subiendo datos...</Text>
                 </View>
               ) : (
+                medicamento?
+                  <TouchableOpacity  style={styles.button} disabled={loading}>
+                    <Text style={styles.buttonText}>Actualizar</Text>
+                  </TouchableOpacity>
+                :
                 <TouchableOpacity onPress={handleSubmit} style={styles.button} disabled={loading}>
                   <Text style={styles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
               )}
+            
             </View>
             
           </View>   

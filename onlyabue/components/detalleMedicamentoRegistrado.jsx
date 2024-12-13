@@ -1,11 +1,12 @@
 import { View, ScrollView, Text, Image, VStack,HStack,Box,Button, Pressable } from "native-base";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import placeholder from '../assets/icons/Image-placeholder.png';
 import { Navigator,useRouter,useLocalSearchParams } from 'expo-router';
 import styles from "../Styles/GlobalStyles";
 import { TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Route } from "expo-router/build/Route";
+import { eliminarMedicamentoPorUsuario } from "../services/firestoreService";
 
 
 export const DetalleMedRegistrado = ()=>{
@@ -14,22 +15,42 @@ const { medicamentoDoc } = useLocalSearchParams();
 const { medicamento } = useLocalSearchParams();
 const {medBox} = useLocalSearchParams();
 const {imagenMed} = useLocalSearchParams();
+const [user, setUser] = useState("")
 const medicamentoObj = JSON.parse(decodeURIComponent(medicamento));
+
+useEffect(()=>{
+    const getUser = async () => {
+    try{
+        const fetchedUser = await getNameFromAsyncStorage();
+        setUser(fetchedUser);
+    }
+    catch(e){
+        console.log(e);
+    }
+    }
+},[])
 
 const fechaCreacion = new Date(medicamentoObj.creadoEn.seconds * 1000 + medicamentoObj.creadoEn.nanoseconds / 1000000);
 const EditarFunc = ()=>{
     router.push({
         pathname: '/(screens)/RegisterMed',
         params:{
-            medicamento: encodeURIComponent(JSON.stringify(medicamento)),
+            medBox:encodeURIComponent(medBox),
+            imagenMed:encodeURIComponent(imagenMed),
+            medicamento: encodeURIComponent(JSON.stringify(medicamentoObj)),
         }
     });
+    console.log('medicamento'+medicamento);
 }
 const opcionesFormato = {
     year: "numeric",
     month: "numeric",
     day: "numeric",
 };
+
+const handleDelete =async()=>{
+    await eliminarMedicamentoPorUsuario(medicamentoDoc,user);
+}
 const fechaLegible = fechaCreacion.toLocaleDateString("es-ES", opcionesFormato);
 
 
@@ -98,8 +119,8 @@ const fechaLegible = fechaCreacion.toLocaleDateString("es-ES", opcionesFormato);
                         
                     </VStack>
                 <HStack m={5} space={4} w="90%" justifyContent="center">
-                    <Button colorScheme="red" flex={1} fontSize={22}>Eliminar</Button>
-                    <Button colorScheme="blue" flex={1} fontSize={22}>Editar</Button>
+                    <Button onPress={handleDelete} colorScheme="red" flex={1} fontSize={22}>Eliminar</Button>
+                    <Button onPress={EditarFunc} colorScheme="blue" flex={1} fontSize={22}>Editar</Button>
                 </HStack>
             </VStack>
             

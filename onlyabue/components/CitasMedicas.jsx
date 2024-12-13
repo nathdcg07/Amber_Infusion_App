@@ -24,7 +24,7 @@ export const CitasMedicas = () => {
     ]);
      //paginacion
   const [pagina, setPagina] = useState(1);
-  const itemsPorPagina = 2;  
+  const itemsPorPagina = 5;  
 
 // Obtener solo los elementos de la página actual
 const obtenerItemsDePagina = () => {
