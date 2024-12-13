@@ -15,6 +15,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getNameFromAsyncStorage } from "../services/frontServices";
 import CustomImagePicker from './ImagePicker';
 import { primerRecordatorio } from "./recordatorios/notificacionesService";
+import { programarNotificacion } from "../services/NotificationsScripts";
 
 
 
@@ -118,7 +119,6 @@ useEffect(() => {
       Cantidad &&
       selectedColor
     ) {
-      
       try {
         if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
           alert('Debe seleccionar una imagen');
@@ -144,17 +144,20 @@ useEffect(() => {
           creadoEn: new Date(),
           dias: selectedDays,
         });
+  
         const recordatorioData = {
           medicamentoId: docRef.id,
           usuarioId: usuarioPruebaRef.id,
+          medicamentoNombre: NombreComercial,
           intervalo: Intervalo,
           horaInicial: selectedTime,
           dias: selectedDays,
         };
-        if (selectedTime != '') {
-          await primerRecordatorio(recordatorioData);
+  
+        if (selectedTime) {
+          await programarNotificacion(recordatorioData);
         }
-    
+  
         alert('Medicamento registrado correctamente');
         console.log("Medicamento agregado con ID: ", docRef.id);
   
@@ -167,9 +170,8 @@ useEffect(() => {
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
-
-    
-  };  
+  };
+  
   async function uploadImage(uri) {
     const response = await fetch(uri);
     const blob = await response.blob();

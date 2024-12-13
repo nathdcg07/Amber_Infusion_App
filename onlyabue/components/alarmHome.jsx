@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { StatusBar, View, Fab, Box, Text, Spinner, Circle } from "native-base";
+import { StatusBar, View, Fab, Box, Text, Spinner, Circle, Button } from "native-base";
 import { ScrollView, StyleSheet, Dimensions, ImageBackground, RefreshControl } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { NextAlarm } from "./nextAlarm";
@@ -10,23 +10,26 @@ import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from "../assets/icons/Fondo.jpg";
 import { loadMedsFromFile, saveMedsToFile } from "../services/frontServices";
 import styles from "../Styles/GlobalStyles";
+import * as Notifications from 'expo-notifications';
+
 
 const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
+
+
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [PlaceHolderF, setPlaceholderF] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
       try {
-        // const fetchedUser = await getNameFromAsyncStorage();
-        const fetchedUser = "W2H5OUAzK5maXu5jcww5";
+        const fetchedUser = await getNameFromAsyncStorage();
         setUser(fetchedUser);
 
         const dataMeds = await loadMedsFromFile();
@@ -39,7 +42,7 @@ export function AlarmHome() {
           await saveMedsToFile(remoteData);
         }
         if (!dataMeds || dataMeds.length === 0) {
-          setPlaceholder();
+          setPlaceholder(true);
         }
       } catch (error) {
         console.error("Error durante la inicialización:", error);

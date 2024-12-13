@@ -37,8 +37,7 @@ export const UserAccount = () => {
     const fetchUser = async () => {
       setLoad(true);
       try {
-        //const user = await getNameFromAsyncStorage(); // Asegúrate de que esta función esté importada
-        const user = 'W2H5OUAzK5maXu5jcww5';
+        const user = await getNameFromAsyncStorage(); // Asegúrate de que esta función esté importada
         const fetchedUser = await getUserData(user);
         setUserData(fetchedUser || {});
         const listaMed = await loadMedsFromFile();
