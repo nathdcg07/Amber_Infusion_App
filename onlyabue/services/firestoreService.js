@@ -401,7 +401,7 @@ export const registrarUsuario = async ({
 
 
 //funciones para citas medicas crear, buscar, eliminar actualizar
-export const crearCitaMedica = async (cita) => {
+/*export const crearCitaMedica = async (cita) => {
   try {
     const docRef = await addDoc(collection(firestore, "citas_medicas"), cita);
     console.log("Cita creada exitosamente. ID:", docRef.id);
@@ -409,7 +409,7 @@ export const crearCitaMedica = async (cita) => {
     console.error("Error al crear la cita:", error);
   }
 };
-
+*/
 export const leerCitaMedica = async (id) => {
   const docRef = doc(firestore, "citas_medicas", id);
   const docSnap = await getDoc(docRef);
@@ -572,10 +572,45 @@ export const updateMedicationData = async (userId, medicationId, updatedData) =>
   }
 };
 
-const fechaCita = new Date('2024-11-04 T15:00');
-const recordatorios = calcularRecordatorioCita(fechaCita);
-console.log("Recordatorio 1 día antes:", recordatorios.unDiaAntes);
-console.log("Recordatorio 2 horas antes:", recordatorios.dosHorasAntes);
+
+export const obtenerCitasPorUsuario = async (usuarioId) => {
+  try {
+    // Referencia al documento del usuario con el ID proporcionado
+    const usuarioDocRef = doc(firestore, 'usuarios', usuarioId);
+
+    // Verificar si el documento existe
+    const usuarioDoc = await getDoc(usuarioDocRef);
+    if (!usuarioDoc.exists()) {
+      console.error(`No se encontró un usuario con el ID: ${usuarioId}`);
+      return [];
+    }
+
+    // Acceder a la subcolección "medicamentos" del usuario
+    const medicamentosCollectionRef = collection(usuarioDocRef, 'citas_medicas');
+    const medicamentosSnapshot = await getDocs(medicamentosCollectionRef);
+
+    // Mapear los documentos de la subcolección a un array
+    const listaMedicamentos = medicamentosSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return listaMedicamentos;
+  } catch (error) {
+    console.error('Error al obtener medicamentos:', error);
+    return [];
+  }
+};
+
+export const crearCitaMedica = async (usuarioId, cita) => {
+  try {
+      const usuarioRef = doc(collection(firestore, 'usuarios'), usuarioId);
+      const citasRef = collection(usuarioRef, 'citas_medicas');  
+      const docRef = await addDoc(citasRef, cita)    } catch (error) {
+      console.error('Error al crear la cita médica:', error);
+      throw error;
+  }
+};
 
 
 

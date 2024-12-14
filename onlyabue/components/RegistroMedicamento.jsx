@@ -16,6 +16,7 @@ import { getNameFromAsyncStorage } from "../services/frontServices";
 import CustomImagePicker from './ImagePicker';
 import { primerRecordatorio } from "./recordatorios/notificacionesService";
 import { updateMedicationData } from "../services/firestoreService";
+import { programarNotificacion } from "../services/NotificationsScripts";
 
 
 
@@ -104,7 +105,6 @@ const convertirFirestore= (firestore)=>{
       Cantidad &&
       selectedColor
     ) {
-      
       try {
         if (errorImageMed && errorImageBox && !selectedImageMed && !selectedImageBox) {
           alert('Debe seleccionar una imagen');
@@ -130,17 +130,22 @@ const convertirFirestore= (firestore)=>{
           creadoEn: new Date(),
           dias: selectedDays,
         });
+  
         const recordatorioData = {
           medicamentoId: docRef.id,
           usuarioId: usuarioPruebaRef.id,
+          medicamentoNombre: NombreComercial,
+          medicamentoPres: Presentacion,
+          medicamentoCantidad:Dosis,
           intervalo: Intervalo,
           horaInicial: selectedTime,
           dias: selectedDays,
         };
-        if (selectedTime != '') {
-          await primerRecordatorio(recordatorioData);
+  
+        if (selectedTime) {
+          await programarNotificacion(recordatorioData);
         }
-    
+  
         alert('Medicamento registrado correctamente');
         console.log("Medicamento agregado con ID: ", docRef.id);
   
@@ -153,9 +158,8 @@ const convertirFirestore= (firestore)=>{
     } else {
       Alert.alert('Error', 'Por favor llene todos los campos del formulario');
     }
-
-    
-  };  
+  };
+  
   async function uploadImage(uri) {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -201,7 +205,7 @@ const convertirFirestore= (firestore)=>{
   
   //validaciones
   const validateNombreComercial = (text) => {
-    const regex = /^[a-zA-Z0-9\s]{2,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{2,}$/;
     if (!regex.test(text)) {
       setErrorNombreComercial('El nombre comercial no debe estar vacío.');
     } else {
@@ -210,7 +214,7 @@ const convertirFirestore= (firestore)=>{
     setNombreComercial(text);
   };
   const validateNombreGenerico = (text) => {
-    const regex = /^[a-zA-Z0-9\s]{3,}$/; // Solo letras y espacios
+    const regex = /^[a-zA-Z0-9\s]{3,}$/;
     if (!regex.test(text)) {
       setErrorNombreGenerico('El nombre comercial no debe estar vacío.');
     } else {
@@ -277,9 +281,9 @@ const convertirFirestore= (firestore)=>{
 
   const handleTimeChange = (event, time) => {
     if (time) {
-      setSelectedTime(time); // Guardar la hora seleccionada
+      setSelectedTime(time);
     }
-    setShowTimePicker(false); // Cerrar el selector después de elegir la hora
+    setShowTimePicker(false); 
   };
   
   function FlechaColor(color){

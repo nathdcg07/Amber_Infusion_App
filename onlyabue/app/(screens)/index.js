@@ -15,12 +15,14 @@ import * as AuthSession from 'expo-auth-session';
 import CryptoJS from 'crypto-js'
 import { saveToken,saveName } from '../../store/slices/userSlice';
 import { obtenerDocumentoPorToken } from '../../services/firestoreService';
-
+import { solicitarPermisosNotificaciones,initializeNotifications } from '../../services/NotificationsScripts';
 
 WebBrowser.maybeCompleteAuthSession();
+initializeNotifications();
 
 export default function Index() {
-  const router = useRouter();
+  
+ const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +35,7 @@ export default function Index() {
   });
 
   useEffect(() => {
+    solicitarPermisosNotificaciones();
     const checkStoredToken = async () => {
       try {
         const storedToken = await AsyncStorage.getItem("authToken");
@@ -63,21 +66,21 @@ export default function Index() {
     try {
       setIsLoading(true);
   
-      // Solicita el perfil del usuario utilizando el token de acceso
+     
       const userInfoResponse = await fetch('https://www.googleapis.com/userinfo/v2/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const userInfo = await userInfoResponse.json();
   
-      // Obtén el correo electrónico del usuario
+      
       const userEmail = userInfo.email;
       const hashedEmail = CryptoJS.SHA256(userEmail).toString(CryptoJS.enc.Hex);
 
-      // Verifica si el token ya existe en la base de datos
+
       const tokenExists = await verificarToken(hashedEmail);
   
       if (tokenExists) {
-        // Almacena el token y establece el estado de autenticación en Redux
+
         const userDocumentId = await obtenerDocumentoPorToken(hashedEmail);
         dispatch(saveName(userDocumentId));
         dispatch(saveToken(hashedEmail));
@@ -102,7 +105,7 @@ export default function Index() {
 
   return (
     <View flex={1}>
-      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />} 
+      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />}
     </View>
   );
 }

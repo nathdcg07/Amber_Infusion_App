@@ -4,26 +4,29 @@ import React, { useState } from "react";
 import { Link } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
 export function CitaCard({Cita}){
-    const [NombreMed, setNombreMed] =useState()
-    const [Detalle, setDetalle] = useState()
-    const [Lugar, setLugar] = useState()
-    const [HoraCita, setHoraCita] = useState()
-    const [Fecha, setFecha]=useState()
+    
+    const fechaCreacion = new Date(Cita.Fecha.seconds * 1000 + Cita.Fecha.nanoseconds / 1000000);
+    
+        const opcionesFormato = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+        };
+        const fechaLegible = fechaCreacion.toLocaleDateString("es-ES", opcionesFormato);
+    
     return(
             <View alignSelf={'center'} style={styles.CardsContainer} shadow={"6"}>
-                        
-                    
-                        <Pressable>                        
+                                             
                             <HStack space={3} alignItems="center" padding={1}>
                                 <Box alignItems={'center'} flex={1}>
                                     <Text alignSelf={'center'} fontSize="2xl" fontWeight="bold">
-                                    {Cita.NombreMed}
+                                    {Cita.NombreMedico} {Cita.ApellidoMedico}
                                     </Text>
                                     <Text alignSelf={'center'} fontSize="2xl" fontWeight="bold">
-                                    {Cita.Fecha}
+                                    {Cita.Hora}
                                     </Text>
                                     <Text alignItems="center" fontSize="2xl" fontWeight="bold">
-                                    {Cita.HoraCita}
+                                    {fechaLegible}
                                     </Text>
                                     <Text alignSelf={'center'} fontSize="md" color="gray.500">
                                     {Cita.Lugar}
@@ -31,15 +34,11 @@ export function CitaCard({Cita}){
                                     <Text alignSelf={'center'} fontSize="md" color="gray.500">
                                     {Cita.Detalle}
                                     </Text>
-                                    {/* <Box style={styles.DetallesCard}>
-                                        <Text>
-                                            Detalles<Icon as={AntDesign} name="arrowright" size={4} color="black" />
-                                        </Text>
-                                    </Box>                                 */}
+                                    <Box style={styles.DetallesCard}>
+
+                                    </Box>                                
                                 </Box>
                             </HStack>
-                        </Pressable>
-                    
                     
             </View>
 

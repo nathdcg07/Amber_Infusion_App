@@ -7,7 +7,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import styles from "../Styles/GlobalStyles";
 import { getNameFromAsyncStorage } from "../services/frontServices";
+import { crearCitaMedica } from "../services/firestoreService";
+import * as Notifications from 'expo-notifications';
+
 const { width, height } = Dimensions.get('window');
+
 
 export function RegistroCitaMedica(){
   
@@ -17,7 +21,6 @@ export function RegistroCitaMedica(){
   const [DescipcionCita, setDescripcionCita]= useState('')
   const [Detalle, setDetalle] = useState('')
   const [Lugar, setLugar] = useState('')
-  const [Recordatorio,setRecordatorio] = useState('')
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDate,SetselectedDate]= useState(null)
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -32,41 +35,59 @@ useEffect(() => {
   fetchUser();
 }, []);
 
-  const handleSubmit = ()=>{
-      if(!errorNombreMed &&
-          !errorApellidoMed &&
-          !errorLugar &&
-          !errorHora &&
-          !errorFecha &&
-          !errorRecordatorio &&
+const handleSubmit = async () => {
+  if (!errorNombreMed &&
+      !errorApellidoMed &&
+      !errorLugar &&
+      !errorHora &&
+      !errorFecha &&
+      NombreMedico &&
+      ApellidoMedico &&
+      Lugar &&
+      selectedDate &&
+      selectedTime
+  ) {
+    // Crear el objeto de cita
+    const cita = {
+      NombreMedico,
+      ApellidoMedico,
+      DescipcionCita,
+      Detalle,
+      Lugar,
+      Hora: selectedTime.toLocaleTimeString(),
+      Fecha: selectedDate,
+    };
 
-          NombreMedico &&
-          ApellidoMedico &&
-          Lugar &&
-          selectedDate &&
-          selectedTime &&
-          Recordatorio
-      ){
-        console.log( 'nombre:'+ NombreMedico +'apellido:'+ ApellidoMedico + 'lugar:'+Lugar+ 'descrip:'+DescipcionCita+'recordatorio:'+Recordatorio +'hora:'+selectedTime.toLocaleTimeString() +'fecha:'+selectedDate )
-      }else{
-        if(!NombreMedico)
-          setErrorNombreMed('llene este espacio')
-        if(!ApellidoMedico)
-          setErrorApellidoMed('llene este espacio')
-        if(!Lugar)
-          setErrorLugar('llene este espacio')
-        if(!selectedTime)
-          setErrorHora('Seleccione Hora de Alarma')
-        if(!selectedDate)
-          setErrorFecha('Seleccione una Fecha')
-        if(!Recordatorio)
-          setErrorRecordatorio('Seleccione Recordatorio')
-        if(!Detalle)
-          setErrorDetalle('Ingrese detalles de la Cita Medica')
+    // Guardar cita en la base de datos o localmente
+    crearCitaMedica(user, cita);
 
-        Alert.alert('Error', 'Por favor llene los campos con * del formulario');
-      }
+    // Calcular la fecha y hora de la notificación
+    const notificationDate = new Date(selectedDate);
+    const [hours, minutes] = selectedTime.toLocaleTimeString().split(':');
+    notificationDate.setHours(Number(hours));
+    notificationDate.setMinutes(Number(minutes));
+    notificationDate.setSeconds(0);
+
+    // Programar la notificación
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Recordatorio de cita médica',
+        body: `Tienes una cita con ${NombreMedico} en ${Lugar}`,
+        data: { cita },
+      },
+      trigger: notificationDate,
+    });
+
+    alert('Cita registrada y notificación programada');
+  } else {
+    if (!NombreMedico) setErrorNombreMed('Llena este espacio');
+    if (!ApellidoMedico) setErrorApellidoMed('Llena este espacio');
+    if (!Lugar) setErrorLugar('Llena este espacio');
+    if (!selectedTime) setErrorHora('Seleccione Hora de Alarma');
+    if (!selectedDate) setErrorFecha('Seleccione una Fecha');
+    if (!Detalle) setErrorDetalle('Ingrese detalles de la Cita Médica');
   }
+};
   
   const handleTimeChange = (event, time) => {
     if (time) {
@@ -85,7 +106,6 @@ useEffect(() => {
 //Set de errores
 const [errorNombreMed,setErrorNombreMed] = useState('')
 const [errorApellidoMed,setErrorApellidoMed] = useState('')
-const [errorRecordatorio,setErrorRecordatorio] = useState('')
 const [errorLugar,setErrorLugar] = useState('')
 const [errorHora,setErrorHora] = useState('')
 const [errorFecha, setErrorFecha]=useState('')
@@ -217,32 +237,7 @@ const [errorDetalle, setErrorDetalle]=useState('')
                               is24Hour={true} 
                             />
                           </Modal>
-{/* Antelacion Recordatorio  */}
-                        <Text style={styles.textForm}>Recordatorio:*</Text>
-                        <Select
-                        size={"lg"} variant={"outline"} backgroundColor={'white'} fontSize={14}
-                        borderRadius={7}
-                        marginTop={1} selectedValue={Recordatorio} minWidth="200"  placeholder="Seleccione cantidad de Medicamento"
-                        onValueChange={(itemValue) => {setRecordatorio(itemValue);
-                          if(Recordatorio!=''){
-                            setErrorRecordatorio('')
-                          }
-                        }}
-                        >
-{/* Falta asignacion de valores */}
-                            <Select.Item label="Ninguno"/>
-                            <Select.Item label="5 Min Antes"/>
-                            <Select.Item label="10 Min Antes"/>
-                            <Select.Item label="15 Min Antes"/>
-                            <Select.Item label="30 Min Antes"/>
-                            <Select.Item label="1 Hora Antes"/>
-                            <Select.Item label="2 Horas Antes"/>
-                            <Select.Item label="3 Horas Antes"/>
-                            <Select.Item label="1 Dia Antes"/>
-                            <Select.Item label="2 Dias Antes"/>
-                        </Select>
 
-                        {errorRecordatorio? htmlError(errorRecordatorio):null}
                         
 {/* //Fecha                           */}
                         <Text style={styles.textForm}>Fecha: *</Text>

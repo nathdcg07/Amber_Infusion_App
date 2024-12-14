@@ -10,10 +10,14 @@ import { obtenerMedicamentosPorUsuario } from "../services/firestoreService";
 import backograundo from "../assets/icons/Fondo.jpg";
 import { loadMedsFromFile, saveMedsToFile } from "../services/frontServices";
 import styles from "../Styles/GlobalStyles";
+import * as Notifications from 'expo-notifications';
+import { solicitarPermisosNotificaciones } from "../services/NotificationsScripts";
 
 const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -200 : -150;
+
+
 
 export function AlarmHome() {
   const [Medicamentos, setMedicamentos] = useState([]);
@@ -52,6 +56,7 @@ const avanzarPagina = () => {
 };
 
   useEffect(() => {
+    solicitarPermisosNotificaciones();
     const initialize = async () => {
       try {
         const fetchedUser = await getNameFromAsyncStorage();
@@ -68,8 +73,8 @@ const avanzarPagina = () => {
           await saveMedsToFile(remoteData);
         }
         if (!dataMeds || dataMeds.length === 0) {
-          setPlaceholder();
-        }        
+          setPlaceholder(true);
+        }
       } catch (error) {
         console.error("Error durante la inicialización:", error);
       } finally {
@@ -100,7 +105,6 @@ const avanzarPagina = () => {
     }
   };
 
-  
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
