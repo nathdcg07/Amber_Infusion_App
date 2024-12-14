@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
 export function CitaCard({Cita}){
-    
+    console.log("desde cards",Cita);
     const fechaCreacion = new Date(Cita.Fecha.seconds * 1000 + Cita.Fecha.nanoseconds / 1000000);
     
         const opcionesFormato = {

@@ -16,12 +16,12 @@ import CryptoJS from 'crypto-js'
 import { saveToken,saveName } from '../../store/slices/userSlice';
 import { obtenerDocumentoPorToken } from '../../services/firestoreService';
 import { solicitarPermisosNotificaciones,initializeNotifications } from '../../services/NotificationsScripts';
+import { requestWritePermission } from '../../services/frontServices';
 
 WebBrowser.maybeCompleteAuthSession();
 initializeNotifications();
 
 export default function Index() {
-  
  const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,6 +35,7 @@ export default function Index() {
   });
 
   useEffect(() => {
+    requestWritePermission();
     solicitarPermisosNotificaciones();
     const checkStoredToken = async () => {
       try {

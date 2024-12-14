@@ -71,8 +71,7 @@ const { width, height } = Dimensions.get('window');
 useEffect(() => {
   
   const fetchUser = async () => {
-    //const fetchedUser = await getNameFromAsyncStorage();
-    const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
+    const fetchedUser = await getNameFromAsyncStorage();
     setUser(fetchedUser);
   };
   fetchUser();

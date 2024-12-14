@@ -37,6 +37,7 @@ export const UserAccount = () => {
     const fetchUser = async () => {
       setLoad(true);
       try {
+        
         const user = await getNameFromAsyncStorage(); // Asegúrate de que esta función esté importada
         const fetchedUser = await getUserData(user);
         setUserData(fetchedUser || {});

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { StatusBar, View, Fab, Box, Text, Spinner, Circle, HStack, Button } from "native-base";
+import { StatusBar, View, Fab, Box, Text, Spinner, Circle, Button } from "native-base";
 import { ScrollView, StyleSheet, Dimensions, ImageBackground, RefreshControl } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { NextAlarm } from "./nextAlarm";
@@ -12,6 +12,7 @@ import { loadMedsFromFile, saveMedsToFile } from "../services/frontServices";
 import styles from "../Styles/GlobalStyles";
 import * as Notifications from 'expo-notifications';
 import { solicitarPermisosNotificaciones } from "../services/NotificationsScripts";
+import { getNameFromAsyncStorage } from "../services/frontServices";
 
 const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
@@ -24,48 +25,20 @@ export function AlarmHome() {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [PlaceHolderF, setPlaceholderF] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
-  
-  const [pagina, setPagina] = useState(1);
-  const itemsPorPagina = 5;  
-
-
-const obtenerItemsDePagina = () => {
-    const inicio = (pagina - 1) * itemsPorPagina;
-    const fin = inicio + itemsPorPagina;
-    return Medicamentos.slice(inicio, fin);
-};
-
-
-const hayMasElementos = () => {
-  return pagina * itemsPorPagina < Medicamentos.length;
-};
-
-
- const retrocederPagina = () => {
-    if (pagina > 1) {
-        setPagina(pagina - 1);
-    }
-};
-
-
-const avanzarPagina = () => {
-    if (hayMasElementos()) {
-        setPagina(pagina + 1);
-    }
-};
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     solicitarPermisosNotificaciones();
     const initialize = async () => {
       try {
-        const fetchedUser = await getNameFromAsyncStorage();
         
+        const fetchedUser = await getNameFromAsyncStorage();
         setUser(fetchedUser);
 
         const dataMeds = await loadMedsFromFile();
         if (Array.isArray(dataMeds) && dataMeds.length > 0) {
-          setMedicamentos(dataMeds);          
+          setMedicamentos(dataMeds);
+          saveMedsToFile(dataMeds);
           setPlaceholderF(false);
         } else {
           const remoteData = await obtenerMedicamentosPorUsuario(fetchedUser);
@@ -73,7 +46,7 @@ const avanzarPagina = () => {
           await saveMedsToFile(remoteData);
         }
         if (!dataMeds || dataMeds.length === 0) {
-          setPlaceholder(true);
+          setPlaceholder();
         }
       } catch (error) {
         console.error("Error durante la inicialización:", error);
@@ -96,14 +69,7 @@ const avanzarPagina = () => {
     setMedicamentos(placeholderMed);
   };
 
-  const setCards = () => {
-    if (PlaceHolderF) {
-      return Medicamentos.map((med) => <CardPlaceholder key={med.nombreComercial} medicamento={med} />);
-    } else {
-      const itemsVisibles = obtenerItemsDePagina();
-      return itemsVisibles.map((med) => <MedCard key={med.id} medicamento={med} />);
-    }
-  };
+
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -141,31 +107,14 @@ const avanzarPagina = () => {
                 Tus Recordatorios
               </Text>
               <View paddingX={3}>
-                {isLoading ? <Spinner size="lg" paddingTop={5} marginBottom={10} /> : setCards()}
+              {isLoading ?(<Spinner size="lg" paddingTop={5} marginBottom={10}/>):(
+              Medicamentos.map((med) => (
+              <MedCard key={med.id} medicamento={med}/>
+              ))
+            )}
               </View>
             </Box>
           </View>
-          <HStack justifyContent="space-between" mt={4} mb={10} px={5}>
-          {pagina > 1 && (
-                <Button 
-                  onPress={retrocederPagina}
-                  style={styles.button}
-                  m={2}
-                >
-                  <Text style={styles.buttonText}>Anterior</Text>
-                </Button>
-              )}
-
-              {hayMasElementos() && (
-                <Button 
-                  onPress={avanzarPagina}
-                  style={styles.button}
-                  m={2}
-                >
-                  <Text style={styles.buttonText}>Siguiente</Text>
-                </Button>
-              )}
-            </HStack>
         </ScrollView>
         <Link asChild href="/RegisterMed">
           <Fab

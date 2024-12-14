@@ -575,7 +575,13 @@ export const updateMedicationData = async (userId, medicationId, updatedData) =>
 
 export const obtenerCitasPorUsuario = async (usuarioId) => {
   try {
-    // Referencia al documento del usuario con el ID proporcionado
+    // Validar el ID del usuario
+    if (!usuarioId) {
+      console.error("El usuarioId es inválido o no está definido:", usuarioId);
+      return [];
+    }
+
+    // Referencia al documento del usuario
     const usuarioDocRef = doc(firestore, 'usuarios', usuarioId);
 
     // Verificar si el documento existe
@@ -585,19 +591,25 @@ export const obtenerCitasPorUsuario = async (usuarioId) => {
       return [];
     }
 
-    // Acceder a la subcolección "medicamentos" del usuario
+    // Referencia a la subcolección "citas_medicas"
     const medicamentosCollectionRef = collection(usuarioDocRef, 'citas_medicas');
     const medicamentosSnapshot = await getDocs(medicamentosCollectionRef);
 
-    // Mapear los documentos de la subcolección a un array
+    // Verificar si la subcolección está vacía
+    if (medicamentosSnapshot.empty) {
+      console.warn(`La subcolección "citas_medicas" está vacía para el usuario: ${usuarioId}`);
+      return [];
+    }
+
+    // Mapear los documentos de la subcolección
     const listaMedicamentos = medicamentosSnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
 
     return listaMedicamentos;
   } catch (error) {
-    console.error('Error al obtener medicamentos:', error);
+    console.error('Error al obtener citas:', error);
     return [];
   }
 };

@@ -1,5 +1,31 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+
+export const requestWritePermission = async () => {
+  try {
+    // Solicita permisos para acceder a la galería del dispositivo
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+
+    if (status !== 'granted') {
+      console.log('Permiso denegado para la galería.');
+      return false;
+    }
+
+    // Verifica si puedes escribir en el sistema de archivos
+    const permission = await FileSystem.requestPermissionsAsync();
+    if (permission.granted) {
+      console.log('Permiso concedido para el sistema de archivos.');
+      return true;
+    } else {
+      console.log('Permiso denegado para el sistema de archivos.');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error al solicitar permisos de escritura:', error);
+    return false;
+  }
+};
 
 export const getNameFromAsyncStorage = async () => {
   try {

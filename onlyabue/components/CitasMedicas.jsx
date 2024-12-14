@@ -1,5 +1,5 @@
 
-import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner,Circle,Button,HStack } from "native-base";
+import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner,Circle } from "native-base";
 import { ScrollView, StyleSheet,Dimensions,ImageBackground, RefreshControl } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link } from "expo-router";
@@ -36,10 +36,10 @@ export const CitasMedicas = () => {
       try {
         const fetchedUser = await getNameFromAsyncStorage();
         setUser(fetchedUser);
-
         const dataDates = await loadDatesFromFile();
         if (Array.isArray(dataDates) && dataDates.length > 0) {
           setCitas(dataDates);
+          saveDatesToFile(dataDates);
           setPlaceholderF(false);
         } else {
           const remoteData = await obtenerCitasPorUsuario(fetchedUser);
@@ -47,7 +47,7 @@ export const CitasMedicas = () => {
           await saveDatesToFile(remoteData);
         }
         if (!dataDates || dataDates.length === 0) {
-          setPlaceholder(true);
+          setPlaceholder();
         }
       } catch (error) {
         console.error("Error durante la inicialización:", error);
@@ -59,36 +59,6 @@ export const CitasMedicas = () => {
     initialize();
 
   }, []);
-
-   //paginacion
-   const [pagina, setPagina] = useState(1);
-   const itemsPorPagina = 5;  
- 
- // Obtener solo los elementos de la página actual
- const obtenerItemsDePagina = () => {
-     const inicio = (pagina - 1) * itemsPorPagina;
-     const fin = inicio + itemsPorPagina;
-     return Citas.slice(inicio, fin);
- };
- 
- // Detectar si hay más elementos para cargar
-   const hayMasElementos = () => {
-     return pagina * itemsPorPagina < Citas.length;
-   };
- 
-   // Retroceder a la página anterior
-   const retrocederPagina = () => {
-       if (pagina > 1) {
-           setPagina(pagina - 1);
-       }
-   };
- 
-   // Avanzar a la siguiente página
-   const avanzarPagina = () => {
-       if (hayMasElementos()) {
-           setPagina(pagina + 1);
-       }
-   };
     
   const setPlaceholder = () => {
     const placeholderMed = [
@@ -101,23 +71,6 @@ export const CitasMedicas = () => {
     setCitas(placeholderMed);
   };
 
-  const setCards = () => {
-    if (!Array.isArray(citas) || citas.length === 0) {
-      return (
-        <Text alignSelf="center" color="white" fontSize={20}>
-          No hay citas disponibles.
-        </Text>
-      );
-    }
-  
-    return citas.map((dates, index) => {
-      if (PlaceHolderF) {
-        return <CardPlaceholder key={index} medicamento={dates} />;
-      } else {
-        return <CitaCard key={index} Cita={dates} />;
-      }
-    });
-  };
 
 
 const onRefresh = useCallback(async () => {
@@ -158,32 +111,11 @@ const onRefresh = useCallback(async () => {
                 </Text>
                 <View paddingX={3}>
                   
-                  {isLoading ? <Spinner size="lg" paddingTop={5} marginBottom={10} /> : setCards()}
+                  {isLoading ? <Spinner size="lg" paddingTop={5} marginBottom={10} /> : (citas.map((dates)=>(<CitaCard Cita={dates}/>)))}
                 
                 </View>
             </Box>
             </View>
-            <HStack justifyContent="space-between" mt={4} mb={10} px={5}>
-          {pagina > 1 && (
-                <Button 
-                  onPress={retrocederPagina}
-                  style={styles.button}
-                  m={2}
-                >
-                  <Text style={styles.buttonText}>Anterior</Text>
-                </Button>
-              )}
-
-              {hayMasElementos() && (
-                <Button 
-                  onPress={avanzarPagina}
-                  style={styles.button}
-                  m={2}
-                >
-                  <Text style={styles.buttonText}>Siguiente</Text>
-                </Button>
-              )}
-            </HStack>
         </ScrollView>
             <Link asChild href="/RegistroCitaMed">
             <Fab
@@ -201,6 +133,3 @@ const onRefresh = useCallback(async () => {
     </View>
   )
 }
-
-
-
