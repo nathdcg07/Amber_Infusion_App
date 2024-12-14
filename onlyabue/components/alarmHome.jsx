@@ -11,7 +11,7 @@ import backograundo from "../assets/icons/Fondo.jpg";
 import { loadMedsFromFile, saveMedsToFile } from "../services/frontServices";
 import styles from "../Styles/GlobalStyles";
 import * as Notifications from 'expo-notifications';
-
+import { solicitarPermisosNotificaciones } from "../services/NotificationsScripts";
 
 const { width, height } = Dimensions.get("window");
 const aspectRatio = height / width;
@@ -27,9 +27,11 @@ export function AlarmHome() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    solicitarPermisosNotificaciones();
     const initialize = async () => {
       try {
-        const fetchedUser = await getNameFromAsyncStorage();
+        const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
+        //const fetchedUser = await getNameFromAsyncStorage();
         setUser(fetchedUser);
 
         const dataMeds = await loadMedsFromFile();

@@ -73,4 +73,42 @@ export async function deleteMedsFile() {
   }
 }
   
+export async function saveDatesToFile(data) {
+  try {
+    const fileUri = FileSystem.documentDirectory + 'citas.json'; // Ruta del archivo
+    await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(data, null, 2)); // Guardar como JSON
+    console.log('Citas guardados en el archivo:');
+  } catch (error) {
+    console.error('Error guardando Citas en el archivo:', error);
+  }
+}
+
+export async function loadDatesFromFile() {
+  try {
+    const fileUri = FileSystem.documentDirectory + 'citas.json';
+    const fileExists = await FileSystem.getInfoAsync(fileUri);
+    
+    // Verificar si el archivo existe
+    if (!fileExists.exists) {
+      console.log('El archivo no existe.');
+      return null;
+    }
+    
+    const fileContent = await FileSystem.readAsStringAsync(fileUri);
+    
+    // Verificar si el contenido del archivo está vacío
+    if (!fileContent || fileContent.trim().length === 0) {
+      console.log('El archivo está vacío.');
+      return null;
+    }
+
+    const meds = JSON.parse(fileContent);
+    console.log('citas cargados desde el archivo');
+    return meds;
+    
+  } catch (error) {
+    console.error('Error cargando citas desde el archivo:', error);
+    return null;  // En caso de error, retornar null
+  }
+}
   

@@ -22,7 +22,7 @@ initializeNotifications();
 
 export default function Index() {
   
-  const router = useRouter();
+ /* const router = useRouter();
   const dispatch = useDispatch();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,10 +102,11 @@ export default function Index() {
   if (isLoading) {
     return <LoadingScreen />;
   }
-
+*/
   return (
     <View flex={1}>
-      {isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />}
+      {/*isAuthenticated ? <Redirect href="/(tabs)/Home" /> : <AuthScreen onSignIn={() => promptAsync()} />*/}
+      <Redirect href="/(tabs)/Home" />
     </View>
   );
 }

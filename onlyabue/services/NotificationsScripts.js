@@ -21,59 +21,45 @@ export const initializeNotifications =()=>{
     });
 };
 
-const scheduleNotifications = async ({ horaInicial, intervalo, dias, medicamento }) => {
-    try {
-      const fecha = new Date(horaInicial);
-      const hora = fecha.getHours();
-      const minutos = fecha.getMinutes();
+export const programarNotificacion = async (recordatorioData) => {
+    const { intervalo, horaInicial, dias, medicamentoCantidad,medicamentoPres,medicamentoNombre } = recordatorioData;
   
-      for (const dia of dias) {
-        const dayOfWeek = getDayOfWeekNumber(dia);
+    // Extraer hora y minutos de selectedTime
+    const date = new Date(horaInicial);
+    const hour = date.getHours();
+    const minute = date.getMinutes();
   
-
-        let currentHour = hora;
-        let currentMinute = minutos;
-  
-        while (currentHour < 24) {
-
+    for (const dia of dias) {
+        try {
+          const dayOfWeek = getDayOfWeekNumber(dia); // Convertir días en números
           const trigger = {
-            weekday: dayOfWeek, 
-            hour: currentHour,
-            minute: currentMinute,
-            repeats: true, 
+            weekday: dayOfWeek, // Día de la semana (1 = Domingo, 7 = Sábado)
+            hour,
+            minute,
+            repeats: true,
           };
-  
+      
           await Notifications.scheduleNotificationAsync({
             content: {
-              title: 'Es hora de tomar tu medicamento',
-              body: `Recuerda tomar ${medicamento.nombreComercial}`,
+              title: "Recordatorio de Medicamento",
+              body: `Es hora de tomar tu medicamento. ${medicamentoNombre} ${medicamentoCantidad} ${medicamentoPres}`,
               sound: true,
+              data: { medicamentoId: recordatorioData.medicamentoId },
             },
             trigger,
           });
-  
-          
-          currentHour += intervalo; 
-          if (currentHour >= 24) break; 
+        } catch (error) {
+          console.error(`Error programando notificación para el día ${dia}:`, error);
         }
       }
-  
-      console.log('Notificaciones programadas correctamente.');
-    } catch (error) {
-      console.error('Error al programar notificaciones:', error);
-    }
   };
   
-
+  // Convertir el nombre del día a número
   const getDayOfWeekNumber = (dia) => {
-    const diasMap = {
-      Domingo: 1,
-      Lunes: 2,
-      Martes: 3,
-      Miercoles: 4,
-      Jueves: 5,
-      Viernes: 6,
-      Sabado: 7,
-    };
-    return diasMap[dia] || null; 
+    const diasSemana = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"];
+    const index = diasSemana.indexOf(dia);
+    if (index === -1) {
+      throw new RangeError(`El día proporcionado no es válido: ${dia}`);
+    }
+    return index + 1; // Ajustar índice (0 = Domingo, necesitamos 1 = Domingo)
   };

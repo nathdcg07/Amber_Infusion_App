@@ -149,6 +149,8 @@ useEffect(() => {
           medicamentoId: docRef.id,
           usuarioId: usuarioPruebaRef.id,
           medicamentoNombre: NombreComercial,
+          medicamentoPres: Presentacion,
+          medicamentoCantidad:Dosis,
           intervalo: Intervalo,
           horaInicial: selectedTime,
           dias: selectedDays,

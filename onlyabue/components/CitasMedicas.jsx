@@ -1,3 +1,4 @@
+
 import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner,Circle } from "native-base";
 import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -9,45 +10,76 @@ import { CitaCard } from "./CitasProgramadas";
 import styles from "../Styles/GlobalStyles";
 import backogoundo from '../assets/icons/Fondo.jpg';
 import { getNameFromAsyncStorage } from "../services/frontServices";
+import { loadDatesFromFile,saveDatesToFile } from "../services/frontServices";
+import { obtenerCitasPorUsuario } from "../services/firestoreService";
 import CardPlaceholder from "./CardPlaceholder";
+
+
+
 const { width,height } = Dimensions.get('window');
 const aspectRatio = height / width;
 const topPosition = aspectRatio > 1.6 ? -150 : -150;
+
+
+
 export const CitasMedicas = () => {
+
   const [PlaceHolderF,setPlaceholderF]=useState(false);
-    const [Citas,setCitas]=useState([
-      {nombreComercial:"Sin Citas"}
-      // {NombreMed:'Dr. Jose Armando rocio',Detalle:'Sin Detalle',Lugar:'Hospital del Norte', HoraCita:'12:30', Fecha:'12/11/2024'},
-      // {NombreMed:'Dr. Armando Hoyos',Detalle:'Sin Detalle',Lugar:'Hospital del Sur', HoraCita:'9:30', Fecha:'12/10/2024'},
-      // {NombreMed:'Dr. Jose Armando rocio',Detalle:'Sin Detalle',Lugar:'Hospital del Norte', HoraCita:'12:30', Fecha:'12/11/2024'},
+  const [user, setUser] = useState(null);
+  const [citas, setCitas] = useState([]);
+  const [isLoading, setIsLoading]  = useState(false);
+  
+  useEffect(() => {
 
-    ]);
+    const initialize = async () => {
+      try {
+        const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
+        //const fetchedUser = await getNameFromAsyncStorage();
+        setUser(fetchedUser);
 
-    //no preocuparse, estoy reutilizando un componente para el placeholder,
-    // me dio flojera hacer otro XD
-    const setPlaceholder = ()=>{
-      const placeholderMed=[{
-        nombreComercial:"Sin Citas",
-        
-      }]
-      setPlaceholderF(true);
-      setCitas(placeholderMed);
-    }
-    
-    const setCards=()=>{
-      console.log('llegue a la funcion')
-      if(PlaceHolderF==true){
-        console.log('llegue al if true')
-        return Citas.map((med) => (
-        <CardPlaceholder medicamento={med}/>
-        ))
-      }else{
-        return Citas.map((cita,index)=>(
-          <CitaCard key={index} Cita={cita}/>
-        ))
+        const dataDates = await loadDatesFromFile();
+        if (Array.isArray(dataDates) && dataDates.length > 0) {
+          setCitas(dataDates);
+          setPlaceholderF(false);
+        } else {
+          const remoteData = await obtenerCitasPorUsuario(fetchedUser);
+          setCitas(remoteData);
+          await saveDatesToFile(remoteData);
+        }
+        if (!dataDates || dataDates.length === 0) {
+          setPlaceholder(true);
+        }
+      } catch (error) {
+        console.error("Error durante la inicialización:", error);
+      } finally {
+        setIsLoading(false);
       }
-      
-    }
+    };
+
+    initialize();
+
+  }, []);
+    
+  const setPlaceholder = () => {
+    const placeholderMed = [
+      {
+        nombreComercial: "Sin Citas",
+        dias: "-",
+      },
+    ];
+    setPlaceholderF(true);
+    setCitas(placeholderMed);
+  };
+
+  const setCards = () => {
+      if (PlaceHolderF) {
+        return citas.map((dates) => <CardPlaceholder key={dates.nombreComercial} medicamento={dates} />);
+      } else {
+        return citas.map((dates) => <CitaCard key={dates.id} Cita={dates} />);
+      }
+    };
+
+
   return (
     <View flex={1}>
         <ImageBackground source={backogoundo}
@@ -68,12 +100,7 @@ export const CitasMedicas = () => {
                 </Text>
                 <View paddingX={3}>
                   
-                  {
-//cambiar esta wea por la funcion del placeholder cuando este el fetch
-                    Citas.map((med) => (
-                      <CardPlaceholder medicamento={med}/>
-                      ))
-                  }
+                  {isLoading ? <Spinner size="lg" paddingTop={5} marginBottom={10} /> : setCards()}
                 
                 </View>
             </Box>
