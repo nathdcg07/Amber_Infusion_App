@@ -30,8 +30,7 @@ export function AlarmHome() {
     solicitarPermisosNotificaciones();
     const initialize = async () => {
       try {
-        const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
-        //const fetchedUser = await getNameFromAsyncStorage();
+        const fetchedUser = await getNameFromAsyncStorage();
         setUser(fetchedUser);
 
         const dataMeds = await loadMedsFromFile();

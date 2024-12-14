@@ -29,8 +29,7 @@ export function RegistroCitaMedica(){
 
 useEffect(() => {
   const fetchUser = async () => {
-    const fetchedUser = 'W2H5OUAzK5maXu5jcww5';
-    //const fetchedUser = await getNameFromAsyncStorage();
+    const fetchedUser = await getNameFromAsyncStorage();
     setUser(fetchedUser);
   };
   fetchUser();
@@ -79,7 +78,7 @@ const handleSubmit = async () => {
       trigger: notificationDate,
     });
 
-    console.log('Cita registrada y notificación programada:', cita);
+    alert('Cita registrada y notificación programada');
   } else {
     if (!NombreMedico) setErrorNombreMed('Llena este espacio');
     if (!ApellidoMedico) setErrorApellidoMed('Llena este espacio');
