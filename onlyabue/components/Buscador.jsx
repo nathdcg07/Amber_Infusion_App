@@ -18,26 +18,26 @@ const itemsPorPagina = 3;
 const [textoBuscar, settextoBuscar] = useState("");
 const [loading, setLoading] = useState(false);
 
-// Obtener solo los elementos de la página actual
+
 const obtenerItemsDePagina = () => {
     const inicio = (pagina - 1) * itemsPorPagina;
     const fin = inicio + itemsPorPagina;
     return Medicamento.slice(inicio, fin);
 };
 
-// Detectar si hay más elementos para cargar
+
 const hayMasElementos = () => {
     return pagina * itemsPorPagina < Medicamento.length;
 };
 
- // Retroceder a la página anterior
+ 
  const retrocederPagina = () => {
     if (pagina > 1) {
         setPagina(pagina - 1);
     }
 };
 
-// Avanzar a la siguiente página
+
 const avanzarPagina = () => {
     if (hayMasElementos()) {
         setPagina(pagina + 1);

@@ -15,6 +15,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getNameFromAsyncStorage } from "../services/frontServices";
 import CustomImagePicker from './ImagePicker';
 import { primerRecordatorio } from "./recordatorios/notificacionesService";
+import { updateMedicationData } from "../services/firestoreService";
 
 
 
@@ -41,7 +42,7 @@ const { width, height } = Dimensions.get('window');
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState('W2H5OUAzK5maXu5jcww5');
   const [selectedDays, setSelectedDays] = useState([]); 
-
+  const [Id,setId] = useState();
   const daysOfWeek = [
     { label: 'Lunes', value: 'Lunes' },
     { label: 'Martes', value: 'Martes' },
@@ -55,10 +56,8 @@ const { width, height } = Dimensions.get('window');
   const handleCheckboxChange = (day) => {
       setSelectedDays((prevDays) => {
       if (prevDays.includes(day)) {
-        // Si el día ya está seleccionado, lo eliminamos
         return prevDays.filter((selectedDay) => selectedDay !== day);
-      } else {
-        // Si el día no está seleccionado, lo añadimos
+      } else {        
         return [...prevDays, day];
       }
     });
@@ -219,6 +218,33 @@ const convertirFirestore= (firestore)=>{
     }
     setNombreGenerico(text);
   };
+  const handleUpdate = async () => {
+    try {
+      setLoading(true);
+      const imageMedUrl = await uploadImage(selectedImageMed);
+      const imageBoxUrl = await uploadImage(selectedImageBox);
+      await updateMedicationData(user,Id, {
+        imagenMedUrl: imageMedUrl,
+        imagenBoxUrl: imageBoxUrl,
+        nombreComercial: NombreComercial,
+        nombreGenerico: NombreGenerico,
+        dosis: Dosis,
+        intervalo: Intervalo,
+        tamanio: Tamanio,
+        unidad: Unidad,
+        presentacion: Presentacion,
+        cantidad: Cantidad,
+        color: selectedColor,
+        hora: selectedTime,        
+        dias: selectedDays
+      });
+    } catch (error) {
+      console.error('Error al actualizar el medicamento: ', error);
+    }finally{
+      setLoading(false);
+      router.back()
+    }
+  };
   
   const validateIntervalo = ()=> {
     
@@ -270,7 +296,7 @@ const convertirFirestore= (firestore)=>{
     try {
       if (medicamento) {
         const medicamentoData = JSON.parse(decodeURIComponent(medicamento));
-        
+        setId(medicamentoData.id??'');
         setNombreComercial(medicamentoData.nombreComercial ?? '');      
         setNombreGenerico(medicamentoData.nombreGenerico ?? '');
         setDosis(medicamentoData.dosis ?? '');
@@ -617,7 +643,8 @@ const convertirFirestore= (firestore)=>{
                 </View>
               ) : (
                 medicamento?
-                  <TouchableOpacity  style={styles.button} disabled={loading}>
+                  <TouchableOpacity onPress={ handleUpdate}
+                    style={styles.button} disabled={loading}>
                     <Text style={styles.buttonText}>Actualizar</Text>
                   </TouchableOpacity>
                 :

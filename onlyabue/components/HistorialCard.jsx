@@ -1,5 +1,6 @@
 import { View, Image, Text, Box, HStack, VStack, Center, Button } from "native-base";
 import styles from "../Styles/GlobalStyles";
+import { eliminarMedicamentoPorUsuario } from "../services/firestoreService";
 
 export const HistorialCard = ({ medicamento }) => {
     const fechaCreacion = new Date(medicamento.creadoEn.seconds * 1000 + medicamento.creadoEn.nanoseconds / 1000000);
@@ -31,8 +32,7 @@ export const HistorialCard = ({ medicamento }) => {
                     <Text alignSelf={"Center"} color={"gray.400"}>{medicamento.Dias}</Text>
                     <Text>Cada: {medicamento.intervalo} Horas.</Text>
                     <Text>Dosis:{medicamento.dosis}</Text>
-                    <Text>Cantidad:{medicamento.cantidad}</Text>
-                    <Button mt={5} width={130}>Eliminar</Button>
+                    <Text>Cantidad:{medicamento.cantidad}</Text>                    
                 </VStack>
             </HStack>
         </View>
@@ -71,7 +71,7 @@ export const HistorialCardPH = ({medicamento}) =>{
                     <Text>Dosis:{medicamento.dosis}</Text>
                     <Text>Terminado</Text>
                     </VStack>
-                    <Button mt={5} width={130}>Eliminar</Button>
+                    
                 </VStack>
             </HStack>
             </View>

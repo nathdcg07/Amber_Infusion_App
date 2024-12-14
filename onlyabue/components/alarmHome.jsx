@@ -21,30 +21,30 @@ export function AlarmHome() {
   const [user, setUser] = useState(null);
   const [PlaceHolderF, setPlaceholderF] = useState(false);
   const [refreshing, setRefreshing] = useState(false); // Estado para controlar el refresh
-  //paginacion
+  
   const [pagina, setPagina] = useState(1);
   const itemsPorPagina = 5;  
 
-// Obtener solo los elementos de la página actual
+
 const obtenerItemsDePagina = () => {
     const inicio = (pagina - 1) * itemsPorPagina;
     const fin = inicio + itemsPorPagina;
     return Medicamentos.slice(inicio, fin);
 };
 
-// Detectar si hay más elementos para cargar
+
 const hayMasElementos = () => {
   return pagina * itemsPorPagina < Medicamentos.length;
 };
 
- // Retroceder a la página anterior
+
  const retrocederPagina = () => {
     if (pagina > 1) {
         setPagina(pagina - 1);
     }
 };
 
-// Avanzar a la siguiente página
+
 const avanzarPagina = () => {
     if (hayMasElementos()) {
         setPagina(pagina + 1);
@@ -54,8 +54,8 @@ const avanzarPagina = () => {
   useEffect(() => {
     const initialize = async () => {
       try {
-        // const fetchedUser = await getNameFromAsyncStorage();
-        const fetchedUser = "W2H5OUAzK5maXu5jcww5";
+        const fetchedUser = await getNameFromAsyncStorage();
+        
         setUser(fetchedUser);
 
         const dataMeds = await loadMedsFromFile();
@@ -100,7 +100,7 @@ const avanzarPagina = () => {
     }
   };
 
-  // Función de refresco al deslizar
+  
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {

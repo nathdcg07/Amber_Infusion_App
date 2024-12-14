@@ -478,6 +478,7 @@ export const eliminarMedicamentoPorUsuario = async (usuarioId, medicamentoId) =>
     return false; // Retornar false si hay un error
   }
 };
+//buscador
 export const buscarMedicamento = async (textoBuscar) =>{
   try{
     const ListaMed = collection(firestore,'etiquetas');
@@ -509,6 +510,67 @@ export const buscarMedicamento = async (textoBuscar) =>{
   }
   
 }
+//Subir edicion
+export const updateMedicationData = async (userId, medicationId, updatedData) => {
+  try {
+    // Verifica que los campos requeridos no estén vacíos
+    if (!userId || !medicationId || !updatedData) {
+      console.log("usuario:"+userId + "medID:"+medicationId+"Data:" + updatedData)
+      alert('Faltan datos necesarios para la actualización.');
+      return;
+    }
+    
+    // Verifica si hay imágenes nuevas para subir
+    let imageMedUrl = updatedData.imagenMedUrl;
+    let imageBoxUrl = updatedData.imagenBoxUrl;
+    
+    if (updatedData.selectedImageMed) {
+      imageMedUrl = await uploadImage(updatedData.selectedImageMed);
+    }
+    
+    if (updatedData.selectedImageBox) {
+      imageBoxUrl = await uploadImage(updatedData.selectedImageBox);
+    }
+    
+    // Referencia al documento del medicamento en la base de datos
+    const medicamentoRef = doc(collection(doc(collection(firestore, 'usuarios'), userId), 'medicamentos'), medicationId);
+    
+    // Crea un objeto con los datos a actualizar
+    const updatedFields = {
+      imagenMedUrl: imageMedUrl,
+      imagenBoxUrl: imageBoxUrl,
+      nombreComercial: updatedData.nombreComercial,
+      nombreGenerico: updatedData.nombreGenerico,
+      dosis: updatedData.dosis,
+      intervalo: updatedData.intervalo,
+      tamanio: updatedData.tamanio,
+      unidad: updatedData.unidad,
+      presentacion: updatedData.presentacion,
+      cantidad: updatedData.cantidad,
+      color: updatedData.color,
+      hora: updatedData.hora,
+      dias: updatedData.dias,
+      actualizadoEn: new Date(), // Marca de tiempo para la actualización
+    };
+
+    // Filtra los campos vacíos o nulos para evitar sobrescribir con valores "vacíos"
+    Object.keys(updatedFields).forEach(key => {
+      if (updatedFields[key] === undefined || updatedFields[key] === null) {
+        delete updatedFields[key];
+      }
+    });
+    
+    // Actualiza el documento en Firebase
+    await updateDoc(medicamentoRef, updatedFields);
+    
+    alert('Medicamento actualizado correctamente');
+    console.log("Medicamento actualizado con ID: ", medicationId);
+  
+  } catch (error) {
+    console.error("Error actualizando el medicamento: ", error);
+    alert('Error al actualizar el medicamento');
+  }
+};
 
 const fechaCita = new Date('2024-11-04 T15:00');
 const recordatorios = calcularRecordatorioCita(fechaCita);
