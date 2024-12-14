@@ -477,7 +477,7 @@ export const obtenerCitasPorUsuario = async (usuarioId) => {
     }
 
     // Acceder a la subcolección "medicamentos" del usuario
-    const medicamentosCollectionRef = collection(usuarioDocRef, 'citas');
+    const medicamentosCollectionRef = collection(usuarioDocRef, 'citas_medicas');
     const medicamentosSnapshot = await getDocs(medicamentosCollectionRef);
 
     // Mapear los documentos de la subcolección a un array

@@ -1,11 +1,11 @@
 
 import { StatusBar, View, Fab, Center, Pressable, Box, Text, Spinner,Circle } from "native-base";
-import { ScrollView, StyleSheet,Dimensions,ImageBackground } from "react-native";
+import { ScrollView, StyleSheet,Dimensions,ImageBackground, RefreshControl } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Link } from "expo-router";
 import MedCard from "./medicamentoCard";
 import { NextDate } from "./NextDate";
-import React,{ useEffect,useState } from "react";
+import React,{ useEffect,useState,useCallback } from "react";
 import { CitaCard } from "./CitasProgramadas";
 import styles from "../Styles/GlobalStyles";
 import backogoundo from '../assets/icons/Fondo.jpg';
@@ -28,6 +28,7 @@ export const CitasMedicas = () => {
   const [user, setUser] = useState(null);
   const [citas, setCitas] = useState([]);
   const [isLoading, setIsLoading]  = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   useEffect(() => {
 
@@ -72,12 +73,39 @@ export const CitasMedicas = () => {
   };
 
   const setCards = () => {
+    if (!Array.isArray(citas) || citas.length === 0) {
+      return (
+        <Text alignSelf="center" color="white" fontSize={20}>
+          No hay citas disponibles.
+        </Text>
+      );
+    }
+  
+    return citas.map((dates, index) => {
       if (PlaceHolderF) {
-        return citas.map((dates) => <CardPlaceholder key={dates.nombreComercial} medicamento={dates} />);
+        return <CardPlaceholder key={index} medicamento={dates} />;
       } else {
-        return citas.map((dates) => <CitaCard key={dates.id} Cita={dates} />);
+        return <CitaCard key={index} Cita={dates} />;
       }
-    };
+    });
+  };
+
+
+const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const remoteData = await obtenerCitasPorUsuario(user);
+      setCitas(remoteData);
+      await saveDatesToFile(remoteData);
+
+    } catch (error) {
+
+    } finally {
+      setRefreshing(false);
+    }
+  }, [user]);
+
+
 
 
   return (
@@ -86,7 +114,8 @@ export const CitasMedicas = () => {
         style={styles.backgroundImage}>
       
         <StatusBar/>
-        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false} 
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
             <View style={styles.nextAlarmContainer}>
             <Box position={'absolute'}  zIndex={-1}>
               <Circle backgroundColor="#ffffff"  width={width * 1.2} height={height*0.6} top={topPosition} />
